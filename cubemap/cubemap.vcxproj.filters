@@ -28,10 +28,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\cubemap_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\cubemap_fs.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="resources\cubemap_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\cubemap_vs.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

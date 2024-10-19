@@ -18,10 +18,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\stencil_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\stencil_fs.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="resources\stencil_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\stencil_vs.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

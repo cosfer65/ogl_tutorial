@@ -97,19 +97,19 @@
     <ClCompile Include="draw_simple_objects.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\draw_cubet_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cubet_fs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\draw_cubet_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cubet_vs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\draw_cube_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cube_fs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\draw_cube_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cube_vs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

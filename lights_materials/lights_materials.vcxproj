@@ -97,19 +97,19 @@
     <ClCompile Include="lights_materials.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\lights_materials_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_fs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\lights_materials_map_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_map_fs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\lights_materials_material_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_material_fs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\lights_materials_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_vs.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
