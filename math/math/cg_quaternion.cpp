@@ -37,6 +37,10 @@ namespace atlas {
         double pitch = y;// deg_to_rad(y);
         double yaw = z;// deg_to_rad(z);
 
+        roll = z;// deg_to_rad(x);
+        pitch = x;// deg_to_rad(y);
+        yaw = y;// deg_to_rad(z);
+
         double cyaw, cpitch, croll, syaw, spitch, sroll;
         double cyawcpitch, syawspitch, cyawspitch, syawcpitch;
 

@@ -60,6 +60,7 @@ public:
     }
     basemat3& operator = (const basemat3& m) {
         memcpy(data, m.data, 9 * sizeof(T));
+        return *this;
     }
     operator T* () {
         return data;

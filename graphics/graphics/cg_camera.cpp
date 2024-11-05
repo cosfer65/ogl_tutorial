@@ -61,4 +61,15 @@ namespace atlas {
         vUp = cross(right, vForward);
         vUp.normalize();
     }
+    void cg_camera::setup_d(const vec3& pos, const vec3& forw, const vec3& up)
+    {
+        vLocation = pos;
+        vForward = forw;
+        vUp = up;
+        vForward.normalize();
+
+        vec3 right = cross(vForward, vUp);
+        vUp = cross(right, vForward);
+        vUp.normalize();
+    }
 }

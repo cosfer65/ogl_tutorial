@@ -76,11 +76,23 @@ namespace atlas {
             position = _r;
             tmat = translation_matrix(position.x, position.y, position.z);
         }
+        void move_to(float x, float y, float z) {
+            position = vec3(x, y, z);
+            tmat = translation_matrix(x, y, z);
+        }
         void move_by(const vec3& _r) {
             position += _r;
             tmat = translation_matrix(position.x, position.y, position.z);
         }
+        void move_by(float x, float y, float z) {
+            position += vec3(x,y,z);
+            tmat = translation_matrix(position.x, position.y, position.z);
+        }
         virtual void create(GLenum drmode = GL_FILL, bool dr_el = true) {
+        }
+        void set_scale(float x, float y, float z) {
+            scale = vec3(x, y, z);
+            smat = scaling_matrix(scale.x, scale.y, scale.z);
         }
         void set_scale(const vec3& _s) {
             scale = _s;
@@ -151,14 +163,29 @@ namespace atlas {
         virtual void create(GLenum drmode = GL_FILL, bool dr_el = true);
     };
 
-    class cg_gl_mesh :public cg_prim {
+    class cg_gl_plane:public cg_prim {
     protected:
+        float minx;
+        float maxx;
+        float miny;
+        float maxy;
+        float minz;
+        float maxz;
     public:
-        cg_gl_mesh() {
+        cg_gl_plane() {
+            set_extends(-2, 2, 0, 0, -2, 2);
         }
-        virtual ~cg_gl_mesh() {
+        virtual ~cg_gl_plane() {            
         }
         virtual void create(GLenum drmode = GL_FILL, bool dr_el = true);
+        void set_extends(float _minx, float _maxx, float _miny, float _maxy, float _minz, float _maxz) {
+            minx = _minx;
+            maxx = _maxx;
+            miny = _miny;
+            maxy = _maxy;
+            minz = _minz;
+            maxz = _maxz;
+        }
     };
 }
 

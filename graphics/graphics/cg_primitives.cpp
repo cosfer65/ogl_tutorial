@@ -101,7 +101,7 @@ namespace atlas {
         create_from_mesh(&cm, drmode, dr_el);
     }
 
-    void cg_gl_mesh::create(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+    void cg_gl_plane::create(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
         draw_elements = dr_el;
         draw_mode = drmode;
 
@@ -109,8 +109,7 @@ namespace atlas {
         {
             cg_plane_mesh* tmesh = new cg_plane_mesh;
             tmesh = new cg_plane_mesh;
-            //tmesh->set_extent(-5, 5, -5, 5);
-            tmesh->create(10, 0, 10);
+            tmesh->create(minx, maxx, miny, maxy, minz, maxz);
             create_from_mesh(tmesh, drmode, dr_el);
             delete tmesh;
         }

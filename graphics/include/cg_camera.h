@@ -14,18 +14,14 @@ namespace atlas {
         vec3 vLocation;
         vec3 vForward;
         vec3 vUp;
-        float yaw;
 
         cg_camera() {
-            yaw = 0;
             setup(vec3(0, 0, 3), vec3(0, 0, 0), vec3(0, 1, 0));
         }
         cg_camera(const vec3& _l, const vec3 _f, const vec3& _u) {
-            yaw = 0;
             setup(_l, _f, _u);
         }
         cg_camera(cg_camera& cp) {
-            yaw = cp.yaw;
             setup(cp.vLocation, cp.vForward, cp.vUp);
         }
         ~cg_camera() {
@@ -38,6 +34,14 @@ namespace atlas {
             vLocation.x += fwdx;
             vLocation.y += fwdy;
             vLocation.z += fwdz;
+            setup(vLocation, vForward, vUp);
+        }
+
+        void moveto(float x, float y, float z) {
+            vLocation.x = x;
+            vLocation.y = y;
+            vLocation.z = z;
+            setup(vLocation, vForward, vUp);
         }
 
         void rotate(float x, float y, float z) {
@@ -54,6 +58,7 @@ namespace atlas {
         void rotate_locY(float angle);
         void rotate_locZ(float angle);
         void setup(const vec3& pos, const vec3& lookat, const vec3& up);
+        void setup_d(const vec3& pos, const vec3& forw, const vec3& up);
     };
 
     class cg_viewport {

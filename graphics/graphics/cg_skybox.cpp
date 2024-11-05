@@ -82,7 +82,7 @@ namespace atlas {
         "}\n"
     };
 
-    cg_skybox::cg_skybox() {
+    cg_skybox::cg_skybox() :default_shader(NULL) {
     }
 
     cg_skybox::~cg_skybox() {
