@@ -187,6 +187,16 @@ namespace atlas {
             maxz = _maxz;
         }
     };
+    class cg_gl_mesh :public cg_prim {
+    protected:
+    public:
+        cg_gl_mesh() {
+        }
+        virtual ~cg_gl_mesh() {
+        }
+        virtual void create(GLenum drmode = GL_FILL, bool dr_el = true);
+    };
+
 }
 
 #endif //__cg_prim__

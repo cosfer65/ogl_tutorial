@@ -108,10 +108,23 @@ namespace atlas {
         if (vao == 0)
         {
             cg_plane_mesh* tmesh = new cg_plane_mesh;
-            tmesh = new cg_plane_mesh;
-            tmesh->create(minx, maxx, miny, maxy, minz, maxz);
+            tmesh->create(10, 0, 10);
             create_from_mesh(tmesh, drmode, dr_el);
             delete tmesh;
         }
     }
+
+    void cg_gl_mesh::create(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        draw_elements = dr_el;
+        draw_mode = drmode;
+
+        if (vao == 0)
+        {
+            cg_plane_mesh* tmesh = new cg_plane_mesh;
+            tmesh->create(10, 0, 10);
+            create_from_mesh(tmesh, drmode, dr_el);
+            delete tmesh;
+        }
+    }
+
 }
