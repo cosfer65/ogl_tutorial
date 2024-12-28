@@ -10,6 +10,34 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="buffers.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="font.cpp" />
+    <ClCompile Include="glew.c" />
+    <ClCompile Include="primitives.cpp" />
+    <ClCompile Include="shaders.cpp" />
+    <ClCompile Include="skybox.cpp" />
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="application.h" />
+    <ClInclude Include="buffers.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="glew.h" />
+    <ClInclude Include="gl_math.h" />
+    <ClInclude Include="graphics.h" />
+    <ClInclude Include="light.h" />
+    <ClInclude Include="primitives.h" />
+    <ClInclude Include="shaders.h" />
+    <ClInclude Include="skybox.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="wglew.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -48,14 +76,14 @@
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
     <OutDir>$(SolutionDir)lib\$(Configuration)$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>cg_$(ProjectName)</TargetName>
+    <TargetName>as_$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
     <OutDir>$(SolutionDir)lib\$(Configuration)$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>cg_$(ProjectName)</TargetName>
+    <TargetName>as_$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -63,9 +91,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\math\include;$(SolutionDir)\image\include;$(SolutionDir)\$(ProjectName)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\math;$(SolutionDir)\image;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -90,7 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\math\include;$(SolutionDir)\image\include;$(SolutionDir)\$(ProjectName)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\math;$(SolutionDir)\image;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -107,42 +135,6 @@
       <OutputFile>$(SolutionDir)lib\$(Configuration)$(Platform)\$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="graphics\cg_app.cpp" />
-    <ClCompile Include="graphics\cg_buffers.cpp" />
-    <ClCompile Include="graphics\cg_camera.cpp" />
-    <ClCompile Include="graphics\cg_font.cpp" />
-    <ClCompile Include="graphics\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="graphics\cg_light.cpp" />
-    <ClCompile Include="graphics\cg_primitives.cpp" />
-    <ClCompile Include="graphics\cg_shader.cpp" />
-    <ClCompile Include="graphics\cg_skybox.cpp" />
-    <ClCompile Include="graphics\cg_timer.cpp" />
-    <ClCompile Include="graphics\cg_util.cpp" />
-    <ClCompile Include="graphics\glew.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="graphics\pch.h" />
-    <ClInclude Include="include\cg_app.h" />
-    <ClInclude Include="include\cg_buffers.h" />
-    <ClInclude Include="include\cg_camera.h" />
-    <ClInclude Include="include\cg_font.h" />
-    <ClInclude Include="include\cg_light.h" />
-    <ClInclude Include="include\cg_primitives.h" />
-    <ClInclude Include="include\cg_shader.h" />
-    <ClInclude Include="include\cg_skybox.h" />
-    <ClInclude Include="include\cg_timer.h" />
-    <ClInclude Include="include\cg_util.h" />
-    <ClInclude Include="include\glew.h" />
-    <ClInclude Include="include\cg_graphics.h" />
-    <ClInclude Include="include\wglew.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

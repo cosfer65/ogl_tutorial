@@ -10,6 +10,20 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="amath.h" />
+    <ClInclude Include="basematrix.h" />
+    <ClInclude Include="basevec.h" />
+    <ClInclude Include="geom.h" />
+    <ClInclude Include="matrix.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="quaternion.h" />
+    <ClInclude Include="vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="matrix.cpp" />
+    <ClCompile Include="mesh.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -45,13 +59,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>cg_$(ProjectName)</TargetName>
+    <TargetName>as_$(ProjectName)</TargetName>
     <IntDir>$(SolutionDir)$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)lib\$(Configuration)$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>cg_$(ProjectName)</TargetName>
+    <TargetName>as_$(ProjectName)</TargetName>
     <IntDir>$(SolutionDir)$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)lib\$(Configuration)$(Platform)\</OutDir>
   </PropertyGroup>
@@ -61,7 +75,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\$(ProjectName)\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -97,26 +111,6 @@
       <OutputFile>$(SolutionDir)lib\$(Configuration)$(Platform)\$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="include\cg_basematrix.h" />
-    <ClInclude Include="include\cg_basevec.h" />
-    <ClInclude Include="include\cg_geom.h" />
-    <ClInclude Include="include\cg_math.h" />
-    <ClInclude Include="include\cg_matrix.h" />
-    <ClInclude Include="include\cg_mesh.h" />
-    <ClInclude Include="include\cg_quaternion.h" />
-    <ClInclude Include="include\cg_vector.h" />
-    <ClInclude Include="math\pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="math\cg_matrix.cpp" />
-    <ClCompile Include="math\cg_mesh.cpp" />
-    <ClCompile Include="math\cg_quaternion.cpp" />
-    <ClCompile Include="math\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -18,16 +18,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\draw_cube_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cube_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cube_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cube_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cubet_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cubet_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cubet_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\draw_cubet_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

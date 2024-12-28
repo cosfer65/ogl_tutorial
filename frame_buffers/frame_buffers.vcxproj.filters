@@ -28,13 +28,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\frame_buffers_use_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\frame_buffers_use_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\frame_buffers_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\frame_buffers_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\frame_buffers_create_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\frame_buffers_create_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

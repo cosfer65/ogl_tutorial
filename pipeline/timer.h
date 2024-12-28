@@ -1,13 +1,13 @@
 /* high resolution timer */
 // check if a custom definition exists
-#ifndef __cg_timer__
+#ifndef __c_timer__
 // usualy we define something close to the file name
-#define __cg_timer__
+#define __c_timer__
 
-class cg_timer
+class c_timer
 {
 public:
-    cg_timer();
+    c_timer();
 
     void reset(); // resets the timer
     void start(); // starts the timer
@@ -29,6 +29,6 @@ protected:
 #endif
 };
 
-cg_timer* get_global_timer();
+c_timer* get_global_timer();
 
-#endif // __cg_timer__
+#endif // __c_timer__

@@ -18,5 +18,5 @@ bool destroy_GL_window();
 void resize_window(int width, int height);
 
 void init_application();
-void frame_render();
+void render();
 void terminate_application();

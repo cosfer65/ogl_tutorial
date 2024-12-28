@@ -1,66 +1,64 @@
 #include "frame_buffers.h"
-#include "cg_camera.h"
-#include "cg_light.h"
-#include "cg_util.h"
-#include "cg_primitives.h"
-#include "cg_font.h"
-#include "cg_buffers.h"
+#include "camera.h"
+#include "light.h"
+#include "util.h"
+#include "primitives.h"
+#include "font.h"
+#include "buffers.h"
 
 using namespace atlas;
 
-class atlas_app :public cg_app {
-    cg_texture_buffer* m_tex_buffer; // the texture buffer
-    cg_viewport* fb_view;            // the viewport to the texture image
-    cg_shader* m_shader_create;      // the shader to create the texture
-    cg_gl_cube* m_cube;              // rotating cube for the texture
+class atlas_app :public c_application {
+    gl_texture_buffer* m_tex_buffer; // the texture buffer
+    gl_viewport* fb_view;            // the viewport to the texture image
+    c_shader* m_shader_create;      // the shader to create the texture
+    gl_prim* m_cube;              // rotating cube for the texture
 
-    cg_viewport* m_view;             // normal view
-    cg_shader* m_shader_use;         // shader for the final render
-    cg_gl_sphere* m_sphere;          // the object to use the texture
+    gl_viewport* m_view;             // normal view
+    c_shader* m_shader_use;         // shader for the final render
+    gl_prim* m_sphere;          // the object to use the texture
 
-    cg_camera* m_cam;                // shared camer
-    cg_light* m_light;               // shared light
+    gl_camera* m_cam;                // shared camer
+    c_light* m_light;               // shared light
 
-    cg_font* font2D;
+    gl_font* font2D;
 public:
     atlas_app() {
-        m_view = new cg_viewport();
+        m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (frame buffers)";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
     }
-    virtual int init_game() {
+    virtual int init_application() {
         m_view->set_fov(dtr(10));
-        m_cam = new cg_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_light = new cg_light(cg_light::DIRLIGHT);
+        m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_light = new c_light(c_light::DIRLIGHT);
         m_light->set_position(vec3(10, 10, 10));
         m_light->set_ambient(vec3(0.25f));
 
         // create frame buffer view and texture
-        fb_view = new cg_viewport();
+        fb_view = new gl_viewport();
         fb_view->set_view_field(1, 1000);
         fb_view->set_fov(dtr(12));
         fb_view->set_window_aspect(512, 512);
-        m_tex_buffer = new cg_texture_buffer();
+        m_tex_buffer = new gl_texture_buffer();
         m_tex_buffer->create(512, 512);
 
-        m_shader_create = new cg_shader;
-        m_shader_create->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.hlsl");
-        m_shader_create->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_create_fs.hlsl");
+        m_shader_create = new c_shader;
+        m_shader_create->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.glsl");
+        m_shader_create->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_create_fs.glsl");
         m_shader_create->load();
 
-        m_shader_use = new cg_shader;
-        m_shader_use->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.hlsl");
-        m_shader_use->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_use_fs.hlsl");
+        m_shader_use = new c_shader;
+        m_shader_use->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.glsl");
+        m_shader_use->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_use_fs.glsl");
         m_shader_use->load();
 
-        m_cube = new cg_gl_cube;
-        m_cube->create(GL_FILL, true);
+        m_cube = create_cube(GL_FILL, true);
         m_cube->move_to(vec3(0, 0, -2));
         //m_cube->set_scale(vec3(1.5));
 
-        m_sphere = new cg_gl_sphere(1);
-        m_sphere->create(GL_FILL, true);
+        m_sphere = create_sphere(GL_FILL, true);
 
         // the following will be analyzed in the next chapter
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
@@ -73,17 +71,17 @@ public:
 
         return 1;
     }
-    virtual void exit_game() {
+    virtual void exit_application() {
     }
     virtual void resize_window(int width, int height) {
         m_view->set_window_aspect(width, height);
     }
 
-    virtual void frame_move(float fElapsed) {
+    virtual void step_simulation(float fElapsed) {
         m_cube->rotate_by(vec3(dtr(fElapsed * 15), dtr(fElapsed * 30), dtr(fElapsed * 45)));
         m_sphere->rotate_by(vec3(0, dtr(fElapsed * 30), 0));
     }
-    virtual void frame_render() {
+    virtual void render() {
         // we will draw on an off-screen image, which we will use
         // as a texture for the object we will draw later
 
@@ -100,7 +98,7 @@ public:
         glDepthFunc(GL_LEQUAL);
         m_shader_create->use();
         m_light->apply(m_shader_create);
-        mat4 cam_matrix = fb_view->perspective() * m_cam->perspective();
+        mat4 cam_matrix = m_cam->perspective() * fb_view->perspective();
         m_shader_create->set_mat4("camera", cam_matrix);
         m_shader_create->set_vec3("cameraPos", m_cam->vLocation);
         m_shader_create->set_vec3("objectColor", vec3(.4f, .9f, .9f));
@@ -119,7 +117,7 @@ public:
         glDepthFunc(GL_LEQUAL);
         m_shader_use->use();
         m_light->apply(m_shader_use);
-        cam_matrix = m_view->perspective() * m_cam->perspective();
+        cam_matrix = m_cam->perspective() * m_view->perspective();
         m_shader_use->set_mat4("camera", cam_matrix);
         m_shader_use->set_vec3("cameraPos", m_cam->vLocation);
         m_shader_use->set_int("useColor", 0);

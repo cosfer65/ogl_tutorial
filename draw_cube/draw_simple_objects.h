@@ -1,5 +1,5 @@
-#ifndef __atlas_h__
-#define __atlas_h__
+#ifndef __draw_simple_objects_h__
+#define __draw_simple_objects_h__
 
 // Windows Header Files:
 #define WIN32_LEAN_AND_MEAN      // Exclude rarely-used stuff from Windows headers
@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "cg_graphics.h"
-#include "cg_app.h"
+#include "graphics.h"
+#include "application.h"
 
-#endif // __atlas_h__
+#endif // __draw_simple_objects_h__

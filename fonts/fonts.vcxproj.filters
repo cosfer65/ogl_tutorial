@@ -28,10 +28,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\fonts_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\fonts_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\fonts_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\fonts_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

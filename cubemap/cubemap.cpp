@@ -1,36 +1,36 @@
 #include "cubemap.h"
-#include "cg_camera.h"
-#include "cg_light.h"
-#include "cg_util.h"
-#include "cg_primitives.h"
-#include "cg_font.h"
-#include "cg_skybox.h"
+#include "camera.h"
+#include "light.h"
+#include "util.h"
+#include "primitives.h"
+#include "font.h"
+#include "skybox.h"
 
 using namespace atlas;
 
-class atlas_app :public cg_app {
-    cg_viewport* m_view;
-    cg_camera* m_cam;
-    cg_shader* m_shader;
-    cg_skybox* m_skybox;
+class atlas_app :public c_application {
+    gl_viewport* m_view;
+    gl_camera* m_cam;
+    c_shader* m_shader;
+    c_skybox* m_skybox;
 
-    cg_gl_sphere* m_sphere;
-    cg_gl_cube* m_cube;
+    gl_prim* m_sphere;
+    gl_prim* m_cube;
 
-    cg_font* font2D;
+    gl_font* font2D;
 public:
     atlas_app() {
-        m_view = new cg_viewport();
+        m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (cubemap / skybox)";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
     }
-    virtual int init_game() {
+    virtual int init_application() {
         m_view->set_fov(dtr(30));
-        // m_cam = new cg_camera(vec3(0, 10, 30), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_cam = new cg_camera(vec3(0, 0, -20), vec3(0, 0, 0), vec3(0, 1, 0));
+        // m_cam = new gl_camera(vec3(0, 10, 30), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_cam = new gl_camera(vec3(0, 0, -20), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        m_skybox = new cg_skybox;
+        m_skybox = new c_skybox;
         std::vector<std::string> faces
         {
             "resources/px.tga", "resources/nx.tga",
@@ -40,17 +40,16 @@ public:
 
         m_skybox->load(faces);
 
-        m_shader = new cg_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/cubemap_vs.hlsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/cubemap_fs.hlsl");
+        m_shader = new c_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/cubemap_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/cubemap_fs.glsl");
         m_shader->load();
 
-        m_sphere = new cg_gl_sphere(2);
-        m_sphere->create(GL_FILL, true);
+        m_sphere = create_sphere(GL_FILL, true);
+        m_sphere->set_scale(vec3(3));
         m_sphere->move_to(vec3(2.5, 0, 0));
 
-        m_cube = new cg_gl_cube;
-        m_cube->create(GL_FILL, true);
+        m_cube = create_cube(GL_FILL, true);
         m_cube->set_scale(vec3(3));
         m_cube->move_to(vec3(-2.5, 0, 0));
 
@@ -65,13 +64,13 @@ public:
 
         return 1;
     }
-    virtual void exit_game() {
+    virtual void exit_application() {
     }
     virtual void resize_window(int width, int height) {
         m_view->set_window_aspect(width, height);
     }
 
-    virtual void frame_move(float fElapsed) {
+    virtual void step_simulation(float fElapsed) {
         float d15 = dtr(15);
         float d30 = dtr(30);
         float d45 = dtr(45);
@@ -86,7 +85,7 @@ public:
         if (keyDown['D']) m_cam->rotate_locZ(-d30 * fElapsed);//rotate right
         m_cube->rotate_by(vec3(d15 * fElapsed / 5, d30 * fElapsed / 5, 0));
     }
-    virtual void frame_render() {
+    virtual void render() {
         // set the viewport to the whole window
         m_view->set_viewport();
         glClearColor(0.2f, 0.2f, 0.2f, 1);
@@ -94,7 +93,7 @@ public:
 
         m_shader->use();
 
-        mat4 cam_matrix = m_view->perspective() * m_cam->perspective();
+        mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
         // we use 1 and GL_TEXTURE1 for demonstration purposes only

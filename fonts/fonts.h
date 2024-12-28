@@ -9,9 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "cg_graphics.h"
-#include "cg_app.h"
-
-//#include "cg_physics.h"
+#include "graphics.h"
+#include "application.h"
 
 #endif // __atlas_h__

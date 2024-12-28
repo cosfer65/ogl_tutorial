@@ -28,16 +28,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\shadow_mapping_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\shadow_mapping_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\shadow_mapping_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\shadow_mapping_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\depth_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\depth_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\depth_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\depth_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

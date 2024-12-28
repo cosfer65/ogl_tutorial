@@ -1,24 +1,24 @@
 #include "lights_materials.h"
-#include "cg_camera.h"
-#include "cg_light.h"
-#include "cg_util.h"
-#include "cg_primitives.h"
+#include "camera.h"
+#include "light.h"
+#include "util.h"
+#include "primitives.h"
 
 using namespace atlas;
 
-class atlas_app :public cg_app {
-    cg_viewport* m_view;
-    cg_camera* m_cam;
-    cg_light* m_light;
+class atlas_app :public c_application {
+    gl_viewport* m_view;
+    gl_camera* m_cam;
+    c_light* m_light;
 
     // the shaders
-    cg_shader* m_shader;
-    cg_shader* mat_shader;
-    cg_shader* map_shader;
+    c_shader* m_shader;
+    c_shader* mat_shader;
+    c_shader* map_shader;
 
     // the objects
-    cg_gl_cube* m_cube;
-    cg_gl_sphere* m_sphere;
+    gl_prim* m_cube;
+    gl_prim* m_sphere;
 
     // the materials
     cg_material* m_mat1;
@@ -32,21 +32,21 @@ class atlas_app :public cg_app {
 
 public:
     atlas_app() {
-        m_view = new cg_viewport();
+        m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (lights and materials)";
         m_window.prefered_width = 1200;
         m_window.prefered_height = 700;
     }
-    virtual int init_game() {
+    virtual int init_application() {
         m_view->set_fov(dtr(15));
-        m_cam = new cg_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
 
 #if 1
-        m_light = new cg_light(cg_light::SPOTLIGHT);
+        m_light = new c_light(c_light::SPOTLIGHT);
         // light source located at (10,10,10)
         m_light->set_position(vec3(10, 10, 10));
 #else
-        m_light = new cg_light(cg_light::DIRLIGHT);
+        m_light = new c_light(c_light::DIRLIGHT);
         // we are holding the light source and pointing at the objects
         m_light->set_direction(vec3(0, 0, -1));
 #endif
@@ -57,28 +57,26 @@ public:
         m_light->set_specular(vec3(1, 1, 1));
 
         // create the simple light shader
-        m_shader = new cg_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.hlsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.hlsl");
+        m_shader = new c_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
         m_shader->load();
 
         // create the material shader
-        mat_shader = new cg_shader;
-        mat_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.hlsl");
-        mat_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_material_fs.hlsl");
+        mat_shader = new c_shader;
+        mat_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
+        mat_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_material_fs.glsl");
         mat_shader->load();
 
-        map_shader = new cg_shader;
-        map_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.hlsl");
-        map_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_map_fs.hlsl");
+        map_shader = new c_shader;
+        map_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
+        map_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_map_fs.glsl");
         map_shader->load();
 
         // the cube
-        m_cube = new cg_gl_cube;
-        m_cube->create(GL_FILL);
+        m_cube = create_cube(GL_FILL);
         // the sphere
-        m_sphere = new cg_gl_sphere(0.4f);
-        m_sphere->create(GL_FILL);
+        m_sphere = create_sphere(GL_FILL);
 
         // create the materials
         // gold
@@ -128,12 +126,12 @@ public:
         return 1;
     }
 
-    virtual void frame_move(float fElapsed) {
+    virtual void step_simulation(float fElapsed) {
         m_cube->rotate_by(vec3(dtr(fElapsed * 10), dtr(fElapsed * 20), dtr(fElapsed * 30)));
         m_sphere->rotate_by(vec3(0, dtr(fElapsed * 20), 0));
     }
 
-    virtual void frame_render() {
+    virtual void render() {
         // set the viewport to the whole window
         m_view->set_viewport();
 
@@ -141,7 +139,7 @@ public:
         glClearColor(0.2f, 0.2f, 0.2f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mat4 cam_matrix = m_view->perspective() * m_cam->perspective();
+        mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
 
         float xpos = -4.f;
 
@@ -206,7 +204,7 @@ public:
         m_sphere->render(map_shader);
     }
 
-    virtual void exit_game() {
+    virtual void exit_application() {
     }
 
     virtual void resize_window(int width, int height) {

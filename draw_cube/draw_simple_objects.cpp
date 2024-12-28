@@ -1,50 +1,50 @@
 #include "draw_simple_objects.h"
-#include "cg_camera.h"
-#include "cg_util.h"
-#include "cg_primitives.h"
+#include "camera.h"
+#include "util.h"
+#include "primitives.h"
 
 using namespace atlas;
 
-class atlas_app :public cg_app {
-    cg_viewport* m_view;
-    cg_camera* m_cam;
+class atlas_app :public c_application {
+    gl_viewport* m_view;
+    gl_camera* m_cam;
 
     // wireframe shader
-    cg_shader* m_shader;
+    c_shader* m_shader;
     // texture shader
-    cg_shader* mt_shader;
+    c_shader* mt_shader;
 
     // wireframe objects
-    cg_gl_cube* simple_cube;
-    cg_gl_sphere* simple_globe;
+    gl_prim* simple_cube;
+    gl_prim* simple_globe;
     // textured objects
-    cg_gl_cube* simple_cube_t;
-    cg_gl_sphere* simple_globe_t;
+    gl_prim* simple_cube_t;
+    gl_prim* simple_globe_t;
 
     GLuint   texture_globe;
     GLuint   texture_cube;
 
 public:
     atlas_app() {
-        m_view = new cg_viewport();
+        m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (draw simple objects)";
     }
-    virtual int init_game() {
+    virtual int init_application() {
         // zoom is the angle of the field of view
         m_view->set_fov(dtr(25));
         // camera position, look at point, and up vector orientation
-        m_cam = new cg_camera(vec3(0, 0, -20), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_cam = new gl_camera(vec3(0, 0, -20), vec3(0, 0, -1), vec3(0, 1, 0));
 
         // create the basic shader
-        m_shader = new cg_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/draw_cube_vs.hlsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/draw_cube_fs.hlsl");
+        m_shader = new c_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/draw_cube_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/draw_cube_fs.glsl");
         m_shader->load();
 
         // create the texture shader
-        mt_shader = new cg_shader;
-        mt_shader->add_file(GL_VERTEX_SHADER, "resources/draw_cubet_vs.hlsl");
-        mt_shader->add_file(GL_FRAGMENT_SHADER, "resources/draw_cubet_fs.hlsl");
+        mt_shader = new c_shader;
+        mt_shader->add_file(GL_VERTEX_SHADER, "resources/draw_cubet_vs.glsl");
+        mt_shader->add_file(GL_FRAGMENT_SHADER, "resources/draw_cubet_fs.glsl");
         mt_shader->load();
 
         // exture for sphere/globe
@@ -53,16 +53,12 @@ public:
         texture_cube = load_texture("resources/planks.tga");
 
         // create the wireframe objects
-        simple_cube = new cg_gl_cube;
-        simple_globe = new cg_gl_sphere(0.5);
-        simple_cube->create(GL_LINE);
-        simple_globe->create(GL_LINE);
+        simple_cube = create_cube(GL_LINE);
+        simple_globe = create_sphere(GL_LINE);
 
         // create the textured objects
-        simple_cube_t = new cg_gl_cube;
-        simple_globe_t = new cg_gl_sphere(0.5);
-        simple_cube_t->create(GL_FILL);
-        simple_globe_t->create(GL_FILL);
+        simple_cube_t = create_cube(GL_FILL);
+        simple_globe_t = create_sphere(GL_FILL);
 
         // position objects
         simple_cube->move_to(vec3(1.5, 1, -6.f));
@@ -80,7 +76,7 @@ public:
         return 1;
     }
 
-    virtual void frame_move(float fElapsed) {
+    virtual void step_simulation(float fElapsed) {
         // rotate the objects
         simple_cube->rotate_by(vec3(dtr(fElapsed * 10), dtr(fElapsed * 20), dtr(fElapsed * 30)));
         simple_globe->rotate_by(vec3(0, dtr(fElapsed * 20), 0));
@@ -89,7 +85,7 @@ public:
         simple_globe_t->rotate_by(vec3(0, dtr(fElapsed * 20), 0));
     }
 
-    virtual void frame_render() {
+    virtual void render() {
         // set the viewport to the whole window
         m_view->set_viewport();
 
@@ -98,7 +94,8 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // combine the view and camera matrices into one
-        mat4 cam_matrix = m_view->perspective() * m_cam->perspective();
+        // these matrices are COLUMN MAJOR!
+        mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
 
         // enable the shader
         m_shader->use();

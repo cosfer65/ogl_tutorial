@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
                 float fElapsed = (float)get_global_timer()->get_elapsed_time();
 
                 // render scene
-                frame_render();
+                render();
                 // Swap Buffers (Double Buffering)
                 SwapBuffers(g_window.hDC);
 
@@ -111,7 +111,7 @@ bool initialize_window(HINSTANCE hInstance, int nCmdShow)
     RegisterClassEx(&wcex);
 
     // now ask the system to create our window
-    HWND hWnd = create_GL_window(512, 400, 32, szTitle, hInstance, szWindowClass, 1);
+    HWND hWnd = create_GL_window(800, 600, 32, szTitle, hInstance, szWindowClass, 1);
 
     // on error just abort
     if (!hWnd)

@@ -15,84 +15,78 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="graphics\glew.c">
+    <ClCompile Include="application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\pch.cpp">
+    <ClCompile Include="buffers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_app.cpp">
+    <ClCompile Include="camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_buffers.cpp">
+    <ClCompile Include="font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_camera.cpp">
+    <ClCompile Include="glew.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_font.cpp">
+    <ClCompile Include="primitives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_light.cpp">
+    <ClCompile Include="shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_primitives.cpp">
+    <ClCompile Include="skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_shader.cpp">
+    <ClCompile Include="timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\cg_skybox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\cg_timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\cg_util.cpp">
+    <ClCompile Include="util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\glew.h">
+    <ClInclude Include="application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wglew.h">
+    <ClInclude Include="buffers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\pch.h">
+    <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_app.h">
+    <ClInclude Include="font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_buffers.h">
+    <ClInclude Include="gl_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_camera.h">
+    <ClInclude Include="glew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_font.h">
+    <ClInclude Include="graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_graphics.h">
+    <ClInclude Include="light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_light.h">
+    <ClInclude Include="primitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_primitives.h">
+    <ClInclude Include="shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_shader.h">
+    <ClInclude Include="skybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_skybox.h">
+    <ClInclude Include="timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_timer.h">
+    <ClInclude Include="util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\cg_util.h">
+    <ClInclude Include="wglew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

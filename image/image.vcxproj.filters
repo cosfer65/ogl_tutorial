@@ -24,15 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="image\pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="image\targa.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="image\cg_image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="jpeg\jaricom.c">
       <Filter>jpeg\source</Filter>
     </ClCompile>
@@ -171,20 +162,17 @@
     <ClCompile Include="jpeg\jutils.c">
       <Filter>jpeg\source</Filter>
     </ClCompile>
-    <ClCompile Include="image\jpeg.cpp">
+    <ClCompile Include="image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jpeg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="targa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="image\pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="image\targa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cg_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="jpeg\jconfig.h">
       <Filter>jpeg\headers</Filter>
     </ClInclude>
@@ -212,10 +200,19 @@
     <ClInclude Include="jpeg\jversion.h">
       <Filter>jpeg\headers</Filter>
     </ClInclude>
-    <ClInclude Include="image\jpeg.h">
+    <ClInclude Include="base_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="image\base_image.h">
+    <ClInclude Include="image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="jpeg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

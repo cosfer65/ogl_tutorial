@@ -26,7 +26,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 HWND create_GL_window(int wid, int hei, int bitsPerPixel, const char* title, HINSTANCE hInstance, const char* classname, int stencilBuffer);
 bool destroy_GL_window();
 void resize_window(int width, int height);
-void frame_render();
+void render();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
@@ -63,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
                 float fElapsed = (float)get_global_timer()->get_elapsed_time();
 
                 // render scene
-                frame_render();
+                render();
                 // Swap Buffers (Double Buffering)
                 SwapBuffers(g_window.hDC);
 
@@ -321,7 +321,7 @@ void resize_window(int width, int height)
     g_window.vheight = height;
 }
 
-void frame_render()
+void render()
 {
     // black background
     glClearColor(0.0f, .0f, 0.0f, 1.f);

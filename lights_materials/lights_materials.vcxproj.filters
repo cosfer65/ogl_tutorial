@@ -18,16 +18,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\lights_materials_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\lights_materials_map_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_map_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\lights_materials_material_fs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_material_fs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\runtime\resources\lights_materials_vs.hlsl">
+    <FxCompile Include="..\runtime\resources\lights_materials_vs.glsl">
       <Filter>shaders</Filter>
     </FxCompile>
   </ItemGroup>

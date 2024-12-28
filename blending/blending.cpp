@@ -1,9 +1,9 @@
 #include "blending.h"
-#include "cg_camera.h"
-#include "cg_light.h"
-#include "cg_util.h"
-#include "cg_primitives.h"
-#include "cg_font.h"
+#include "camera.h"
+#include "light.h"
+#include "util.h"
+#include "primitives.h"
+#include "font.h"
 
 using namespace atlas;
 
@@ -35,12 +35,12 @@ static std::string mode_names[] = {
     "GL_ONE_MINUS_DST_ALPHA",
 };
 
-class cg_gl_background :public cg_prim {
+class c_background :public gl_prim {
 protected:
 public:
-    cg_gl_background() {
+    c_background() {
     }
-    virtual ~cg_gl_background() {
+    virtual ~c_background() {
     }
     virtual void create(GLenum drmode = GL_FILL, bool dr_el = true) {
         draw_mode = GL_FILL;
@@ -48,8 +48,7 @@ public:
 
         if (vao == 0)
         {
-            cg_plane_mesh* tmesh = new cg_plane_mesh;
-            tmesh = new cg_plane_mesh;
+            c_mesh* tmesh = new c_mesh;
 
             tmesh->addVertex(-1.f, -1.f, 0.f);
             tmesh->addVertex(1.f, -1.f, 0.f);
@@ -75,44 +74,43 @@ public:
     }
 };
 
-class atlas_app :public cg_app {
-    cg_viewport* m_view;
-    cg_camera* m_cam;
-    cg_light* m_light;
-    cg_shader* m_shader;
+class atlas_app :public c_application {
+    gl_viewport* m_view;
+    gl_camera* m_cam;
+    c_light* m_light;
+    c_shader* m_shader;
 
-    cg_gl_cube* m_cube;
-    cg_gl_background* pglass;
+    gl_prim* m_cube;
+    c_background* pglass;
     GLuint   texture;
     int draw_order;
 
-    cg_font* font2D;
+    gl_font* font2D;
 public:
     atlas_app() {
-        m_view = new cg_viewport();
+        m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (blending)";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
     }
-    virtual int init_game() {
+    virtual int init_application() {
         m_view->set_fov(dtr(15));
-        m_cam = new cg_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_light = new cg_light(cg_light::DIRLIGHT);
+        m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_light = new c_light(c_light::DIRLIGHT);
         m_light->set_ambient(vec3(1, 1, 1));
         m_light->set_diffuse(vec3(1, 1, 1));
         m_light->set_specular(vec3(1, 1, 1));
 
-        m_shader = new cg_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/blending_vs.hlsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/blending_fs.hlsl");
+        m_shader = new c_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/blending_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/blending_fs.glsl");
         m_shader->load();
 
-        m_cube = new cg_gl_cube;
-        m_cube->create(GL_FILL, true);
+        m_cube = create_cube(GL_FILL);
         m_cube->move_to(vec3(0, 0, -2));
         m_cube->set_scale(vec3(1.5));
 
-        pglass = new cg_gl_background;
+        pglass = new c_background;
         pglass->create();
         pglass->set_scale(vec3(2));
 
@@ -131,13 +129,13 @@ public:
 
         return 1;
     }
-    virtual void exit_game() {
+    virtual void exit_application() {
     }
     virtual void resize_window(int width, int height) {
         m_view->set_window_aspect(width, height);
     }
 
-    virtual void frame_move(float fElapsed) {
+    virtual void step_simulation(float fElapsed) {
         if (keyDown['N']) source_mode++;
         if (keyDown['M']) dest_mode++;
         if (keyDown['D']) draw_order = 1 - draw_order;
@@ -146,7 +144,7 @@ public:
         keyDown['N'] = keyDown['M'] = keyDown['D'] = 0;
         m_cube->rotate_by(vec3(dtr(fElapsed * 15), dtr(fElapsed * 30), dtr(fElapsed * 45)));
     }
-    virtual void frame_render() {
+    virtual void render() {
         // set the viewport to the whole window
         m_view->set_viewport();
         glClearColor(0.2f, 0.2f, 0.2f, 1);
@@ -158,7 +156,7 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        mat4 cam_matrix = m_view->perspective() * m_cam->perspective();
+        mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
 

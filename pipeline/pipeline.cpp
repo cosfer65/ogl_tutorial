@@ -2,7 +2,7 @@
 #include "common.h"
 #include "pipeline.h"
 
-#include "math.h"
+#include "pmath.h"
 #include "shaders.h"
 
 // SIMPLE
@@ -149,7 +149,7 @@ void init_application()
     glBindVertexArray(0);
 }
 
-void frame_render()
+void render()
 {
     // set the viewport to the whole window
     glViewport(0, 0, g_window.vwidth, g_window.vheight);
@@ -161,7 +161,9 @@ void frame_render()
 
     mat4 view = perspective_matrix(pi / 4.f, (float)(g_window.vwidth) / (float)(g_window.vheight), 1.f, 1000.f);
     mat4 model = translation_matrix(0.5, 0, -2);     // simple model to the right
+    model.transpose();//convert matrix to OpenGL column-major
     mat4 model_t = translation_matrix(-0.5, 0, -2);  // tesselated model to the left
+    model_t.transpose();
 
     // select geometry to draw
     glBindVertexArray(vertex_array);
