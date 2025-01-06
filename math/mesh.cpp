@@ -7,6 +7,7 @@
 #include "amath.h"
 #include "geom.h"
 #include "quaternion.h"
+// #include "3ds_model.h"
 
 typedef std::vector<std::string> str_array;
 class cg_parser {
@@ -55,7 +56,7 @@ std::string file_extension(const std::string& fname) {
 }
 
 namespace atlas {
-    class model_loader {
+    class ply_loader {
         enum read_state { IDLE, VERTEX_READ, FACE_READ };
         read_state state;
         int v_count, f_count;
@@ -127,16 +128,12 @@ namespace atlas {
             }
             return 1;
         }
-        int parse_stl(const std::string& line) {
-            //std::cout << line << '\n';
-            return 1;
-        }
         ////////////////////////////////////////////////////////////////////////////
     public:
-        model_loader(c_mesh* pmesh) {
+        ply_loader(c_mesh* pmesh) {
             m_mesh = pmesh;
         }
-        ~model_loader() {
+        ~ply_loader() {
         }
 
         bool load_ply(const std::string& fname) {
@@ -148,25 +145,6 @@ namespace atlas {
                 while (std::getline(mdl, line))
                 {
                     parse_ply(line);
-                }
-                mdl.close();
-            }
-            else
-            {
-                std::cout << "Unable to open file";
-                return false;
-            }
-
-            return true;
-        }
-        bool load_stl(const std::string& fname) {
-            std::string line;
-            std::ifstream mdl(fname);
-            if (mdl.is_open())
-            {
-                while (std::getline(mdl, line))
-                {
-                    parse_stl(line);
                 }
                 mdl.close();
             }
@@ -199,10 +177,16 @@ namespace atlas {
         if (z > maxz) maxz = z;
         if (z < minz) minz = z;
     }
+    void c_mesh::addVertex(const vec3& v) {
+        addVertex(v.x, v.y, v.z);
+    }
     void c_mesh::addNormal(float x, float y, float z) {
         m_data.normals.push_back(x);
         m_data.normals.push_back(y);
         m_data.normals.push_back(z);
+    }
+    void c_mesh::addNormal(const vec3& n) {
+        addNormal(n.x, n.y, n.z);
     }
     void c_mesh::addTexCoord(float s, float t) {
         m_data.texCoords.push_back(s);
@@ -234,13 +218,21 @@ namespace atlas {
             *(i + 2) = p.z;
         }
     }
-    bool c_mesh::load(const char* fname)
+    bool c_mesh::load(const std::string& fname)
     {
-        if (file_extension(fname) == "ply")
-        {
-            model_loader mld(this);
+        if (file_extension(fname) == "ply") {
+            ply_loader mld(this);
             return mld.load_ply(fname);
         }
+        // if (file_extension(fname) == "3ds") {
+        //     sModel* model = load3dsmodel(fname);
+        //     if (!model)
+        //         return false;
+        // 
+        //     // extract geometry
+        // 
+        //     delete model;
+        // }
 
         return true;
     }
@@ -440,12 +432,5 @@ namespace atlas {
         ms->addIndices(0, 2, 1);
         ms->addIndices(0, 3, 2);
         return ms;
-    }
-
-    c_mesh* load_model(const char* fname) {
-        c_mesh* m = new c_mesh;
-        model_loader ml(m);
-        ml.load_ply(fname);
-        return m;
     }
 }

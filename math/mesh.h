@@ -2,6 +2,7 @@
 #define __mesh_h__
 
 #include <vector>
+#include <string>
 
 #include "vector.h"
 
@@ -56,12 +57,14 @@ namespace atlas {
         std::vector<vec3> face_normals; // needed for collision detection
 
         virtual void addVertex(float x, float y, float z);
+        virtual void addVertex(const vec3& v);
         virtual void addNormal(float x, float y, float z);
+        virtual void addNormal(const vec3& n);
         virtual void addTexCoord(float s, float t);
         virtual void addIndices(unsigned short i1, unsigned short i2, unsigned short i3);
 
         virtual void create(float dx, float dy, float dz) {};
-        bool load(const char* fname);
+        bool load(const std::string& fname);
 
         vec3 vertex(int idx) {
             int i = idx * 3; // point to vertex array index
@@ -87,7 +90,5 @@ namespace atlas {
     // create a rectangular surface at the x-z plane and y=0
     // it extends -x/2 -> x/2  -z/2->z/2 y=0-parameter ignored
     c_mesh* create_plane(float x, float y, float z);
-
-    c_mesh* load_model(const char* fname);
 }
 #endif // __mesh_h__

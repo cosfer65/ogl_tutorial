@@ -61,6 +61,7 @@ namespace atlas {
         void rotate_locZ(float angle);
         void setup(const vec3& pos, const vec3& lookat, const vec3& up);
         void setup_d(const vec3& pos, const vec3& forw, const vec3& up);
+        void setup_d();
     };
 
     class gl_viewport {

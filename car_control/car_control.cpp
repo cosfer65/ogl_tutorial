@@ -12,64 +12,78 @@ using namespace atlas;
 
 class point_of_view {
 protected:
-    atlas::vec3		vPosition;		// position in earth coordinates
-    atlas::vec3		vVelocity;		// velocity in earth coordinates
+    gl_viewport* m_view;
+    gl_camera* m_cam;
+
 public:
-    point_of_view() : vPosition(atlas::vec3(0)), vVelocity(atlas::vec3(0)) {}
+    point_of_view() {
+        m_view = new gl_viewport();
+        m_view->set_fov(dtr(90));
+        m_cam = new gl_camera();
+    }
     virtual ~point_of_view() {}
 
     virtual void create() {}
 
     const atlas::vec3& position() {
-        return vPosition;
+        return m_cam->vLocation;
     }
-    virtual void move_to(const atlas::vec3& v) {
-        vPosition = v;
+    void move_to(const atlas::vec3& v) {
+        m_cam->vLocation = v;
+        m_cam->setup_d();
     }
-    virtual void move_to(float x, float y, float z) {
-        vPosition = atlas::vec3(x, y, z);
+    void move_to(float x, float y, float z) {
+        m_cam->vLocation = atlas::vec3(x, y, z);
+        m_cam->setup_d();
     }
-    const atlas::vec3& velocity() {
-        return vVelocity;
+    virtual void update_view(const vec3& pos, const vec3& fwd, const vec3& up) {
+        m_cam->setup_d(pos, fwd, up);
     }
-    void set_velocity(const atlas::vec3& v) {
-        vVelocity = v;
+
+    gl_viewport* viewport() {
+        return m_view;
     }
-    void set_velocity(float x, float y, float z) {
-        vVelocity = atlas::vec3(x, y, z);
-    }
-    virtual void step_simulation(float dt, unsigned int options) {
-        // calculate the position in earth space:
-        vPosition = vPosition + vVelocity * dt;
+    gl_camera* camera() {
+        return m_cam;
     }
 };
 
-class demo_car : public point_of_view {
-    gl_viewport* m_view;
-    gl_camera* m_cam;
-    vec3 car_fwd;
-    float lr_look_at;
+class moving_car {
+    atlas::vec3		vPosition;		// position in earth coordinates
+    atlas::vec3		vVelocity;		// velocity in earth coordinates
+    vec3 car_fwd;                   // forward looking vector (up is always (0,1,0))
+
     float steering_angle = 0;
     float wheelbase = 2.6f;
 
-    void update_pov() {
-        atlas::vec3 look_at = car_fwd;
-        atlas::rotate_vector(look_at, atlas::vec3(0, 1, 0), lr_look_at);
-        m_cam->setup_d(position(), look_at, vec3(0, 1, 0));
+    point_of_view* p_view = nullptr;
+
+public :
+    moving_car() {
+
     }
-public:
-    demo_car() : point_of_view(), lr_look_at(0.f) {
-        m_view = new gl_viewport();
-        m_view->set_fov(dtr(90));
-        m_cam = new gl_camera();
+    point_of_view* pov() {
+        return p_view;
     }
     void init_simulation(const vec3& pos, const vec3& fwd, const vec3& up, const vec3& vel) {
-        move_to(pos);
-        set_velocity(vel);
+        if (!p_view)
+            p_view = new point_of_view;
+        p_view->update_view(pos, fwd, up);
+
+        vPosition = pos;
+        vVelocity = vel;
+
         car_fwd = fwd;
         car_fwd.normalize();
     }
-    virtual void step_simulation(float dt, unsigned int options) {
+    const atlas::vec3& position() {
+        return vPosition;		// position in earth coordinates
+    }
+    const atlas::vec3& velocity() {
+        return vVelocity;		// velocity in earth coordinates
+    }
+
+    void step_simulation(float dt, unsigned int options) {
         vPosition = vPosition + vVelocity * dt;
 
         atlas::vec3 acceleration = vVelocity;
@@ -103,29 +117,62 @@ public:
             float angular_v = speed / radius;          // calculate angular speed
             float dh = angular_v * dt;           // calculate the anlge of turn for the elapsed time
             atlas::rotate_vector(vVelocity, atlas::vec3(0, 1, 0), dh);  // and change the car direction
-            atlas::rotate_vector(car_fwd, atlas::vec3(0, 1, 0), dh);  // and change the car direction
+            atlas::rotate_vector(car_fwd, atlas::vec3(0, 1, 0), dh);  // and change the car fwd direction vector
         }
-        update_pov();
+        p_view->update_view(vPosition, car_fwd, atlas::vec3(0,1,0));
     }
     gl_viewport* viewport() {
-        return m_view;
+        return p_view->viewport();
     }
     gl_camera* camera() {
-        return m_cam;
+        return p_view->camera();
     }
-
 };
 
+// camera that follows the action from a distance
+class moving_camera : public point_of_view {
+    atlas::vec3 tLocation;      // the tagret location
+    atlas::vec3 tUp;            // target up vector
+    atlas::vec3 tLookAt;        // target point of interest
+    float m_speed = 0.01f;      // camera transition speed
+public:
+    moving_camera() : point_of_view() {
+    }
+    ~moving_camera() {}
+    void move_to(const atlas::vec3& pos) {
+        tLocation = pos;
+    }
+    void look_at(const atlas::vec3& lookat) {
+        tLookAt = lookat;
+    }
+    void orient(const atlas::vec3& up) {
+        tUp = up;
+    }
+    void set_speed(float spd) {
+        m_speed = spd;
+    }
+    // actual camera location is set gradualy using camera speed
+    void step_simulation(float fElapsed) {
+        atlas::vec3 dist(tLocation - m_cam->vLocation);
+        if (dist.length() < 0.001f)
+            return;
+        // here we set only the camera position
+        atlas::vec3 pos(m_cam->vLocation + m_speed * dist);
+        m_cam->setup(pos, tLookAt, tUp);
+    }
+};
+
+
 class car_control_app :public c_application {
-    gl_viewport* m_view;
-    gl_camera* m_cam;
+    point_of_view* m_pov = nullptr;
+    moving_camera* p_moving_camera = nullptr;
     c_light* m_light;
     c_shader* m_shader;
 
     skybox* m_skybox;
     ground* m_ground;
 
-    demo_car* m_car;
+    moving_car* m_car;
 
     std::vector<building*> buildings;
     std::vector<pavement*> pavements;
@@ -133,8 +180,6 @@ class car_control_app :public c_application {
     gl_font* font2D;
 public:
     car_control_app() {
-        m_view = NULL;
-        m_cam = NULL;
         m_window.szTitle = "GusOnGames car control";
         m_window.prefered_width = 800;
         m_window.prefered_height = 500;
@@ -174,10 +219,11 @@ public:
         }
 
         // moving viewer
-        m_car = new demo_car;
+        m_car = new moving_car;
         m_car->init_simulation(vec3(0, 0.25, 35), vec3(0, 0, -1), vec3(0, 1, 0), vec3(0, 0, -1));
-        m_view = m_car->viewport();
-        m_cam = m_car->camera();
+        m_pov = m_car->pov();
+        p_moving_camera = new moving_camera;
+        m_pov = p_moving_camera;
     }
 
     virtual int init_application() {
@@ -219,22 +265,45 @@ public:
             dir |= DECELERATE;
 
         m_car->step_simulation(fElapsed, dir);
+
+        // position the moving camera
+        // 1. get moving object velocity vector
+        atlas::vec3 s(m_car->velocity());
+        // and make it unit length
+        s.normalize();
+        // 2. create the view distance vector
+        s.scale(15.f);
+        // 3. and calculate the camera position
+        atlas::vec3 loc(m_car->position() - s);
+        // raise the view camera at a certain height
+        loc.y = 2.f;
+        // apply all these to the moving camera
+        p_moving_camera->move_to(loc);
+        p_moving_camera->look_at(m_car->position());
+        p_moving_camera->orient(atlas::vec3(0, 1, 0));
+        // and let it move
+        p_moving_camera->step_simulation(fElapsed);
+
+
+
     }
 
     virtual void render() {
-        m_view->set_viewport();
+        if (!m_pov)
+            return;
+        m_pov->viewport()->set_viewport();
 
         glClearColor(0.2f, 0.2f, 0.2f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
+        mat4 cam_matrix = m_pov->camera()->perspective() * m_pov->viewport()->perspective();
 
-        m_skybox->render(m_view, m_cam);
+        m_skybox->render(m_pov->viewport(), m_pov->camera());
 
         m_shader->use();
         m_light->apply(m_shader);
         m_shader->set_mat4("camera", cam_matrix);
-        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+        m_shader->set_vec3("cameraPos", m_pov->camera()->vLocation);
 
         m_shader->set_int("use_texture", 0);
         m_ground->render(m_shader);
@@ -257,8 +326,8 @@ public:
     }
 
     virtual void resize_window(int width, int height) {
-        if (m_view)
-            m_view->set_window_aspect(width, height);
+        if (m_pov)
+            m_pov->viewport()->set_window_aspect(width, height);
     }
 };
 

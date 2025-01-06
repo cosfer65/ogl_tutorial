@@ -15,6 +15,7 @@
     <ClInclude Include="basematrix.h" />
     <ClInclude Include="basevec.h" />
     <ClInclude Include="geom.h" />
+    <ClInclude Include="obj_model.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="quaternion.h" />
