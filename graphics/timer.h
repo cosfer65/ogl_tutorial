@@ -3,10 +3,10 @@
 #define __timer_h__
 
 namespace atlas {
-    class c_timer
+    class gl_timer
     {
     public:
-        c_timer();
+        gl_timer();
 
         void reset(); // resets the timer
         void start(); // starts the timer
@@ -31,7 +31,7 @@ namespace atlas {
 #endif
     };
 
-    c_timer* get_global_timer();
+    gl_timer* get_global_timer();
 }
 
 #endif // __timer_h__

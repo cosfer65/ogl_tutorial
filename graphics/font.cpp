@@ -150,7 +150,7 @@ namespace atlas {
         wglUseFontBitmaps(hDC, 0, 256, listBase);
     }
 
-    void gl_font::render(c_shader* shader, int alignment, const char* str, ...)
+    void gl_font::render(gl_shader* shader, int alignment, const char* str, ...)
     {
         float length = 0;
         char text[1512];

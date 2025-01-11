@@ -4,10 +4,10 @@
 // usualy we define something close to the file name
 #define __c_timer__
 
-class c_timer
+class gl_timer
 {
 public:
-    c_timer();
+    gl_timer();
 
     void reset(); // resets the timer
     void start(); // starts the timer
@@ -29,6 +29,6 @@ protected:
 #endif
 };
 
-c_timer* get_global_timer();
+gl_timer* get_global_timer();
 
 #endif // __c_timer__

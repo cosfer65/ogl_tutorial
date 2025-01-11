@@ -8,18 +8,18 @@
 
 using namespace atlas;
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_texture_buffer* m_tex_buffer; // the texture buffer
     gl_viewport* fb_view;            // the viewport to the texture image
-    c_shader* m_shader_create;      // the shader to create the texture
+    gl_shader* m_shader_create;      // the shader to create the texture
     gl_prim* m_cube;              // rotating cube for the texture
 
     gl_viewport* m_view;             // normal view
-    c_shader* m_shader_use;         // shader for the final render
+    gl_shader* m_shader_use;         // shader for the final render
     gl_prim* m_sphere;          // the object to use the texture
 
     gl_camera* m_cam;                // shared camer
-    c_light* m_light;               // shared light
+    gl_light* m_light;               // shared light
 
     gl_font* font2D;
 public:
@@ -32,7 +32,7 @@ public:
     virtual int init_application() {
         m_view->set_fov(dtr(10));
         m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_light = new c_light(c_light::DIRLIGHT);
+        m_light = new gl_light(gl_light::DIRLIGHT);
         m_light->set_position(vec3(10, 10, 10));
         m_light->set_ambient(vec3(0.25f));
 
@@ -44,12 +44,12 @@ public:
         m_tex_buffer = new gl_texture_buffer();
         m_tex_buffer->create(512, 512);
 
-        m_shader_create = new c_shader;
+        m_shader_create = new gl_shader;
         m_shader_create->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.glsl");
         m_shader_create->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_create_fs.glsl");
         m_shader_create->load();
 
-        m_shader_use = new c_shader;
+        m_shader_use = new gl_shader;
         m_shader_use->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.glsl");
         m_shader_use->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_use_fs.glsl");
         m_shader_use->load();

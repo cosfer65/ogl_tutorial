@@ -1,5 +1,5 @@
-#ifndef __atlas_h__
-#define __atlas_h__
+#ifndef __lights_materials_h__
+#define __lights_materials_h__
 
 // Windows Header Files:
 #define WIN32_LEAN_AND_MEAN      // Exclude rarely-used stuff from Windows headers
@@ -12,4 +12,4 @@
 #include "graphics.h"
 #include "application.h"
 
-#endif // __atlas_h__
+#endif // __lights_materials_h__

@@ -3,6 +3,7 @@
 
 #include "camera.h"
 #include "light.h"
+#include "material.h"
 #include "util.h"
 #include "primitives.h"
 #include "font.h"
@@ -12,12 +13,12 @@
 #include "quaternion.h"
 
 class skybox {
-    atlas::c_skybox* m_sbox;
+    atlas::gl_skybox* m_sbox;
 public:
     skybox() {
     }
     void create() {
-        m_sbox = new atlas::c_skybox;
+        m_sbox = new atlas::gl_skybox;
         std::vector<std::string> faces
         {
             "resources/px.tga", "resources/nx.tga",
@@ -81,7 +82,7 @@ public:
     virtual ~ground() {}
     virtual void create() {
         m_plane = atlas::create_plane(GL_FILL, true);
-        m_plane->set_scale(100, 0, 100);
+        m_plane->set_scale(200, 0, 200);
 
         m_material = new atlas::cg_material;
         m_material->set_ambient(0.23456f, 0.23456f, 0.23456f);
@@ -90,7 +91,7 @@ public:
         m_material->set_shine(0.1f * 128);
     }
 
-    virtual void render(atlas::c_shader* m_shader) {
+    virtual void render(atlas::gl_shader* m_shader) {
         m_material->apply(m_shader);
         m_plane->render(m_shader);
     }
@@ -120,7 +121,7 @@ public:
     virtual void move_to(float x, float y, float z) {
         m_box->move_to(x, y, z);
     }
-    virtual void render(atlas::c_shader* m_shader) {
+    virtual void render(atlas::gl_shader* m_shader) {
         m_material->apply(m_shader);
         m_box->render(m_shader);
     }
@@ -148,7 +149,7 @@ public:
     GLuint texture() {
         return m_texture;
     }
-    virtual void render(atlas::c_shader* m_shader) {
+    virtual void render(atlas::gl_shader* m_shader) {
         glBindTexture(GL_TEXTURE_2D, m_texture);
         m_box->render(m_shader);
     }

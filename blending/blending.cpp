@@ -74,11 +74,11 @@ public:
     }
 };
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
-    c_light* m_light;
-    c_shader* m_shader;
+    gl_light* m_light;
+    gl_shader* m_shader;
 
     gl_prim* m_cube;
     c_background* pglass;
@@ -96,12 +96,12 @@ public:
     virtual int init_application() {
         m_view->set_fov(dtr(15));
         m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_light = new c_light(c_light::DIRLIGHT);
+        m_light = new gl_light(gl_light::DIRLIGHT);
         m_light->set_ambient(vec3(1, 1, 1));
         m_light->set_diffuse(vec3(1, 1, 1));
         m_light->set_specular(vec3(1, 1, 1));
 
-        m_shader = new c_shader;
+        m_shader = new gl_shader;
         m_shader->add_file(GL_VERTEX_SHADER, "resources/blending_vs.glsl");
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/blending_fs.glsl");
         m_shader->load();

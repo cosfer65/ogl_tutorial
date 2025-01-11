@@ -11,19 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3d_models.h" />
     <ClInclude Include="amath.h" />
     <ClInclude Include="basematrix.h" />
     <ClInclude Include="basevec.h" />
     <ClInclude Include="geom.h" />
-    <ClInclude Include="obj_model.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="quaternion.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3d_models.cpp" />
     <ClCompile Include="matrix.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

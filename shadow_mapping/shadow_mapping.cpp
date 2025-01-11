@@ -9,11 +9,11 @@
 
 using namespace atlas;
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
-    c_light* m_light;
-    c_shader* m_shader;
+    gl_light* m_light;
+    gl_shader* m_shader;
 
     gl_prim* m_cube;
     gl_prim* m_cube2;
@@ -21,7 +21,7 @@ class atlas_app :public c_application {
     gl_prim* m_ground;
     gl_prim* m_sphere;
 
-    c_shader* depth_shader;
+    gl_shader* depth_shader;
     gl_depth_buffer* d_buffer;
 
     gl_font* font2D;
@@ -35,15 +35,15 @@ public:
     virtual int init_application() {
         m_view->set_fov(dtr(15));
         m_cam = new gl_camera(vec3(-5, 10, 30), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_light = new c_light(c_light::DIRLIGHT);
+        m_light = new gl_light(gl_light::DIRLIGHT);
         m_light->set_position(vec3(-3, 5, 0));
 
-        m_shader = new c_shader;
+        m_shader = new gl_shader;
         m_shader->add_file(GL_VERTEX_SHADER, "resources/shadow_mapping_vs.glsl");
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shadow_mapping_fs.glsl");
         m_shader->load();
 
-        depth_shader = new c_shader;
+        depth_shader = new gl_shader;
         depth_shader->add_file(GL_VERTEX_SHADER, "resources/depth_vs.glsl");
         //depth_shader->add_file(GL_FRAGMENT_SHADER, "resources/depth_fs.glsl");
         depth_shader->load();
@@ -93,7 +93,7 @@ public:
         m_cube->rotate_by(vec3(fElapsed * d15, fElapsed * d30, fElapsed * d45));
         m_cube2->rotate_by(vec3(fElapsed * d45, -fElapsed * d30, fElapsed * d15));
     }
-    void render_scene(c_shader* shader) {
+    void render_scene(gl_shader* shader) {
         shader->set_vec3("objectColor", vec3(.4f, .65f, .9f));
         m_sphere->render(shader);
         m_cube->render(shader);

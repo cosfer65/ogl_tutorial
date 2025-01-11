@@ -1,7 +1,10 @@
+#include "3d_models.h"
 #include "graphics.h"
 #include "primitives.h"
 
 namespace atlas {
+    static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<std::vector<atlas::ivec3>>& fcs);
+
     static GLuint create_vbo(std::vector<float>& vertices, std::vector<unsigned short>& indices) {
         // the identifier of the buffer we will create
         GLuint vao;
@@ -114,4 +117,55 @@ namespace atlas {
         return p;
     }
 
+    static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<std::vector<atlas::ivec3>>& fcs) {
+        c_mesh* m_mesh = new c_mesh;
+
+        int count = 0;
+        for (auto& f : fcs) {
+            for (int i = 0; i < 3; ++i) {
+                int v = f[i].x - 1;
+                m_mesh->addVertex(verts[v]);
+                v = f[i].z - 1;
+                m_mesh->addNormal(norms[v]);
+            }
+            m_mesh->addIndices(count, count + 1, count + 2);
+            count += 3;
+        }
+        gl_prim* prim = new gl_prim;
+        prim->create_from_mesh(m_mesh, GL_FILL);
+        delete m_mesh;
+        return prim;
+    }
+
+    gl_model::gl_model(const base_3d_model& model) {
+        create(model);
+    }
+
+    gl_model::gl_model(const std::string& model_file) {
+        load_model(model_file);
+    }
+
+    void gl_model::load_model(const std::string& model_file, const ivec3& inverts /*= ivec3(1, 1, 1)*/) {
+        obj_model* l_model = new obj_model;
+        l_model->load(model_file);
+        create(*l_model);
+        delete l_model;
+    }
+
+    void gl_model::create(const base_3d_model& model) {
+        std::vector<gl_prim*> model_o;
+
+        for (auto o : model.m_objects) {
+            gl_prim* p = create_prim(model.m_vertices, model.m_normals, *o);
+
+            base_3d_model::mtl* mm = o->m_material;
+            cg_material* m_mat1 = new cg_material;
+            m_mat1->set_ambient(mm->ka);
+            m_mat1->set_diffuse(mm->kd);
+            m_mat1->set_specular(mm->ks);
+            m_mat1->set_shine(mm->ns);// 0.4f * 128);
+            p->set_material(m_mat1);
+            m_objects.push_back(p);
+        }
+    }
 }

@@ -12,7 +12,7 @@
 #define ALIGN_RIGHT  2
 
 namespace atlas {
-    class c_shader;
+    class gl_shader;
 
     // simple font class supporting 2d and 3d fonts
     class gl_font : public gl_prim {
@@ -40,7 +40,7 @@ namespace atlas {
         ~gl_font();
 
         // print 3d (aligned left/center/right), syntax like printf
-        void render(c_shader* shader, int alignment, const char* str, ...);
+        void render(gl_shader* shader, int alignment, const char* str, ...);
         // print 2d (no align), syntax like printf
         void render(const char* str, ...);
 

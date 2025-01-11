@@ -23,14 +23,14 @@ namespace atlas {
         std::string shader_src;
     };
 
-    class c_shader {
+    class gl_shader {
         GLuint program;
         GLint old_program;
         std::vector<shader_file> sh_file_list;
     public:
-        c_shader() :program(0) {
+        gl_shader() :program(0) {
         }
-        ~c_shader()
+        ~gl_shader()
         {
             if (program)
                 glDeleteProgram(program);

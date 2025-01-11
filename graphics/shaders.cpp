@@ -7,7 +7,7 @@
 #include "shaders.h"
 
 namespace atlas {
-    GLuint c_shader::load()
+    GLuint gl_shader::load()
     {
         std::vector<shader_source*> code;
 
@@ -41,7 +41,7 @@ namespace atlas {
         return program;
     }
 
-    GLuint c_shader::compile(const std::vector<shader_source*>& code)
+    GLuint gl_shader::compile(const std::vector<shader_source*>& code)
     {
         std::vector<GLuint> ishaders;
         for (auto it = code.begin(); it != code.end(); ++it)
@@ -60,7 +60,7 @@ namespace atlas {
         return program;
     }
 
-    GLuint c_shader::load(const char* vertex_file, const char* fragment_file, const char* geometry_file /*= nullptr*/)
+    GLuint gl_shader::load(const char* vertex_file, const char* fragment_file, const char* geometry_file /*= nullptr*/)
     {
         add_file(GL_VERTEX_SHADER, vertex_file);
         add_file(GL_FRAGMENT_SHADER, fragment_file);
@@ -70,7 +70,7 @@ namespace atlas {
         return program;
     }
 
-    GLuint c_shader::compile(const char* vertex_source, const char* fragment_source, const char* geom_source/* = NULL*/)
+    GLuint gl_shader::compile(const char* vertex_source, const char* fragment_source, const char* geom_source/* = NULL*/)
     {
         std::vector<shader_source*> code;
         if (vertex_source)

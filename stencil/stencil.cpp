@@ -33,7 +33,7 @@ public:
             delete tmesh;
         }
     }
-    virtual void render(c_shader* _shader) {
+    virtual void render(gl_shader* _shader) {
         if (!vao) return;
 
         glBindVertexArray(vao);
@@ -76,7 +76,7 @@ public:
             delete tmesh;
         }
     }
-    virtual void render(c_shader* _shader) {
+    virtual void render(gl_shader* _shader) {
         if (!vao) return;
 
         // position object
@@ -93,11 +93,11 @@ public:
     }
 };
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
-    c_light* m_light;
-    c_shader* m_shader;
+    gl_light* m_light;
+    gl_shader* m_shader;
 
     gl_prim* m_cube;
     float xcen;
@@ -118,13 +118,13 @@ public:
         m_view->set_fov(dtr(25));
         m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        m_light = new c_light(c_light::SPOTLIGHT);
+        m_light = new gl_light(gl_light::SPOTLIGHT);
         m_light->set_position(vec3(10, 10, 10));
         m_light->set_ambient(vec3(1, 1, 1));
         m_light->set_diffuse(vec3(1, 1, 1));
         m_light->set_specular(vec3(1, 1, 1));
 
-        m_shader = new c_shader;
+        m_shader = new gl_shader;
         m_shader->add_file(GL_VERTEX_SHADER, "resources/stencil_vs.glsl");
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/stencil_fs.glsl");
         m_shader->load();

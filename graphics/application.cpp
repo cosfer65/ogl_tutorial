@@ -6,7 +6,7 @@
 #include "timer.h"
 #include "shaders.h"
 
-atlas::c_application* theApp = NULL;
+atlas::gl_application* theApp = NULL;
 
 void debug_out(const char* prompt, float var)
 {
@@ -107,7 +107,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 namespace atlas {
-    c_application::c_application()
+    gl_application::gl_application()
     {
         theApp = this;
 
@@ -127,11 +127,11 @@ namespace atlas {
         bLooping = false;
     }
 
-    c_application::~c_application()
+    gl_application::~gl_application()
     {
     }
 
-    int c_application::run()
+    int gl_application::run()
     {
         // zero the keystatus buffers
         memset(keyDown, 0, sizeof(keyDown));
@@ -201,7 +201,7 @@ namespace atlas {
         return (int)msg.wParam;
     }
 
-    int c_application::init(HINSTANCE hInstance)
+    int gl_application::init(HINSTANCE hInstance)
     {
         // Perform standard Windows application initialization
         hInst = hInstance; // Store instance handle in our global variable
@@ -234,18 +234,18 @@ namespace atlas {
         return 1;
     }
 
-    void c_application::terminate()
+    void gl_application::terminate()
     {
     }
 
-    void c_application::resize_window(int width, int height)
+    void gl_application::resize_window(int width, int height)
     {
         m_window.current_width = width;
         m_window.current_height = height;
     }
 
     // This function Creates Our OpenGL Window
-    HWND c_application::create_GL_window(int wid, int hei, int bitsPerPixel, const char* title, HINSTANCE hInstance, const char* classname, int stencilBuffer)
+    HWND gl_application::create_GL_window(int wid, int hei, int bitsPerPixel, const char* title, HINSTANCE hInstance, const char* classname, int stencilBuffer)
     {
         DWORD windowStyle = WS_OVERLAPPEDWINDOW;                // define our window style
         DWORD windowExtendedStyle = WS_EX_APPWINDOW;            // define the window's extended style
@@ -361,7 +361,7 @@ namespace atlas {
         return m_window.hWnd;                                        // window creating was a success
     }
 
-    bool c_application::destroy_GL_window()                                // destroy the opengl window & release resources
+    bool gl_application::destroy_GL_window()                                // destroy the opengl window & release resources
     {
         if (m_window.hWnd != 0)                                        // does the window have a handle?
         {
@@ -383,7 +383,7 @@ namespace atlas {
         return true;                                        // return true
     }
 
-    int c_application::init_application()
+    int gl_application::init_application()
     {
         // geometry and color data are stored in the shader
         static const GLchar* vertex_source =
@@ -415,15 +415,23 @@ namespace atlas {
         " color = vs_color;"
         "}"
         };
-        base_shader = new c_shader;
+        base_shader = new gl_shader;
         base_shader->compile(vertex_source, fragment_source);
         return 1;
     }
-    void c_application::step_simulation(float fElapsed)
+    void gl_application::step_simulation(float fElapsed)
     {
     }
-
-    void c_application::render()
+    void gl_application::pause_simulation(float fElapsed){
+        b_paused = true;
+    }
+    void gl_application::resume_simulation(float fElapsed) {
+        b_paused = false;
+    }
+    void gl_application::restart_simulation() {
+        b_paused = false;
+    }
+    void gl_application::render()
     {
         glViewport(0, 0, m_window.current_width, m_window.current_height);
         // clear the screen
@@ -436,22 +444,22 @@ namespace atlas {
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
-    void c_application::exit_application()
+    void gl_application::exit_application()
     {
         delete base_shader;
     }
-    void c_application::onKeyDown(int keycode) {
+    void gl_application::onKeyDown(int keycode) {
         keyDown[keycode] = true;							// Set The Selected Key (wParam) To True
         if (keyDown[VK_ESCAPE])
             bLooping = false;
     }
-    void c_application::onKeyUp(int keycode) {
+    void gl_application::onKeyUp(int keycode) {
         keyDown[keycode] = false;						// Set The Selected Key (wParam) To False
     }
-    void c_application::windowMinimized(bool m) {
+    void gl_application::windowMinimized(bool m) {
         m_window.isMinimized = m;
     }
-    void c_application::windowMaximized() {
+    void gl_application::windowMaximized() {
         m_window.isMinimized = false;					// set isMinimized to false
     }
 }

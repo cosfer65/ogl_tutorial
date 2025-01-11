@@ -2,13 +2,13 @@
 #include <windows.h>
 #include "timer.h"
 
-c_timer* get_global_timer()
+gl_timer* get_global_timer()
 {
-    static c_timer timer;
+    static gl_timer timer;
     return &timer;
 }
 
-c_timer::c_timer()
+gl_timer::gl_timer()
 {
     m_bTimerStopped = true;
     m_bUsingQPF = false;
@@ -22,7 +22,7 @@ c_timer::c_timer()
     m_llQPFTicksPerSec = qwTicksPerSec.QuadPart;
 }
 
-void c_timer::reset()
+void gl_timer::reset()
 {
     if (!m_bUsingQPF)
         return;
@@ -39,7 +39,7 @@ void c_timer::reset()
     m_bTimerStopped = FALSE;
 }
 
-void c_timer::start()
+void gl_timer::start()
 {
     if (!m_bUsingQPF)
         return;
@@ -54,7 +54,7 @@ void c_timer::start()
     m_bTimerStopped = FALSE;
 }
 
-void c_timer::stop()
+void gl_timer::stop()
 {
     if (!m_bUsingQPF)
         return;
@@ -73,12 +73,12 @@ void c_timer::stop()
     }
 }
 
-bool c_timer::is_stopped()
+bool gl_timer::is_stopped()
 {
     return m_bTimerStopped;
 }
 
-double c_timer::get_elapsed_time()
+double gl_timer::get_elapsed_time()
 {
     if (!m_bUsingQPF)
         return -1.0;

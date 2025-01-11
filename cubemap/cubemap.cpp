@@ -8,11 +8,11 @@
 
 using namespace atlas;
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
-    c_shader* m_shader;
-    c_skybox* m_skybox;
+    gl_shader* m_shader;
+    gl_skybox* m_skybox;
 
     gl_prim* m_sphere;
     gl_prim* m_cube;
@@ -30,7 +30,7 @@ public:
         // m_cam = new gl_camera(vec3(0, 10, 30), vec3(0, 0, 0), vec3(0, 1, 0));
         m_cam = new gl_camera(vec3(0, 0, -20), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        m_skybox = new c_skybox;
+        m_skybox = new gl_skybox;
         std::vector<std::string> faces
         {
             "resources/px.tga", "resources/nx.tga",
@@ -40,7 +40,7 @@ public:
 
         m_skybox->load(faces);
 
-        m_shader = new c_shader;
+        m_shader = new gl_shader;
         m_shader->add_file(GL_VERTEX_SHADER, "resources/cubemap_vs.glsl");
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/cubemap_fs.glsl");
         m_shader->load();

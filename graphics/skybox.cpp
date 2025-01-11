@@ -82,17 +82,17 @@ namespace atlas {
         "}\n"
     };
 
-    c_skybox::c_skybox() {
+    gl_skybox::gl_skybox() {
     }
 
-    c_skybox::~c_skybox() {
+    gl_skybox::~gl_skybox() {
     }
 
-    void c_skybox::load(const std::vector<std::string>& faces)
+    void gl_skybox::load(const std::vector<std::string>& faces)
     {
         if (skyboxVAO == 0)
         {
-            // c_skybox VAO
+            // gl_skybox VAO
             glGenVertexArrays(1, &skyboxVAO);
             glGenBuffers(1, &skyboxVBO);
             glBindVertexArray(skyboxVAO);
@@ -104,7 +104,7 @@ namespace atlas {
 
         if (default_shader == NULL)
         {
-            default_shader = new c_shader;
+            default_shader = new gl_shader;
             default_shader->compile(vertex_source, fragment_source);
         }
 
@@ -130,7 +130,7 @@ namespace atlas {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
-    void c_skybox::render(gl_viewport* vp, gl_camera* cam)
+    void gl_skybox::render(gl_viewport* vp, gl_camera* cam)
     {
         glDepthFunc(GL_LEQUAL);
         default_shader->use();

@@ -7,11 +7,11 @@
 extern "C" void __cdecl odprintf(const char* format, ...);
 
 namespace atlas {
-    class c_shader;
+    class gl_shader;
 
     void debug_out(const char* prompt, float var);
 
-    struct c_window {
+    struct gl_window {
         std::string szTitle;
         int prefered_width;
         int prefered_height;
@@ -23,7 +23,7 @@ namespace atlas {
         bool isMinimized;
     };
 
-    class c_application {
+    class gl_application {
         std::string szWindowClass;
 
         HINSTANCE hInst;
@@ -32,13 +32,14 @@ namespace atlas {
         bool destroy_GL_window();
 
     protected:
-        c_shader* base_shader;
+        gl_shader* base_shader;
+        bool b_paused = false;
     public:
         bool keyDown[256];
-        c_window m_window;
+        gl_window m_window;
 
-        c_application();
-        virtual ~c_application();
+        gl_application();
+        virtual ~gl_application();
 
         int init(HINSTANCE hInstance);
         int run();
@@ -52,6 +53,9 @@ namespace atlas {
 
         virtual int init_application();
         virtual void step_simulation(float fElapsed);
+        virtual void pause_simulation(float fElapsed);
+        virtual void resume_simulation(float fElapsed);
+        virtual void restart_simulation();
         virtual void render();
         virtual void exit_application();
     };

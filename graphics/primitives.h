@@ -4,9 +4,12 @@
 #include "amath.h"
 #include "matrix.h"
 #include "mesh.h"
+#include "material.h"
 #include "shaders.h"
 
 namespace atlas {
+    class base_3d_model;
+
     class gl_prim {
     protected:
         mesh_sizes m_mesh_sizes;
@@ -19,6 +22,8 @@ namespace atlas {
         vec3 position;
         vec3 scale;
         vec3 rotation;
+
+        cg_material* m_material; // allow drawable objects to have their own materials
     public:
         mat4 rmat;  // rotation matrix (local)
         mat4 tmat;  // translation matrix
@@ -40,13 +45,25 @@ namespace atlas {
 
         virtual void create_from_mesh(c_mesh* mesh, GLenum drmode = GL_FILL, bool dr_el = true);
 
+        void set_material(cg_material* m) {
+            m_material = m;
+        }
+        const cg_material* material() {
+            return m_material;
+        }
+
         void calc_ob_matrix() {
             mat4 ob_matrix = tmat * rmat * smat;
             ob_matrix.transpose();
         }
 
-        virtual void render(c_shader* _shader) {
+        virtual void render(gl_shader* _shader) {
             if (!vao) return;
+
+            if (m_material) {
+                m_material->apply(_shader);
+                _shader->set_vec3("objectColor", m_material->get_ambient());
+            }
 
             // position object
             mat4 ob_matrix = tmat * rmat * smat;
@@ -142,6 +159,45 @@ namespace atlas {
     gl_prim* create_sphere(GLenum drmode = GL_LINE, bool dr_el = true);
     gl_prim* create_cylinder(GLenum drmode = GL_LINE, bool dr_el = true);
     gl_prim* create_plane(GLenum drmode = GL_LINE, bool dr_el = true);
+
+    class gl_model {
+        std::vector<gl_prim*> m_objects;
+    public:
+        gl_model() {}
+        gl_model(const std::string& model_file);
+        gl_model(const base_3d_model& model);
+
+        ~gl_model() {
+            for (auto o : m_objects)
+                delete o;
+        }
+        void create(const base_3d_model& model);
+        void load_model(const std::string& model_file, const ivec3& inverts=ivec3(1,1,1));
+
+        void render(gl_shader* m_shader) {
+            for (auto p : m_objects) {
+                p->render(m_shader);
+            }
+        }
+        void move_to(const vec3& m) {
+            for (auto p : m_objects) {
+                p->move_to(m);
+            }
+        }
+        void rotate_by(float x, float y, float z) {
+            for (auto p : m_objects) {
+                p->rotate_by(vec3(x, y, z));
+            }
+        }
+        void set_scale(const vec3& s) {
+            for (auto p : m_objects) {
+                p->set_scale(s);
+            }
+        }
+    };
+
+
+
 }
 
 #endif // __primitives__

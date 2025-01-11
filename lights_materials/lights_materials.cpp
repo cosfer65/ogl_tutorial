@@ -1,20 +1,21 @@
 #include "lights_materials.h"
 #include "camera.h"
 #include "light.h"
+#include "material.h"
 #include "util.h"
 #include "primitives.h"
 
 using namespace atlas;
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
-    c_light* m_light;
+    gl_light* m_light;
 
     // the shaders
-    c_shader* m_shader;
-    c_shader* mat_shader;
-    c_shader* map_shader;
+    gl_shader* m_shader;
+    gl_shader* mat_shader;
+    gl_shader* map_shader;
 
     // the objects
     gl_prim* m_cube;
@@ -34,19 +35,19 @@ public:
     atlas_app() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (lights and materials)";
-        m_window.prefered_width = 1200;
-        m_window.prefered_height = 700;
+        m_window.prefered_width = 1000;
+        m_window.prefered_height = 750;
     }
     virtual int init_application() {
         m_view->set_fov(dtr(15));
         m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
 
 #if 1
-        m_light = new c_light(c_light::SPOTLIGHT);
+        m_light = new gl_light(gl_light::SPOTLIGHT);
         // light source located at (10,10,10)
         m_light->set_position(vec3(10, 10, 10));
 #else
-        m_light = new c_light(c_light::DIRLIGHT);
+        m_light = new gl_light(gl_light::DIRLIGHT);
         // we are holding the light source and pointing at the objects
         m_light->set_direction(vec3(0, 0, -1));
 #endif
@@ -57,18 +58,18 @@ public:
         m_light->set_specular(vec3(1, 1, 1));
 
         // create the simple light shader
-        m_shader = new c_shader;
+        m_shader = new gl_shader;
         m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
         m_shader->load();
 
         // create the material shader
-        mat_shader = new c_shader;
+        mat_shader = new gl_shader;
         mat_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
         mat_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_material_fs.glsl");
         mat_shader->load();
 
-        map_shader = new c_shader;
+        map_shader = new gl_shader;
         map_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
         map_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_map_fs.glsl");
         map_shader->load();

@@ -5,14 +5,14 @@
 
 using namespace atlas;
 
-class atlas_app :public c_application {
+class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
 
     // wireframe shader
-    c_shader* m_shader;
+    gl_shader* m_shader;
     // texture shader
-    c_shader* mt_shader;
+    gl_shader* mt_shader;
 
     // wireframe objects
     gl_prim* simple_cube;
@@ -36,13 +36,13 @@ public:
         m_cam = new gl_camera(vec3(0, 0, -20), vec3(0, 0, -1), vec3(0, 1, 0));
 
         // create the basic shader
-        m_shader = new c_shader;
+        m_shader = new gl_shader;
         m_shader->add_file(GL_VERTEX_SHADER, "resources/draw_cube_vs.glsl");
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/draw_cube_fs.glsl");
         m_shader->load();
 
         // create the texture shader
-        mt_shader = new c_shader;
+        mt_shader = new gl_shader;
         mt_shader->add_file(GL_VERTEX_SHADER, "resources/draw_cubet_vs.glsl");
         mt_shader->add_file(GL_FRAGMENT_SHADER, "resources/draw_cubet_fs.glsl");
         mt_shader->load();

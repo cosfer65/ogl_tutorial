@@ -8,52 +8,7 @@
 #include "geom.h"
 #include "quaternion.h"
 // #include "3ds_model.h"
-
-typedef std::vector<std::string> str_array;
-class cg_parser {
-    str_array tokens;
-public:
-    cg_parser() {}
-    ~cg_parser() {}
-
-    void tokenize(const std::string& line, const std::string& delim, str_array& tok_list)
-    {
-        std::string tok;
-        int l = (int)line.length();
-        bool instr = false;
-
-        for (int i = 0; i < l; ++i)
-        {
-            if (delim.find(line[i]) != std::string::npos)
-            {
-                if (instr)
-                {
-                    tok_list.push_back(tok);
-                    // std::cout << "tok:" << tok << "\n";
-                    tok = "";
-                }
-                instr = false;
-                continue;
-            }
-            else
-            {
-                tok += line[i];
-                instr = true;
-            }
-        }
-        if (instr)
-        {
-            tok_list.push_back(tok);
-            tok = "";
-        }
-        tok_list.push_back(" ");
-    }
-};
-std::string file_extension(const std::string& fname) {
-    std::size_t dot = fname.find_last_of(".");
-    std::string ret = fname.substr(dot + 1);
-    return ret;
-}
+#include "utils.h"
 
 namespace atlas {
     class ply_loader {

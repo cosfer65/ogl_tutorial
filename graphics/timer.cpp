@@ -2,13 +2,13 @@
 #include "timer.h"
 
 namespace atlas {
-    c_timer* get_global_timer()
+    gl_timer* get_global_timer()
     {
-        static c_timer timer;
+        static gl_timer timer;
         return &timer;
     }
 
-    c_timer::c_timer()
+    gl_timer::gl_timer()
     {
         m_bTimerStopped = true;
         m_bUsingQPF = false;
@@ -22,7 +22,7 @@ namespace atlas {
         m_llQPFTicksPerSec = qwTicksPerSec.QuadPart;
     }
 
-    void c_timer::reset()
+    void gl_timer::reset()
     {
         if (!m_bUsingQPF)
             return;
@@ -39,7 +39,7 @@ namespace atlas {
         m_bTimerStopped = FALSE;
     }
 
-    void c_timer::start()
+    void gl_timer::start()
     {
         if (!m_bUsingQPF)
             return;
@@ -54,7 +54,7 @@ namespace atlas {
         m_bTimerStopped = FALSE;
     }
 
-    void c_timer::stop()
+    void gl_timer::stop()
     {
         if (!m_bUsingQPF)
             return;
@@ -73,14 +73,14 @@ namespace atlas {
         }
     }
 
-    void c_timer::advance()
+    void gl_timer::advance()
     {
         if (!m_bUsingQPF)
             return;
         m_llStopTime += m_llQPFTicksPerSec / 10;
     }
 
-    double c_timer::get_absolute_time()
+    double gl_timer::get_absolute_time()
     {
         if (!m_bUsingQPF)
             return -1.0;
@@ -96,7 +96,7 @@ namespace atlas {
         return fTime;
     }
 
-    double c_timer::get_time()
+    double gl_timer::get_time()
     {
         if (!m_bUsingQPF)
             return -1.0;
@@ -112,7 +112,7 @@ namespace atlas {
         return fAppTime;
     }
 
-    double c_timer::get_elapsed_time()
+    double gl_timer::get_elapsed_time()
     {
         if (!m_bUsingQPF)
             return -1.0;
@@ -129,7 +129,7 @@ namespace atlas {
         return fElapsedTime;
     }
 
-    bool c_timer::is_stopped()
+    bool gl_timer::is_stopped()
     {
         return m_bTimerStopped;
     }

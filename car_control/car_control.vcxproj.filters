@@ -31,11 +31,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\FragmentShader.hlsl">
+    <None Include="..\runtime\resources\FragmentShader.glsl">
       <Filter>shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="resources\VertexShader.hlsl">
+    </None>
+    <None Include="..\runtime\resources\VertexShader.glsl">
       <Filter>shaders</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>
