@@ -55,6 +55,6 @@ std::string change_filename(const std::string& fpath, const std::string& fname) 
     auto found = res.find_last_of('/');
     if (found == std::string::npos)
         return fpath;
-    res = res.substr(0,found+1) + fname;
+    res = res.substr(0, found + 1) + fname;
     return res;
 }

@@ -132,7 +132,6 @@ public:
         m_shader->use();
         m_light->apply(m_shader);
 
-
         // combine the view and camera matrices into one
         mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
 

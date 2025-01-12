@@ -7,8 +7,8 @@
 #include "vector.h"
 
 namespace atlas {
-	class quaternion;
-	
+    class quaternion;
+
     struct iface {
         int i1, i2, i3;
         iface() { i1 = i2 = i3 = 0; }

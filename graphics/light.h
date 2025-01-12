@@ -60,6 +60,5 @@ namespace atlas {
             shdr->set_vec3("light.specular", specular);
         }
     };
-
 }
 #endif // __light_h__

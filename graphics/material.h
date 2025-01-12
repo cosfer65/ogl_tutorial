@@ -6,7 +6,6 @@
 #include "shaders.h"
 
 namespace atlas {
-
     class cg_material {
         vec3 ambient;
         vec3 diffuse;
@@ -25,7 +24,7 @@ namespace atlas {
         }
         ~cg_material() {
         }
-        vec3 get_ambient() const{
+        vec3 get_ambient() const {
             return ambient;
         }
         vec3 get_diffuse() const {

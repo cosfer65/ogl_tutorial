@@ -196,7 +196,6 @@ class car_control_app :public gl_application {
 
     moving_car* m_car;
 
-
     std::vector<building*> buildings;
     std::vector<pavement*> pavements;
 

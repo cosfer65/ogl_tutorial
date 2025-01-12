@@ -79,8 +79,9 @@ public:
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
         m_shader->set_vec3("objectColor", vec3(0.07568f, 0.01424f, 0.7568f));
 
-        
         model1->render(m_shader);
+
+        m_shader->set_vec3("objectColor", vec3(0.07568f, 0.01424f, 0.7568f));
     }
 
     virtual void exit_application() {

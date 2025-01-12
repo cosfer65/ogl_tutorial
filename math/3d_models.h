@@ -10,7 +10,6 @@
 
 namespace atlas {
     class base_3d_model {
-
     public:
         base_3d_model() {}
 
@@ -58,7 +57,7 @@ namespace atlas {
             m_textures.push_back(vec2(x, y));
         };
         void add_face(const vertex& v1, const vertex& v2, const vertex& v3) {
-            current->push_back(face({v1,v2,v3}));
+            current->push_back(face({ v1,v2,v3 }));
         }
         void invert_coordinates(const ivec3& ivt);
     };
@@ -69,17 +68,15 @@ namespace atlas {
         bool import_material_lib(const std::string& fname);
         void parse_material_tokens(const str_array& tokens);
         std::string current_file;
-        ivec2 flip=ivec2(0,0);// 1=x, 2=y, 3=z --> 1,2=flip x,y etc (0,0) = do nothing
+        ivec2 flip = ivec2(0, 0);// 1=x, 2=y, 3=z --> 1,2=flip x,y etc (0,0) = do nothing
         int negate = 0;// ivec3(0, 0, 0);
         int ccw = 1;
         void fix_model();
     public:
         obj_model() :base_3d_model() {
-
         }
         virtual bool load(const std::string& fnm);
     };
-
 }
 
 #endif // __3d_models_h__

@@ -169,7 +169,7 @@ public:
         if (ycen > 0.25f) ystep = -ystep;
         if (ycen < -0.25f) ystep = -ystep;
     }
-    
+
     virtual void render() {
         // set the viewport to the whole window
         m_view->set_viewport();

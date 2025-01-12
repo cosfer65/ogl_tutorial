@@ -172,7 +172,7 @@ namespace atlas {
                 delete o;
         }
         void create(const base_3d_model& model);
-        void load_model(const std::string& model_file, const ivec3& inverts=ivec3(1,1,1));
+        void load_model(const std::string& model_file, const ivec3& inverts = ivec3(1, 1, 1));
 
         void render(gl_shader* m_shader) {
             for (auto p : m_objects) {
@@ -195,9 +195,6 @@ namespace atlas {
             }
         }
     };
-
-
-
 }
 
 #endif // __primitives__

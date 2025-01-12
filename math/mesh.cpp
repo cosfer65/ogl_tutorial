@@ -183,9 +183,9 @@ namespace atlas {
         //     sModel* model = load3dsmodel(fname);
         //     if (!model)
         //         return false;
-        // 
+        //
         //     // extract geometry
-        // 
+        //
         //     delete model;
         // }
 

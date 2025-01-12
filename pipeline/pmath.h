@@ -50,7 +50,6 @@ inline T DetIJ3(T data[9], int r, int c) {
     return ret;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////
 /*  matrix layout is row major
 0  1 2 3

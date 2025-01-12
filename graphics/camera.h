@@ -45,7 +45,6 @@ namespace atlas {
             setup(vLocation, vForward, vUp);
         }
 
-
         void rotate(float x, float y, float z) {
             // x - right
             // y - up

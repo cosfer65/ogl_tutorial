@@ -422,7 +422,7 @@ namespace atlas {
     void gl_application::step_simulation(float fElapsed)
     {
     }
-    void gl_application::pause_simulation(float fElapsed){
+    void gl_application::pause_simulation(float fElapsed) {
         b_paused = true;
     }
     void gl_application::resume_simulation(float fElapsed) {

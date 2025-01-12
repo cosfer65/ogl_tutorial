@@ -163,9 +163,9 @@ namespace atlas {
     void obj_model::fix_model() {
         if (flip.x != 0 && flip.y != 0) {
             for (auto& v : m_vertices) {
-                float t = v[flip.x-1];
-                v[flip.x-1] = v[flip.y - 1];
-                v[flip.y-1] = t;
+                float t = v[flip.x - 1];
+                v[flip.x - 1] = v[flip.y - 1];
+                v[flip.y - 1] = t;
             }
         }
         if (negate != 0) {
@@ -188,7 +188,7 @@ namespace atlas {
         }
     }
 
-    void base_3d_model::invert_coordinates(const ivec3& ivt){
+    void base_3d_model::invert_coordinates(const ivec3& ivt) {
         for (auto& v : m_vertices) {
             v.x *= ivt.x;
             v.y *= ivt.y;
