@@ -50,6 +50,19 @@ namespace atlas {
         virtual void onKeyUp(int keycode);
         virtual void windowMinimized(bool);
         virtual void windowMaximized();
+#if 0
+        WPARAM extra_btn : pressed with mouse
+#define MK_LBUTTON          0x0001
+#define MK_RBUTTON          0x0002
+#define MK_SHIFT            0x0004
+#define MK_CONTROL          0x0008
+#define MK_MBUTTON          0x0010
+#endif
+        virtual void onMouseMove(int dx, int dy, WPARAM extra_btn) {};
+        virtual void onMouseDown(int btn, WPARAM extra_btn) {};
+        virtual void onMouseUp(int btn, WPARAM extra_btn) {};
+        virtual void onMouseDblClick(int btn, WPARAM extra_btn) {};
+        virtual void onMouseWheel(int delta, WPARAM extra_btn) {};
 
         virtual int init_application();
         virtual void step_simulation(float fElapsed);

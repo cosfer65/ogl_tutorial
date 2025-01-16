@@ -173,9 +173,9 @@ namespace atlas {
             for (auto& v : m_vertices) {
                 v[negate] *= -1;
             }
-            for (auto& v : m_normals) {
-                v[negate] *= -1;
-            }
+            // for (auto& v : m_normals) {
+            //    // v[negate] *= -1;
+            // }
         }
         if (!ccw) {
             for (auto o : m_objects) {

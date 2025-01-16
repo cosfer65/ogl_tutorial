@@ -58,6 +58,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 {
     PAINTSTRUCT ps;
     HDC hdc;
+    static int mouse_set = 0;
+    static int last_mouse_x;
+    static int last_mouse_y;
 
     switch (message)
     {
@@ -92,6 +95,53 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             return 0;                                                 // Return
         }
         break;                                                        // Break
+
+    case WM_MOUSEMOVE:
+    {
+        int x, y;
+        x = LOWORD(lParam);
+        y = HIWORD(lParam);
+        if (!mouse_set)
+        {
+            last_mouse_x = x;
+            last_mouse_y = y;
+        }
+        int dx = x - last_mouse_x;
+        int dy = y - last_mouse_y;
+        last_mouse_x = x;
+        last_mouse_y = y;
+        mouse_set = 1;
+        theApp->onMouseMove(dx, dy, wParam);
+    }
+    break;
+    case WM_LBUTTONDOWN:
+        theApp->onMouseDown(MK_LBUTTON, wParam & 0x7f);
+        break;
+    case WM_LBUTTONUP:
+        theApp->onMouseUp(MK_LBUTTON, wParam & 0x7f);
+        break;
+    case WM_LBUTTONDBLCLK:
+        break;
+    case WM_RBUTTONDOWN:
+        theApp->onMouseDown(MK_RBUTTON, wParam & 0x7f);
+        break;
+    case WM_RBUTTONUP:
+        theApp->onMouseUp(MK_RBUTTON, wParam & 0x7f);
+        break;
+    case WM_RBUTTONDBLCLK:
+        break;
+    case WM_MBUTTONDOWN:
+        theApp->onMouseDown(MK_MBUTTON, wParam & 0x7f);
+        break;
+    case WM_MBUTTONUP:
+        theApp->onMouseUp(MK_MBUTTON, wParam & 0x7f);
+        break;
+    case WM_MBUTTONDBLCLK:
+        break;
+
+    case WM_MOUSEWHEEL:
+        theApp->onMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam), wParam & 0x7f);
+        break;
 
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
