@@ -110,14 +110,14 @@ public:
         // no negative velocity
         if (vVelocity.length() < 0.001 && (options & DECELERATE))
             vVelocity = vec3(0);
-
+        float steering_turn_speed = 20; // degrees per second
         if (options & STEER_LEFT) { // left
-            steering_angle += 40.f;
+            steering_angle += steering_turn_speed * dt;
             if (steering_angle > 40.f)  // maximum steering angle
                 steering_angle = 40.f;
         }
         else if (options & STEER_RIGHT) { // right
-            steering_angle -= 40.f;
+            steering_angle -= steering_turn_speed * dt;
             if (steering_angle < -40.f)
                 steering_angle = -40.f;
         }
