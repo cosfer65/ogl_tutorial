@@ -74,6 +74,7 @@ public:
         if (!p_view)
             p_view = new point_of_view;
         p_view->update_view(pos, fwd, up);
+        p_view->viewport()->set_fov(dtr(45));
 
         vPosition = pos;
         vVelocity = vel;
