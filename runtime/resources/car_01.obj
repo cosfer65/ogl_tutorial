@@ -1,7 +1,7 @@
 # Blender 4.3.2
 # www.blender.org
 negate z
-mtllib car_01b.mtl
+mtllib car_01.mtl
 o car_body
 v -1.974516 -0.069475 -5.081621
 v -1.974516 2.220089 -2.287672
