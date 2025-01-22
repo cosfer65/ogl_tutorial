@@ -6,3 +6,4 @@ OpenGL tutorial.docx
 /x64
 *.aps
 *.bak
+/runtime/Releasex64
