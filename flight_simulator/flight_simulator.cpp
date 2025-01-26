@@ -1,5 +1,4 @@
-#include "model_loader.h"
-#include "3d_models.h"
+#include "flight_simulator.h"
 #include "camera.h"
 #include "light.h"
 #include "primitives.h"
@@ -21,18 +20,17 @@ class atlas_app :public gl_application {
 public:
     atlas_app() {
         m_view = new gl_viewport();
-        m_window.szTitle = "GusOnGames (model loader)";
+        m_window.szTitle = "GusOnGames (flight simulator)";
         m_window.prefered_width = 1200;
         m_window.prefered_height = 700;
     }
     virtual int init_application() {
         m_view->set_fov(dtr(fov));
-        // m_cam = new gl_camera(vec3(-5, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_cam = new gl_camera(vec3(-5, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        m_light = new gl_light(gl_light::SPOTLIGHT);
+        m_light = new gl_light(gl_light::DIRLIGHT);
         // we are holding the light source and pointing at the objects
-        m_light->set_position(vec3(10, 10, 10));
+        m_light->set_direction(vec3(0, 0, -1));
         // allow some ambience for the light
         // white light (we can experiment with this)
         m_light->set_ambient(vec3(1, 1, 1));
@@ -46,8 +44,7 @@ public:
         m_shader->load();
 
         model1 = new gl_model();
-        //model1->load_model("resources/car_01.obj", ivec3(1, 1, -1));
-        model1->load("resources/rafale.stl");
+        model1->load("resources/flight_sim_plane.stl");
         model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
 
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
@@ -78,65 +75,6 @@ public:
         m_view->set_fov(dtr(fov));
     };
 
-    virtual void step_simulation(float fElapsed) {
-        bool reload = false;
-        if (keyDown['R']) {
-            atlas::inv_x = 1;
-            atlas::inv_y = 1;
-            atlas::inv_z = 1;
-            atlas::flip_xy = 0;
-            atlas::flip_xz = 0;
-            atlas::flip_yz = 0;
-            reload = true;
-            keyDown['R'] = 0;
-        }
-        if (keyDown['S']) {
-            model1->save("resources/model.stl");
-            keyDown['S'] = 0;
-            reload = true;
-        }
-        if (keyDown['X']) {
-            atlas::inv_x *= -1;
-            keyDown['X'] = 0;
-            reload = true;
-        }
-        if (keyDown['Y']) {
-            atlas::inv_y *= -1;
-            keyDown['Y'] = 0;
-            reload = true;
-        }
-        if (keyDown['Z']) {
-            atlas::inv_z *= -1;
-            keyDown['Z'] = 0;
-            reload = true;
-        }
-        if (keyDown['1']) {
-            atlas::flip_xy = 1 - atlas::flip_xy;
-            atlas::flip_xz = 0;
-            atlas::flip_yz = 0;
-            keyDown['1'] = 0;
-            reload = true;
-        }
-        if (keyDown['2']) {
-            atlas::flip_xz = 1 - atlas::flip_xz;
-            atlas::flip_xy = 0;
-            atlas::flip_yz = 0;
-            keyDown['2'] = 0;
-            reload = true;
-        }
-        if (keyDown['3']) {
-            atlas::flip_yz = 1 - atlas::flip_yz;
-            atlas::flip_xy = 0;
-            atlas::flip_xz = 0;
-            keyDown['3'] = 0;
-            reload = true;
-        }
-        if (reload) {
-            model1->load("resources/rafale.stl");
-            model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
-        }
-    }
-
     virtual void render() {
         // set the viewport to the whole window
         m_view->set_viewport();
@@ -160,23 +98,6 @@ public:
         m_shader->end();
 
         font2D->set_color(vec4(1));
-
-        {
-            char txt[100];
-            sprintf(txt, "x:%d, y:%d, z:%d, xy:%d, xz%d, yz:%d", atlas::inv_x, atlas::inv_y, atlas::inv_z, atlas::flip_xy, atlas::flip_xz, atlas::flip_yz);
-            font2D->set_position(5, 110);
-            font2D->render(txt);
-        }
-
-        font2D->set_position(5, 95);
-        font2D->render("S to save model");
-        font2D->set_position(5, 80);
-        font2D->render("R to reset model");
-        font2D->set_position(5, 65);
-        font2D->render("X/Y/Z to invert axis");
-        font2D->set_position(5, 50);
-        font2D->render("flips: 1-yz, 2-xy, 3-xz");
-
         font2D->set_position(5, 35);
         font2D->render("Left mouse button and drag to rotate around X/Y axes");
         font2D->set_position(5, 20);

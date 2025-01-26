@@ -40,7 +40,7 @@ std::string file_extension(const std::string& fname) {
 }
 
 void bslash_to_slash(std::string& str) {
-    int l = str.length();
+    int l = (int)str.length();
     for (int i = 0; i < l; ++i) {
         if (str[i] == '\\') {
             str[i] = '/';

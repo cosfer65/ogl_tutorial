@@ -9,17 +9,19 @@
 #include "utils.h"
 
 namespace atlas {
+    typedef ivec3 vertex;
+
     class base_3d_model {
     public:
         base_3d_model() {}
 
-        virtual bool load(const std::string& fnm) { return NULL; }
+        virtual bool load(const std::string& fnm) = 0;
+        virtual bool save(const std::string& fnm) { return true; }
 
         std::vector<vec3> m_vertices;
         std::vector<vec3> m_normals;
         std::vector<vec2> m_textures;
 
-        typedef ivec3 vertex;
         typedef std::vector<vertex> face;
         struct mtl {
             float ns;
@@ -42,22 +44,34 @@ namespace atlas {
         std::map<std::string, mtl*> mat_list;
         mtl* mat_lib;
 
-        ~base_3d_model() {
+        virtual ~base_3d_model() {
             for (auto o : m_objects) delete o;
             for (auto m : mat_list) delete m.second;
         }
 
-        void add_vertex(float x, float y, float z) {
+        size_t add_vertex(float x, float y, float z) {
             m_vertices.push_back(vec3(x, y, z));
+            return m_vertices.size(); // index of last insert!
         };
-        void add_normal(float x, float y, float z) {
+        size_t add_vertex(const vec3& v) {
+            m_vertices.push_back(v);
+            return m_vertices.size(); // index of last insert!
+        };
+        size_t add_normal(float x, float y, float z) {
             m_normals.push_back(vec3(x, y, z));
+            return m_normals.size(); // index of last insert!
         };
-        void add_tex_coord(float x, float y) {
+        size_t add_normal(const vec3& n) {
+            m_normals.push_back(n);
+            return m_normals.size(); // index of last insert!
+        };
+        size_t add_tex_coord(float x, float y) {
             m_textures.push_back(vec2(x, y));
+            return m_textures.size(); // index of last insert!
         };
-        void add_face(const vertex& v1, const vertex& v2, const vertex& v3) {
-            current->push_back(face({ v1,v2,v3 }));
+        size_t add_face(const vertex& v1, const vertex& v2, const vertex& v3) {
+            current->push_back(face({ v1,v2,v3 })); 
+            return current->size(); // index of last insert!
         }
         void invert_coordinates(const ivec3& ivt);
     };
@@ -76,6 +90,27 @@ namespace atlas {
         obj_model() :base_3d_model() {
         }
         virtual bool load(const std::string& fnm);
+    };
+
+
+    extern int inv_x;
+    extern int inv_y;
+    extern int inv_z;
+    extern int flip_xy;
+    extern int flip_xz;
+    extern int flip_yz;
+
+    class facet;
+    class stl_model : public base_3d_model {
+        void parse_tokens(const str_array& tokens);
+        std::vector<facet*> m_facets;
+        void build_internals();
+    public:
+        stl_model() :base_3d_model() {
+        }
+        virtual ~stl_model();
+        virtual bool load(const std::string& fnm);
+        virtual bool save(const std::string& fnm);
     };
 }
 

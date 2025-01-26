@@ -5,7 +5,19 @@
 #include "3d_models.h"
 
 namespace atlas {
-    //typedef basevec3<int> ivec3;
+    void base_3d_model::invert_coordinates(const ivec3& ivt) {
+        for (auto& v : m_vertices) {
+            v.x *= ivt.x;
+            v.y *= ivt.y;
+            v.z *= ivt.z;
+        }
+        for (auto& v : m_normals) {
+            v.x *= ivt.x;
+            v.y *= ivt.y;
+            v.z *= ivt.z;
+        }
+    }
+
     template<typename T>
     basevec3<T> parse_vector3(const std::string& str, const std::string& delim) {
         basevec3<T> v;
@@ -18,8 +30,8 @@ namespace atlas {
         v.z = (T)atof(star[2].c_str());
     }
 
-    obj_model::vertex obj_model::parse_vertex(const std::string& token) {
-        obj_model::vertex v;
+    vertex obj_model::parse_vertex(const std::string& token) {
+        vertex v;
         str_array star;
         cg_parser parser;
 
@@ -124,9 +136,9 @@ namespace atlas {
                 m_objects.push_back(current);
             }
             // add face
-            obj_model::vertex v1 = parse_vertex(tokens[1]);
-            obj_model::vertex v2 = parse_vertex(tokens[2]);
-            obj_model::vertex v3 = parse_vertex(tokens[3]);
+            vertex v1 = parse_vertex(tokens[1]);
+            vertex v2 = parse_vertex(tokens[2]);
+            vertex v3 = parse_vertex(tokens[3]);
             // convert to CCW
             add_face(v1, v2, v3);
         }
@@ -188,16 +200,119 @@ namespace atlas {
         }
     }
 
-    void base_3d_model::invert_coordinates(const ivec3& ivt) {
-        for (auto& v : m_vertices) {
-            v.x *= ivt.x;
-            v.y *= ivt.y;
-            v.z *= ivt.z;
+    class facet {
+    public:
+        facet() {
         }
-        for (auto& v : m_normals) {
-            v.x *= ivt.x;
-            v.y *= ivt.y;
-            v.z *= ivt.z;
+        ~facet() {
         }
+
+        std::vector<vec3> vertices;
+        vec3 normal;
+    };
+    int inv_x = 1;
+    int inv_y = 1;
+    int inv_z = 1;
+    int flip_xy = 0;
+    int flip_xz = 0;
+    int flip_yz = 0;
+
+
+    stl_model::~stl_model() {
+        for (auto f : m_facets)
+            delete f;
+    }
+
+    void stl_model::parse_tokens(const str_array& tokens) {
+        static facet* face = nullptr;
+        if (tokens[0] == "facet") {
+            face = new facet;
+            m_facets.push_back(face);
+        }
+        if (!face) return;
+        for (int i = 0; i < tokens.size(); ++i) {
+            if (tokens[i] == "normal") {
+                if (flip_xy)
+                    face->normal = vec3((float)atof(tokens[i + 2].c_str()) * inv_x, (float)atof(tokens[i + 1].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z);
+                else if (flip_xz)
+                    face->normal = vec3((float)atof(tokens[i + 3].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 1].c_str()) * inv_z);
+                else if (flip_yz)
+                    face->normal = vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 3].c_str()) * inv_y, (float)atof(tokens[i + 2].c_str()) * inv_z);
+                else
+                    face->normal = vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z);
+                break;
+            }
+            if (tokens[i] == "vertex") {
+                if (flip_xy)
+                    face->vertices.push_back(vec3((float)atof(tokens[i + 2].c_str()) * inv_x, (float)atof(tokens[i + 1].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z));
+                else if (flip_xz)
+                    face->vertices.push_back(vec3((float)atof(tokens[i + 3].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 1].c_str()) * inv_z));
+                else if (flip_yz)
+                    face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 3].c_str()) * inv_y, (float)atof(tokens[i + 2].c_str()) * inv_z));
+                else
+                    face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z));
+                break;
+
+                // face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z));
+                break;
+            }
+        }
+    }
+
+    void stl_model::build_internals() {
+        current = new object;
+        current->m_material = new mtl;
+        current->m_material->ka = vec3(0.45f, 0.45f, 0.65f);
+
+        m_objects.push_back(current);
+
+        for (auto& f : m_facets) {
+            int v1 = (int)add_vertex(f->vertices[0]);
+            int n = (int)add_normal(f->normal);
+            int v2 = (int)add_vertex(f->vertices[1]);
+            int v3 = (int)add_vertex(f->vertices[2]);
+            add_face(vertex(v1, -1, n), vertex(v2, -1, n), vertex(v3, -1, n));
+        }
+    }
+
+    bool stl_model::load(const std::string& fnm) {
+        cg_parser parser;
+        std::string line;
+        std::ifstream mdl(fnm);
+        if (mdl.is_open()) {
+            while (std::getline(mdl, line))
+            {
+                str_array star;
+                parser.tokenize(line, " ", star);
+                parse_tokens(star);
+            }
+            mdl.close();
+        }
+        else {
+            return false;
+        }
+        build_internals();
+        return true;
+    }
+
+    bool stl_model::save(const std::string& fnm) { 
+        std::ofstream mdl(fnm);
+        mdl << "solid Object01\n";
+        if (mdl.is_open()) {
+            for (auto& f : m_facets) {
+                mdl << "  facet normal " << f->normal.x << " " << f->normal.y << " " << f->normal.z << "\n";
+                mdl << "    outer loop\n";
+                for (int i=0; i<3;++i)
+                    mdl << "      vertex " << f->vertices[i].x << " " << f->vertices[i].y << " " << f->vertices[i].z << "\n";
+                mdl << "    endloop\n";
+                mdl << "  endfacet\n";
+            }
+            mdl << "endsolid Object01\n";
+            mdl.close();
+        }
+        else {
+            return false;
+        }
+        return true;
     }
 }
