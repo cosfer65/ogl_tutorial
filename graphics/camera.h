@@ -68,10 +68,13 @@ namespace atlas {
         float near_plane, far_plane;
         float zoom_angle;
         float aspect;
+        // viewport position within the window
+        int left, bottom;
 
     public:
         gl_viewport(float _pa = 45, int _w = 800, int _h = 600, float _n = 0.1f, float _f = 1000.f) :
-            zoom_angle(_pa), near_plane(_n), far_plane(_f), width(_w), height(_h), aspect((float)_w / (float)_h) {
+            zoom_angle(_pa), near_plane(_n), far_plane(_f), width(_w), height(_h), aspect((float)_w / (float)_h),
+            left(0), bottom(0) {
         }
         mat4 perspective() {
             return perspective_matrix(zoom_angle, aspect, near_plane, far_plane);
@@ -84,6 +87,10 @@ namespace atlas {
             height = _h;
             aspect = (float)width / (float)height;
         }
+        void set_position(int _left, int _bottom) {
+            left = _left;
+            bottom = _bottom;
+        }
         void set_fov(float _z) {
             zoom_angle = _z;
         }
@@ -92,7 +99,7 @@ namespace atlas {
             far_plane = _f;
         }
         void set_viewport() {
-            glViewport(0, 0, width, height);
+            glViewport(left, bottom, width, height);
         }
     };
 }

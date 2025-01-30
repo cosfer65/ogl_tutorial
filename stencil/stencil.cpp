@@ -6,12 +6,12 @@
 
 using namespace atlas;
 
-class cg_gl_stencil :public gl_prim {
+class gl_stencil :public gl_prim {
 protected:
 public:
-    cg_gl_stencil() {
+    gl_stencil() {
     }
-    virtual ~cg_gl_stencil() {
+    virtual ~gl_stencil() {
     }
     virtual void create(GLenum drmode = GL_FILL, bool dr_el = true) {
         draw_elements = true;
@@ -28,6 +28,67 @@ public:
 
             tmesh->addIndices(0, 1, 2);
             tmesh->addIndices(0, 2, 3);
+
+            create_from_mesh(tmesh, GL_FILL, true);
+            delete tmesh;
+        }
+    }
+    virtual void create_elliptic(GLenum drmode = GL_FILL, bool dr_el = true) {
+        draw_elements = true;
+        draw_mode = GL_FILL;
+
+        if (vao == 0)
+        {
+            c_mesh* tmesh = new c_mesh;
+            int c = 0;
+            for (float a = 0; a <= 360; a += 10) {
+                float da = dtr(a);
+                float x = (float)(cos(da));
+                float y = (float)(sin(da));
+                tmesh->addVertex(x, y, 0);
+                c++;
+            }
+            tmesh->addVertex(0, 0, 0);//37
+
+            for (int i = 0; i <= 36; ++i) {
+                tmesh->addIndices(37, i, i + 1);
+            }
+
+            create_from_mesh(tmesh, GL_FILL, true);
+            delete tmesh;
+        }
+    }
+    virtual void r_create(GLenum drmode = GL_FILL, bool dr_el = true) {
+        draw_elements = true;
+        draw_mode = GL_FILL;
+
+        if (vao == 0)
+        {
+            c_mesh* tmesh = new c_mesh;
+            int c = 0;
+            for (float a = 0; a <= 360; a += 10) {
+                float da = dtr(a);
+                float x = (float)(0.25 * cos(da));
+                float y = (float)(0.25 * sin(da));
+                tmesh->addVertex(x, y, 0);
+                c++;
+            }
+            tmesh->addVertex(.25f, .25f, 0);
+            tmesh->addVertex(-.25f, .25f, 0);
+            tmesh->addVertex(-.25f, -.25f, 0);
+            tmesh->addVertex(.25f, -.25f, 0);
+
+            tmesh->addVertex(1, 1, 0); //37
+            tmesh->addVertex(-1, 1, 0);//38
+            tmesh->addVertex(-1, -1, 0);//39
+            tmesh->addVertex(1, -1, 0);//40
+
+            for (int q = 0; q < 4; ++q) {
+                int j = 9 * q;
+                for (int i = 0; i <= 9; ++i) {
+                    tmesh->addIndices(i + j, 37 + q, i + j + 1);
+                }
+            }
 
             create_from_mesh(tmesh, GL_FILL, true);
             delete tmesh;
@@ -104,7 +165,7 @@ class atlas_app :public gl_application {
     float ycen;
     float xstep;
     float ystep;
-    cg_gl_stencil* pstencil;
+    gl_stencil* pstencil;
     cg_gl_background* pbackgound;
 
 public:
@@ -144,8 +205,9 @@ public:
         ystep = .125f;
 
         // the stencil object
-        pstencil = new cg_gl_stencil;
-        pstencil->create();
+        pstencil = new gl_stencil;
+        pstencil->create_elliptic();
+        pstencil->set_scale(vec3(0.25));
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -183,7 +245,7 @@ public:
         // prepare the stencil buffer
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glDepthMask(GL_FALSE);
-        glStencilFunc(GL_NEVER, 1, 0xFF);
+        glStencilFunc(GL_NEVER, 1, 0xff);
         glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);  // draw 1s on test fail (always)
 
         // draw stencil pattern

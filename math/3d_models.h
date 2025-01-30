@@ -13,6 +13,13 @@ namespace atlas {
 
     class base_3d_model {
     public:
+        static int inv_x;
+        static int inv_y;
+        static int inv_z;
+        static int flip_xy;
+        static int flip_xz;
+        static int flip_yz;
+
         base_3d_model() {}
 
         virtual bool load(const std::string& fnm) = 0;
@@ -91,14 +98,6 @@ namespace atlas {
         }
         virtual bool load(const std::string& fnm);
     };
-
-
-    extern int inv_x;
-    extern int inv_y;
-    extern int inv_z;
-    extern int flip_xy;
-    extern int flip_xz;
-    extern int flip_yz;
 
     class facet;
     class stl_model : public base_3d_model {

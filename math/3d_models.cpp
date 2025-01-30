@@ -5,6 +5,13 @@
 #include "3d_models.h"
 
 namespace atlas {
+    int base_3d_model::inv_x = 1;
+    int base_3d_model::inv_y = 1;
+    int base_3d_model::inv_z = 1;
+    int base_3d_model::flip_xy = 0;
+    int base_3d_model::flip_xz = 0;
+    int base_3d_model::flip_yz = 0;
+
     void base_3d_model::invert_coordinates(const ivec3& ivt) {
         for (auto& v : m_vertices) {
             v.x *= ivt.x;
@@ -210,13 +217,6 @@ namespace atlas {
         std::vector<vec3> vertices;
         vec3 normal;
     };
-    int inv_x = 1;
-    int inv_y = 1;
-    int inv_z = 1;
-    int flip_xy = 0;
-    int flip_xz = 0;
-    int flip_yz = 0;
-
 
     stl_model::~stl_model() {
         for (auto f : m_facets)

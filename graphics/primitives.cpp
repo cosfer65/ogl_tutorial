@@ -140,6 +140,13 @@ namespace atlas {
     gl_model::gl_model(const std::string& model_file) {
         load(model_file);
     }
+    void gl_model::clean_up() {
+        for (auto o : m_objects)
+            delete o;
+        m_objects.clear();
+        if (loaded_model)
+            delete loaded_model;
+    }
 
     void gl_model::load(const std::string& model_file) {
         clean_up();
@@ -158,12 +165,13 @@ namespace atlas {
         if (file_extension(model_file) == "obj") {
         }
         else if (file_extension(model_file) == "stl") {
-            file_model->save(model_file);
+            if (loaded_model)
+                loaded_model->save(model_file);
         }
     }
 
     void gl_model::create(base_3d_model* model) {
-        file_model = model;
+        loaded_model = model;
 
         for (auto o : model->m_objects) {
             gl_prim* p = create_prim(model->m_vertices, model->m_normals, *o);

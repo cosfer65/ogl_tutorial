@@ -162,7 +162,7 @@ namespace atlas {
 
     class gl_model {
         std::vector<gl_prim*> m_objects;
-        base_3d_model* file_model = nullptr;
+        base_3d_model* loaded_model = nullptr;
     public:
         gl_model() {}
         gl_model(const std::string& model_file);
@@ -170,13 +170,7 @@ namespace atlas {
         ~gl_model() {
             clean_up();
         }
-        void clean_up() {
-            for (auto o : m_objects)
-                delete o;
-            m_objects.clear();
-            if (file_model)
-                delete file_model;
-        }
+        void clean_up();
         void create(base_3d_model* model);
         void load(const std::string& model_file);
         void save(const std::string& model_file);

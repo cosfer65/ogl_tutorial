@@ -81,12 +81,12 @@ public:
     virtual void step_simulation(float fElapsed) {
         bool reload = false;
         if (keyDown['R']) {
-            atlas::inv_x = 1;
-            atlas::inv_y = 1;
-            atlas::inv_z = 1;
-            atlas::flip_xy = 0;
-            atlas::flip_xz = 0;
-            atlas::flip_yz = 0;
+            base_3d_model::inv_x = 1;
+            base_3d_model::inv_y = 1;
+            base_3d_model::inv_z = 1;
+            base_3d_model::flip_xy = 0;
+            base_3d_model::flip_xz = 0;
+            base_3d_model::flip_yz = 0;
             reload = true;
             keyDown['R'] = 0;
         }
@@ -96,38 +96,38 @@ public:
             reload = true;
         }
         if (keyDown['X']) {
-            atlas::inv_x *= -1;
+            base_3d_model::inv_x *= -1;
             keyDown['X'] = 0;
             reload = true;
         }
         if (keyDown['Y']) {
-            atlas::inv_y *= -1;
+            base_3d_model::inv_y *= -1;
             keyDown['Y'] = 0;
             reload = true;
         }
         if (keyDown['Z']) {
-            atlas::inv_z *= -1;
+            base_3d_model::inv_z *= -1;
             keyDown['Z'] = 0;
             reload = true;
         }
         if (keyDown['1']) {
-            atlas::flip_xy = 1 - atlas::flip_xy;
-            atlas::flip_xz = 0;
-            atlas::flip_yz = 0;
+            base_3d_model::flip_xy = 1 - base_3d_model::flip_xy;
+            base_3d_model::flip_xz = 0;
+            base_3d_model::flip_yz = 0;
             keyDown['1'] = 0;
             reload = true;
         }
         if (keyDown['2']) {
-            atlas::flip_xz = 1 - atlas::flip_xz;
-            atlas::flip_xy = 0;
-            atlas::flip_yz = 0;
+            base_3d_model::flip_xz = 1 - base_3d_model::flip_xz;
+            base_3d_model::flip_xy = 0;
+            base_3d_model::flip_yz = 0;
             keyDown['2'] = 0;
             reload = true;
         }
         if (keyDown['3']) {
-            atlas::flip_yz = 1 - atlas::flip_yz;
-            atlas::flip_xy = 0;
-            atlas::flip_xz = 0;
+            base_3d_model::flip_yz = 1 - base_3d_model::flip_yz;
+            base_3d_model::flip_xy = 0;
+            base_3d_model::flip_xz = 0;
             keyDown['3'] = 0;
             reload = true;
         }
@@ -163,7 +163,9 @@ public:
 
         {
             char txt[100];
-            sprintf(txt, "x:%d, y:%d, z:%d, xy:%d, xz%d, yz:%d", atlas::inv_x, atlas::inv_y, atlas::inv_z, atlas::flip_xy, atlas::flip_xz, atlas::flip_yz);
+            sprintf(txt, "x:%d, y:%d, z:%d, xy:%d, xz%d, yz:%d", 
+                base_3d_model::inv_x, base_3d_model::inv_y, base_3d_model::inv_z, 
+                base_3d_model::flip_xy, base_3d_model::flip_xz, base_3d_model::flip_yz);
             font2D->set_position(5, 110);
             font2D->render(txt);
         }
