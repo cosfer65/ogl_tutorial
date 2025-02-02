@@ -22,6 +22,7 @@ namespace atlas {
         vec3 position;
         vec3 scale;
         vec3 rotation;
+        int use_vertex_color;
 
         cg_material* m_material; // allow drawable objects to have their own materials
     public:
@@ -40,6 +41,7 @@ namespace atlas {
             rmat = rotation_matrix(rotation.x, 0, 0, 1) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 1, 0, 0);
             smat = scaling_matrix(scale.x, scale.y, scale.z);
             tmat = translation_matrix(position.x, position.y, position.z);
+            use_vertex_color = 0;
         }
         virtual ~gl_prim() {}
 
@@ -60,10 +62,16 @@ namespace atlas {
         virtual void render(gl_shader* _shader) {
             if (!vao) return;
 
-            if (m_material) {
+
+            if (use_vertex_color) {
+                _shader->set_int("use_vertex_color", 1);
+            }
+            else if (m_material) {
                 m_material->apply(_shader);
                 _shader->set_vec3("objectColor", m_material->get_ambient());
+                _shader->set_int("use_vertex_color", 0);
             }
+            
 
             // position object
             mat4 ob_matrix = tmat * rmat * smat;

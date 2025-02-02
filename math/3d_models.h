@@ -27,10 +27,11 @@ namespace atlas {
 
         std::vector<vec3> m_vertices;
         std::vector<vec3> m_normals;
+        std::vector<vec3> m_colors;
         std::vector<vec2> m_textures;
 
         typedef std::vector<vertex> face;
-        struct mtl {
+        struct material {
             float ns;
             float d;
             float tr;
@@ -43,13 +44,13 @@ namespace atlas {
         class object : public std::vector<face> {
         public:
             object() {}
-            mtl* m_material;
+            material* m_material;
         };
 
         std::vector<object*> m_objects;
         object* current;
-        std::map<std::string, mtl*> mat_list;
-        mtl* mat_lib;
+        std::map<std::string, material*> mat_list;
+        material* mat_lib;
 
         virtual ~base_3d_model() {
             for (auto o : m_objects) delete o;
@@ -72,12 +73,20 @@ namespace atlas {
             m_normals.push_back(n);
             return m_normals.size(); // index of last insert!
         };
+        size_t add_color(float r, float g, float b) {
+            m_colors.push_back(vec3(r, g, b));
+            return m_colors.size(); // index of last insert!
+        };
+        size_t add_color(const vec3& n) {
+            m_colors.push_back(n);
+            return m_colors.size(); // index of last insert!
+        };
         size_t add_tex_coord(float x, float y) {
             m_textures.push_back(vec2(x, y));
             return m_textures.size(); // index of last insert!
         };
         size_t add_face(const vertex& v1, const vertex& v2, const vertex& v3) {
-            current->push_back(face({ v1,v2,v3 })); 
+            current->push_back(face({ v1,v2,v3 })); // vertex, texture, normal indices per vertex
             return current->size(); // index of last insert!
         }
         void invert_coordinates(const ivec3& ivt);
@@ -110,6 +119,18 @@ namespace atlas {
         virtual ~stl_model();
         virtual bool load(const std::string& fnm);
         virtual bool save(const std::string& fnm);
+    };
+
+    class ifacet;
+    class off_model : public base_3d_model {
+        std::vector<ifacet*> m_facets;
+        void build_internals();
+    public:
+        off_model() :base_3d_model() {
+        }
+        virtual ~off_model();
+        virtual bool load(const std::string& fnm);
+        // virtual bool save(const std::string& fnm);
     };
 }
 

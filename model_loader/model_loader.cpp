@@ -7,6 +7,11 @@
 
 using namespace atlas;
 
+//std::string model_name("resources/car_01.obj");
+//std::string model_name("resources/rafale.stl");
+std::string model_name("resources/homer_out.off");
+//std::string model_name("resources/ico_sps.off");
+
 class atlas_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
@@ -35,9 +40,9 @@ public:
         m_light->set_position(vec3(10, 10, 10));
         // allow some ambience for the light
         // white light (we can experiment with this)
-        m_light->set_ambient(vec3(1, 1, 1));
-        m_light->set_diffuse(vec3(1, 1, 1));
-        m_light->set_specular(vec3(1, 1, 1));
+        m_light->set_ambient(vec3(1));
+        m_light->set_diffuse(vec3(1));
+        m_light->set_specular(vec3(1));
 
         // create the simple light shader
         m_shader = new gl_shader;
@@ -46,9 +51,8 @@ public:
         m_shader->load();
 
         model1 = new gl_model();
-        //model1->load_model("resources/car_01.obj", ivec3(1, 1, -1));
-        model1->load("resources/rafale.stl");
-        model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
+        model1->load(model_name); 
+        //model1->set_scale(vec3(0.5f, 0.5f, 0.5f));
 
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
 
@@ -91,7 +95,7 @@ public:
             keyDown['R'] = 0;
         }
         if (keyDown['S']) {
-            model1->save("resources/model.stl");
+            // model1->save("resources/model.stl");
             keyDown['S'] = 0;
             reload = true;
         }
@@ -132,8 +136,8 @@ public:
             reload = true;
         }
         if (reload) {
-            model1->load("resources/rafale.stl");
-            model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
+            model1->load(model_name);
+            // model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
         }
     }
 

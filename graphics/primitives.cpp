@@ -76,6 +76,7 @@ namespace atlas {
             ++idx;
             glVertexAttribPointer(idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
             glEnableVertexAttribArray(idx);
+            use_vertex_color = 1;
         }
 
         if (m_mesh_sizes.num_texCoords > 0)
@@ -140,7 +141,7 @@ namespace atlas {
         int count = 0;
         for (auto& f : fcs) {
             for (int i = 0; i < 3; ++i) {
-                int v = f[i].x - 1;
+                int v = f[i].x;
                 m_mesh->addVertex(verts[v]);
 
                 if (colors) {
@@ -153,7 +154,7 @@ namespace atlas {
                     m_mesh->addColor(r, g, b);
                 }
 
-                v = f[i].z - 1;
+                v = f[i].z;
                 m_mesh->addNormal(norms[v]);
             }
             m_mesh->addIndices(count, count + 1, count + 2);
@@ -188,6 +189,11 @@ namespace atlas {
             l_model->load(model_file);
             create(l_model);
         }
+        else if (file_extension(model_file) == "off") {
+            off_model* l_model = new off_model;
+            l_model->load(model_file);
+            create(l_model);
+        }
     }
     void gl_model::save(const std::string& model_file) {
         if (file_extension(model_file) == "obj") {
@@ -202,9 +208,12 @@ namespace atlas {
         loaded_model = model;
 
         for (auto o : model->m_objects) {
-            gl_prim* p = create_prim(model->m_vertices, model->m_normals, NULL, *o);
+            std::vector<atlas::vec3>* colors = NULL;
+            if (model->m_colors.size() > 0)
+                colors = &model->m_colors;
+            gl_prim* p = create_prim(model->m_vertices, model->m_normals, colors, *o);
 
-            base_3d_model::mtl* mm = o->m_material;
+            base_3d_model::material* mm = o->m_material;
             if (mm) {
                 cg_material* m_mat1 = new cg_material;
                 m_mat1->set_ambient(mm->ka);

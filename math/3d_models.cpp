@@ -3,6 +3,7 @@
 #include <regex>
 
 #include "3d_models.h"
+#include "geom.h"
 
 namespace atlas {
     int base_3d_model::inv_x = 1;
@@ -43,16 +44,16 @@ namespace atlas {
         cg_parser parser;
 
         parser.tokenize(token, "/", star);
-        v.x = atoi(star[0].c_str());
-        v.y = atoi(star[1].c_str());
-        v.z = atoi(star[2].c_str());
+        v.x = atoi(star[0].c_str()) - 1; // convert to 0 base
+        v.y = atoi(star[1].c_str()) - 1;
+        v.z = atoi(star[2].c_str()) - 1;
 
         return v;
     }
 
     void obj_model::parse_material_tokens(const str_array& tokens) {
         if (tokens[0] == "newmtl") {
-            mat_lib = new mtl;
+            mat_lib = new material;
             mat_list[tokens[1]] = mat_lib;
         }
         else if (tokens[0] == "Ns") {
@@ -261,16 +262,16 @@ namespace atlas {
 
     void stl_model::build_internals() {
         current = new object;
-        current->m_material = new mtl;
+        current->m_material = new material;
         current->m_material->ka = vec3(0.45f, 0.45f, 0.65f);
 
         m_objects.push_back(current);
 
         for (auto& f : m_facets) {
-            int v1 = (int)add_vertex(f->vertices[0]);
-            int n = (int)add_normal(f->normal);
-            int v2 = (int)add_vertex(f->vertices[1]);
-            int v3 = (int)add_vertex(f->vertices[2]);
+            int v1 = (int)add_vertex(f->vertices[0])-1;//convert to 0 base
+            int n = (int)add_normal(f->normal)-1;
+            int v2 = (int)add_vertex(f->vertices[1])-1;
+            int v3 = (int)add_vertex(f->vertices[2])-1;
             add_face(vertex(v1, -1, n), vertex(v2, -1, n), vertex(v3, -1, n));
         }
     }
@@ -314,5 +315,94 @@ namespace atlas {
             return false;
         }
         return true;
+    }
+    ////////////////////////////////////////////////////////////////////////
+    class ifacet {
+    public:
+        ifacet() {
+        }
+        ~ifacet() {
+        }
+
+        ivec3 vertices;
+        vec3 normal;
+    };
+
+    off_model::~off_model() {
+
+    }
+
+    bool off_model::load(const std::string& fnm) {
+        cg_parser parser;
+        std::string line;
+        std::ifstream mdl(fnm);
+        if (mdl.is_open()) {
+            int max_points = -1;
+            int max_trias = -1;
+            int pt_count = 0;
+            int tria_count = 0;
+            while (std::getline(mdl, line))
+            {
+                str_array star;
+                parser.tokenize(line, " ", star);
+
+                if (star[0] == "OFF" || star[0] == "COFF") continue;
+
+                if (star.size() < 3) continue; // error?
+                if (max_points == -1) {
+                    max_points = atoi(star[0].c_str());
+                    max_trias = atoi(star[1].c_str());
+                    continue;
+                }
+                if (pt_count < max_points) {
+                    float x = (float)atof(star[0].c_str());
+                    float y = (float)atof(star[1].c_str());
+                    float z = (float)atof(star[2].c_str());
+                    m_vertices.push_back(vec3(x, y, z));
+                    if (star.size() > 5) {
+                        float r = (float)atof(star[3].c_str());
+                        float g = (float)atof(star[4].c_str());
+                        float b = (float)atof(star[5].c_str());
+                        m_colors.push_back(vec3(r, g, b));
+                    }
+                    pt_count++;
+                    continue;
+                }
+                if (tria_count < max_trias) {
+                    int i = atoi(star[1].c_str());
+                    int j = atoi(star[2].c_str());
+                    int k = atoi(star[3].c_str());
+                    ifacet* face = new ifacet;
+                    face->vertices = ivec3(i, j, k);
+                    m_facets.push_back(face);
+                    pt_count++;
+                    continue;
+                }
+            }
+            mdl.close();
+            build_internals();
+        }
+        else {
+            return false;
+        }
+        return true;
+    }
+
+    void off_model::build_internals() {
+        current = new object;
+        current->m_material = new material;
+        current->m_material->ka = vec3(0.45f, 0.45f, 0.65f);
+
+        m_objects.push_back(current);
+
+        for (auto& f : m_facets) {
+            int i = f->vertices.x;
+            int j = f->vertices.y;
+            int k = f->vertices.z;
+            vec3 n = calc_normal(m_vertices[i], m_vertices[j], m_vertices[k]);
+            int ni = (int)add_normal(n) - 1;
+            add_face(vertex(f->vertices.x, -1, ni), vertex(f->vertices.y, -1, ni), vertex(f->vertices.z, -1, ni));
+        }
+
     }
 }
