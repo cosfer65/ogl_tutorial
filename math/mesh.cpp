@@ -140,6 +140,16 @@ namespace atlas {
         m_data.normals.push_back(y);
         m_data.normals.push_back(z);
     }
+    void c_mesh::addColor(float r, float g, float b) {
+        m_data.colors.push_back(r);
+        m_data.colors.push_back(g);
+        m_data.colors.push_back(b);
+    }
+    void c_mesh::addColor(const vec3& n) {
+        m_data.colors.push_back(n.x);
+        m_data.colors.push_back(n.y);
+        m_data.colors.push_back(n.z);
+    }
     void c_mesh::addNormal(const vec3& n) {
         addNormal(n.x, n.y, n.z);
     }

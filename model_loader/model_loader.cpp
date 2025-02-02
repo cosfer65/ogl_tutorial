@@ -41,8 +41,8 @@ public:
 
         // create the simple light shader
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/model_loader_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/model_loader_fs.glsl");
         m_shader->load();
 
         model1 = new gl_model();

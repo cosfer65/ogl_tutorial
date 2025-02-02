@@ -35,7 +35,7 @@ public:
     atlas_app() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (lights and materials)";
-        m_window.prefered_width = 1000;
+        m_window.prefered_width = 1200;
         m_window.prefered_height = 750;
     }
     virtual int init_application() {

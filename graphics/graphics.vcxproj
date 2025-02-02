@@ -94,7 +94,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\math;$(SolutionDir)\image;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\math;$(SolutionDir)\image;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -119,7 +119,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\math;$(SolutionDir)\image;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\math;$(SolutionDir)\image;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>

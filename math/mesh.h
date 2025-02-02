@@ -24,12 +24,14 @@ namespace atlas {
     struct mesh_data {
         std::vector<float> vertices;
         std::vector<float> normals;  // vertex normals
+        std::vector<float> colors;   // per vertex color
         std::vector<float> texCoords;
         std::vector<unsigned short> indices;
     };
     struct mesh_sizes {
         size_t num_vertices;
         size_t num_normals;
+        size_t num_colors;
         size_t num_texCoords;
         size_t num_indices;
         void set_from_mesh(const mesh_data& mesh) {
@@ -37,6 +39,7 @@ namespace atlas {
             num_normals = mesh.normals.size();
             num_texCoords = mesh.texCoords.size();
             num_indices = mesh.indices.size();
+            num_colors = mesh.colors.size();
         }
     };
     class c_mesh {
@@ -59,6 +62,8 @@ namespace atlas {
         virtual void addVertex(float x, float y, float z);
         virtual void addVertex(const vec3& v);
         virtual void addNormal(float x, float y, float z);
+        virtual void addColor(float r, float g, float b);
+        virtual void addColor(const vec3& n);
         virtual void addNormal(const vec3& n);
         virtual void addTexCoord(float s, float t);
         virtual void addIndices(unsigned short i1, unsigned short i2, unsigned short i3);
@@ -79,6 +84,9 @@ namespace atlas {
         }
         int n_vertices() {
             return num_vertices;
+        }
+        int n_colors() {
+            return (int)m_data.colors.size();
         }
         virtual void move(float x, float y, float z);
         virtual void rotate(quaternion& q);

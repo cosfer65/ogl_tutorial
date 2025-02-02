@@ -3,7 +3,7 @@
 #include "primitives.h"
 
 namespace atlas {
-    static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<std::vector<atlas::ivec3>>& fcs);
+    static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<atlas::vec3>* colors, const std::vector<std::vector<atlas::ivec3>>& fcs);
 
     static GLuint create_vbo(std::vector<float>& vertices, std::vector<unsigned short>& indices) {
         // the identifier of the buffer we will create
@@ -67,6 +67,17 @@ namespace atlas {
             glEnableVertexAttribArray(idx);
         }
 
+        if (m_mesh_sizes.num_colors > 0)
+        {
+            GLuint color_buffer;
+            glGenBuffers(1, &color_buffer);
+            glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+            glBufferData(GL_ARRAY_BUFFER, m_mesh_sizes.num_colors * sizeof(float), &mesh->m_data.colors[0], GL_STATIC_DRAW);
+            ++idx;
+            glVertexAttribPointer(idx, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            glEnableVertexAttribArray(idx);
+        }
+
         if (m_mesh_sizes.num_texCoords > 0)
         {
             GLuint texture_buffer;
@@ -117,7 +128,13 @@ namespace atlas {
         return p;
     }
 
-    static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<std::vector<atlas::ivec3>>& fcs) {
+    inline float random_color() {
+        int c = rand() % 256;
+        float col = ((float)c) / 255.f;
+        return col;
+    }
+
+    static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<atlas::vec3>* colors, const std::vector<std::vector<atlas::ivec3>>& fcs) {
         c_mesh* m_mesh = new c_mesh;
 
         int count = 0;
@@ -125,6 +142,17 @@ namespace atlas {
             for (int i = 0; i < 3; ++i) {
                 int v = f[i].x - 1;
                 m_mesh->addVertex(verts[v]);
+
+                if (colors) {
+                    // float r = random_color();
+                    // float g = random_color();
+                    // float b = random_color();
+                    float r = (*colors)[v].x;
+                    float g = (*colors)[v].y;
+                    float b = (*colors)[v].z;
+                    m_mesh->addColor(r, g, b);
+                }
+
                 v = f[i].z - 1;
                 m_mesh->addNormal(norms[v]);
             }
@@ -174,7 +202,7 @@ namespace atlas {
         loaded_model = model;
 
         for (auto o : model->m_objects) {
-            gl_prim* p = create_prim(model->m_vertices, model->m_normals, *o);
+            gl_prim* p = create_prim(model->m_vertices, model->m_normals, NULL, *o);
 
             base_3d_model::mtl* mm = o->m_material;
             if (mm) {

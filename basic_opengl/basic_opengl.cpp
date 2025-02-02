@@ -341,7 +341,7 @@ void render()
     gluPerspective(45.0f, (float)(g_window.vwidth) / (float)(g_window.vheight), 1.0f, 1000.0f);
 
     // new we are going into the world coordinates
-    // select the modelview ma
+    // select the modelview matrix
     glMatrixMode(GL_MODELVIEW);
     // reset the modelview matrix
     glLoadIdentity();
