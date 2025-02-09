@@ -58,7 +58,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\physics;$(SolutionDir)\graphics;$(SolutionDir)\math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\graphics;$(SolutionDir)\math</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -75,7 +75,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\physics;$(SolutionDir)\graphics;$(SolutionDir)\math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\graphics;$(SolutionDir)\math</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -87,10 +87,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="airplane.h" />
     <ClInclude Include="flight_simulator.h" />
+    <ClInclude Include="instruments.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="airplane.cpp" />
     <ClCompile Include="flight_simulator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\runtime\resources\compass_fs.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\runtime\resources\compass_vs.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

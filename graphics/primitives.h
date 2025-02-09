@@ -62,7 +62,6 @@ namespace atlas {
         virtual void render(gl_shader* _shader) {
             if (!vao) return;
 
-
             if (use_vertex_color) {
                 _shader->set_int("use_vertex_color", 1);
             }
@@ -71,7 +70,6 @@ namespace atlas {
                 _shader->set_vec3("objectColor", m_material->get_ambient());
                 _shader->set_int("use_vertex_color", 0);
             }
-            
 
             // position object
             mat4 ob_matrix = tmat * rmat * smat;
@@ -110,8 +108,16 @@ namespace atlas {
             rotation = _r;
             rmat = rotation_matrix(rotation.x, 1, 0, 0) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 0, 0, 1);
         }
+        void rotate_to(float x, float y, float z) {
+            rotation = vec3(x, y, z);
+            rmat = rotation_matrix(rotation.x, 1, 0, 0) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 0, 0, 1);
+        }
         void rotate_by(const vec3& _r) {
             rotation += _r;
+            rmat = rotation_matrix(rotation.x, 1, 0, 0) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 0, 0, 1);
+        }
+        void rotate_by(float x, float y, float z) {
+            rotation += vec3(x,y,z);
             rmat = rotation_matrix(rotation.x, 1, 0, 0) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 0, 0, 1);
         }
         void move_to(const vec3& _r) {
@@ -198,11 +204,28 @@ namespace atlas {
                 p->rotate_by(vec3(x, y, z));
             }
         }
+        void rotate_to(float x, float y, float z) {
+            for (auto p : m_objects) {
+                p->rotate_to(vec3(x, y, z));
+            }
+        }
         void set_scale(const vec3& s) {
             for (auto p : m_objects) {
                 p->set_scale(s);
             }
         }
+    };
+
+    class gl_stencil :public gl_prim {
+    protected:
+    public:
+        gl_stencil() {
+        }
+        virtual ~gl_stencil() {
+        }
+        virtual void create(GLenum drmode = GL_FILL, bool dr_el = true);
+        virtual void create_elliptic(GLenum drmode = GL_FILL, bool dr_el = true);
+        virtual void r_create(GLenum drmode = GL_FILL, bool dr_el = true);
     };
 }
 

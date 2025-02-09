@@ -7,3 +7,5 @@ OpenGL tutorial.docx
 *.aps
 *.bak
 /runtime/Releasex64
+flight_simulator/airplane - Copy.cpp
+flight_simulator/airplane - Copy.h

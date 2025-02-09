@@ -225,4 +225,86 @@ namespace atlas {
             m_objects.push_back(p);
         }
     }
+
+    void gl_stencil::create(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        draw_elements = true;
+        draw_mode = GL_FILL;
+
+        if (vao == 0)
+        {
+            c_mesh* tmesh = new c_mesh;
+
+            tmesh->addVertex(-.2f, -.25f, 0);
+            tmesh->addVertex(.2f, -.25f, 0);
+            tmesh->addVertex(.2f, .25f, 0);
+            tmesh->addVertex(-.2f, .25f, 0);
+
+            tmesh->addIndices(0, 1, 2);
+            tmesh->addIndices(0, 2, 3);
+
+            create_from_mesh(tmesh, GL_FILL, true);
+            delete tmesh;
+        }
+    }
+    void gl_stencil::create_elliptic(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        draw_elements = true;
+        draw_mode = GL_FILL;
+
+        if (vao == 0)
+        {
+            c_mesh* tmesh = new c_mesh;
+            int c = 0;
+            for (float a = 0; a <= 360; a += 10) {
+                float da = dtr(a);
+                float x = (float)(cos(da));
+                float y = (float)(sin(da));
+                tmesh->addVertex(x, y, 0);
+                c++;
+            }
+            tmesh->addVertex(0, 0, 0);//37
+
+            for (int i = 0; i <= 36; ++i) {
+                tmesh->addIndices(37, i, i + 1);
+            }
+
+            create_from_mesh(tmesh, GL_FILL, true);
+            delete tmesh;
+        }
+    }
+    void gl_stencil::r_create(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        draw_elements = true;
+        draw_mode = GL_FILL;
+
+        if (vao == 0)
+        {
+            c_mesh* tmesh = new c_mesh;
+            int c = 0;
+            for (float a = 0; a <= 360; a += 10) {
+                float da = dtr(a);
+                float x = (float)(0.25 * cos(da));
+                float y = (float)(0.25 * sin(da));
+                tmesh->addVertex(x, y, 0);
+                c++;
+            }
+            tmesh->addVertex(.25f, .25f, 0);
+            tmesh->addVertex(-.25f, .25f, 0);
+            tmesh->addVertex(-.25f, -.25f, 0);
+            tmesh->addVertex(.25f, -.25f, 0);
+
+            tmesh->addVertex(1, 1, 0); //37
+            tmesh->addVertex(-1, 1, 0);//38
+            tmesh->addVertex(-1, -1, 0);//39
+            tmesh->addVertex(1, -1, 0);//40
+
+            for (int q = 0; q < 4; ++q) {
+                int j = 9 * q;
+                for (int i = 0; i <= 9; ++i) {
+                    tmesh->addIndices(i + j, 37 + q, i + j + 1);
+                }
+            }
+
+            create_from_mesh(tmesh, GL_FILL, true);
+            delete tmesh;
+        }
+    }
 }

@@ -9,7 +9,7 @@ using namespace atlas;
 
 //std::string model_name("resources/car_01.obj");
 //std::string model_name("resources/rafale.stl");
-std::string model_name("resources/homer_out.off");
+std::string model_name("resources/artificial_horizon.obj");
 //std::string model_name("resources/ico_sps.off");
 
 class atlas_app :public gl_application {

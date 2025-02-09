@@ -6,111 +6,13 @@
 
 using namespace atlas;
 
-class gl_stencil :public gl_prim {
+
+class gl_background :public gl_prim {
 protected:
 public:
-    gl_stencil() {
+    gl_background() {
     }
-    virtual ~gl_stencil() {
-    }
-    virtual void create(GLenum drmode = GL_FILL, bool dr_el = true) {
-        draw_elements = true;
-        draw_mode = GL_FILL;
-
-        if (vao == 0)
-        {
-            c_mesh* tmesh = new c_mesh;
-
-            tmesh->addVertex(-.2f, -.25f, 0);
-            tmesh->addVertex(.2f, -.25f, 0);
-            tmesh->addVertex(.2f, .25f, 0);
-            tmesh->addVertex(-.2f, .25f, 0);
-
-            tmesh->addIndices(0, 1, 2);
-            tmesh->addIndices(0, 2, 3);
-
-            create_from_mesh(tmesh, GL_FILL, true);
-            delete tmesh;
-        }
-    }
-    virtual void create_elliptic(GLenum drmode = GL_FILL, bool dr_el = true) {
-        draw_elements = true;
-        draw_mode = GL_FILL;
-
-        if (vao == 0)
-        {
-            c_mesh* tmesh = new c_mesh;
-            int c = 0;
-            for (float a = 0; a <= 360; a += 10) {
-                float da = dtr(a);
-                float x = (float)(cos(da));
-                float y = (float)(sin(da));
-                tmesh->addVertex(x, y, 0);
-                c++;
-            }
-            tmesh->addVertex(0, 0, 0);//37
-
-            for (int i = 0; i <= 36; ++i) {
-                tmesh->addIndices(37, i, i + 1);
-            }
-
-            create_from_mesh(tmesh, GL_FILL, true);
-            delete tmesh;
-        }
-    }
-    virtual void r_create(GLenum drmode = GL_FILL, bool dr_el = true) {
-        draw_elements = true;
-        draw_mode = GL_FILL;
-
-        if (vao == 0)
-        {
-            c_mesh* tmesh = new c_mesh;
-            int c = 0;
-            for (float a = 0; a <= 360; a += 10) {
-                float da = dtr(a);
-                float x = (float)(0.25 * cos(da));
-                float y = (float)(0.25 * sin(da));
-                tmesh->addVertex(x, y, 0);
-                c++;
-            }
-            tmesh->addVertex(.25f, .25f, 0);
-            tmesh->addVertex(-.25f, .25f, 0);
-            tmesh->addVertex(-.25f, -.25f, 0);
-            tmesh->addVertex(.25f, -.25f, 0);
-
-            tmesh->addVertex(1, 1, 0); //37
-            tmesh->addVertex(-1, 1, 0);//38
-            tmesh->addVertex(-1, -1, 0);//39
-            tmesh->addVertex(1, -1, 0);//40
-
-            for (int q = 0; q < 4; ++q) {
-                int j = 9 * q;
-                for (int i = 0; i <= 9; ++i) {
-                    tmesh->addIndices(i + j, 37 + q, i + j + 1);
-                }
-            }
-
-            create_from_mesh(tmesh, GL_FILL, true);
-            delete tmesh;
-        }
-    }
-    virtual void render(gl_shader* _shader) {
-        if (!vao) return;
-
-        glBindVertexArray(vao);
-        glFrontFace(GL_CCW);
-        glPolygonMode(GL_FRONT, draw_mode);
-        glDrawElements(GL_TRIANGLES, (unsigned int)m_mesh_sizes.num_indices, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
-    }
-};
-
-class cg_gl_background :public gl_prim {
-protected:
-public:
-    cg_gl_background() {
-    }
-    virtual ~cg_gl_background() {
+    virtual ~gl_background() {
     }
     virtual void create(GLenum drmode = GL_FILL, bool dr_el = true) {
         draw_elements = true;
@@ -166,7 +68,7 @@ class atlas_app :public gl_application {
     float xstep;
     float ystep;
     gl_stencil* pstencil;
-    cg_gl_background* pbackgound;
+    gl_background* pbackgound;
 
 public:
     atlas_app() {
@@ -193,7 +95,7 @@ public:
         m_cube = create_cube(GL_FILL, true);
         m_cube->set_scale(vec3(1.2f, 1.2f, 1.2f));
 
-        pbackgound = new cg_gl_background;
+        pbackgound = new gl_background;
         pbackgound->create();
         pbackgound->set_scale(vec3(10));
         pbackgound->move_to(vec3(0, 0, -20));
@@ -230,6 +132,8 @@ public:
         if (xcen < -0.25f) xstep = -xstep;
         if (ycen > 0.25f) ystep = -ystep;
         if (ycen < -0.25f) ystep = -ystep;
+        // move the window
+        pstencil->move_to(xcen, ycen, 0);
     }
 
     virtual void render() {
@@ -254,12 +158,11 @@ public:
         ob_matrix.loadIdentity();  // at the center of the screen
         m_shader->set_mat4("model", ob_matrix);
         m_shader->set_mat4("camera", ob_matrix);
-        // move the window
-        m_shader->set_vec3("displacement", vec3(xcen, ycen, 0));
+
         // disabling these to speed up drawing
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
-        pstencil->render(NULL);
+        pstencil->render(m_shader);
 
         // return to normal drawing
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

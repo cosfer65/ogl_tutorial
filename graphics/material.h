@@ -4,6 +4,7 @@
 #include "graphics.h"
 #include "vector.h"
 #include "shaders.h"
+#include "util.h"
 
 namespace atlas {
     class cg_material {
@@ -81,6 +82,27 @@ namespace atlas {
                 glActiveTexture(GL_TEXTURE0 + specular_index);
                 glBindTexture(GL_TEXTURE_2D, specular_map);
             }
+        }
+    };
+
+    class gl_texture {
+        GLuint   m_texture = 0;
+    public:
+        gl_texture() {}
+        ~gl_texture() {
+            if (m_texture)
+                glDeleteTextures(1, &m_texture);
+        }
+
+        void load(const std::string& file_name) {
+            m_texture = load_texture(file_name);
+        }
+        void bind() {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, m_texture);
+        }
+        void release() {
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
     };
 }

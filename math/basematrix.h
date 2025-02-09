@@ -52,6 +52,9 @@ public:
                                     T(0), T(0), T(1) };
         memcpy(data, identity, 9 * sizeof(T));
     }
+    T& e(int r, int c) {
+        return data[(r - 1) * 3 + (c - 1)];
+    }
     T& operator[](int index) {
         return data[index];
     }
@@ -94,7 +97,7 @@ public:
         basemat3 t(data[0], data[3], data[6], data[1], data[4], data[7], data[2], data[5], data[8]);
         memcpy(data, t.data, 9 * sizeof(T));
     }
-    basemat3& invert() {
+    basemat3& inverse() {
         T mInverse[9];
         T d = det3(data);
         if (d == 0) d = 1;
@@ -238,6 +241,9 @@ public:
     T& operator[](int index) {
         return data[index];
     }
+    T& e(int r, int c) {
+        return data[(r - 1) * 4 + (c - 1)];
+    }
     T operator[](int index) const {
         return data[index];
     }
@@ -288,7 +294,7 @@ public:
         temp[12] = data[3]; temp[13] = data[7]; temp[14] = data[11]; temp[15] = data[15];
         memcpy(data, temp, 16 * sizeof(T));
     }
-    basemat4& invert() {
+    basemat4& inverse() {
         int i, j;
         T det, detij;
         T mInverse[16];

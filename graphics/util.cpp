@@ -3,14 +3,14 @@
 #include "image.h"
 
 namespace atlas {
-    GLuint load_texture(const char* fname)
+    GLuint load_texture(const std::string& fname)
     {
         // default return is failure
         GLuint tex = -1;
 
         // try to load the TGA image
         cg_image img;
-        if (!img.load(fname))
+        if (!img.load(fname.c_str()))
         {
             // return failure (invalid OpenGL id)
             return tex;

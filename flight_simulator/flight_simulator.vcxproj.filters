@@ -18,10 +18,23 @@
     <ClInclude Include="flight_simulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="instruments.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="airplane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="flight_simulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="airplane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\runtime\resources\compass_fs.glsl" />
+    <None Include="..\runtime\resources\compass_vs.glsl" />
   </ItemGroup>
 </Project>

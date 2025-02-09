@@ -156,7 +156,7 @@ public:
         temp[12] = data[3]; temp[13] = data[7]; temp[14] = data[11]; temp[15] = data[15];
         memcpy(data, temp, 16 * sizeof(T));
     }
-    basemat4& invert() {
+    basemat4& inverse() {
         int i, j;
         T det, detij;
         T mInverse[16];
