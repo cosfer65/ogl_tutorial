@@ -10,9 +10,9 @@ namespace atlas {
     class quaternion;
 
     struct iface {
-        int i1, i2, i3;
+        unsigned int i1, i2, i3;
         iface() { i1 = i2 = i3 = 0; }
-        iface(int _i1, int _i2, int _i3) :
+        iface(unsigned int _i1, unsigned int _i2, unsigned int _i3) :
             i1(_i1), i2(_i2), i3(_i3) {
         }
     };
@@ -26,20 +26,20 @@ namespace atlas {
         std::vector<float> normals;  // vertex normals
         std::vector<float> colors;   // per vertex color
         std::vector<float> texCoords;
-        std::vector<unsigned short> indices;
+        std::vector<unsigned int> indices;
     };
     struct mesh_sizes {
-        size_t num_vertices;
-        size_t num_normals;
-        size_t num_colors;
-        size_t num_texCoords;
-        size_t num_indices;
+        unsigned int num_vertices;
+        unsigned int num_normals;
+        unsigned int num_colors;
+        unsigned int num_texCoords;
+        unsigned int num_indices;
         void set_from_mesh(const mesh_data& mesh) {
-            num_vertices = mesh.vertices.size();
-            num_normals = mesh.normals.size();
-            num_texCoords = mesh.texCoords.size();
-            num_indices = mesh.indices.size();
-            num_colors = mesh.colors.size();
+            num_vertices = (unsigned int)mesh.vertices.size();
+            num_normals = (unsigned int)mesh.normals.size();
+            num_texCoords = (unsigned int)mesh.texCoords.size();
+            num_indices = (unsigned int)mesh.indices.size();
+            num_colors = (unsigned int)mesh.colors.size();
         }
     };
     class c_mesh {
@@ -54,8 +54,8 @@ namespace atlas {
         c_mesh();
         virtual ~c_mesh();
 
-        int num_vertices;
-        int num_faces;
+        unsigned int num_vertices;
+        unsigned int num_faces;
         mesh_data m_data;
         std::vector<vec3> face_normals; // needed for collision detection
 
@@ -66,27 +66,27 @@ namespace atlas {
         virtual void addColor(const vec3& n);
         virtual void addNormal(const vec3& n);
         virtual void addTexCoord(float s, float t);
-        virtual void addIndices(unsigned short i1, unsigned short i2, unsigned short i3);
+        virtual void addIndices(unsigned int i1, unsigned int i2, unsigned int i3);
 
         virtual void create(float dx, float dy, float dz) {};
         bool load(const std::string& fname);
 
-        vec3 vertex(int idx) {
-            int i = idx * 3; // point to vertex array index
+        vec3 vertex(unsigned int idx) {
+            unsigned int i = idx * 3; // point to vertex array index
             return vec3(m_data.vertices[i], m_data.vertices[i + 1], m_data.vertices[i + 2]);
         }
-        iface face(int idx) {
-            int i = idx * 3; // point to index array index
+        iface face(unsigned int idx) {
+            unsigned int i = idx * 3; // point to index array index
             return iface(m_data.indices[i], m_data.indices[i + 1], m_data.indices[i + 2]);
         }
-        int faces() {
+        unsigned int faces() {
             return num_faces;
         }
-        int n_vertices() {
+        unsigned int n_vertices() {
             return num_vertices;
         }
-        int n_colors() {
-            return (int)m_data.colors.size();
+        unsigned int n_colors() {
+            return (unsigned int)m_data.colors.size();
         }
         virtual void move(float x, float y, float z);
         virtual void rotate(quaternion& q);

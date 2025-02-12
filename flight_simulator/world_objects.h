@@ -1,14 +1,33 @@
 #ifndef __WORLD_OBJECTS_H__
 #define __WORLD_OBJECTS_H__
 
+#include <map>
+
 #include "camera.h"
 #include "light.h"
 #include "material.h"
-#include "util.h"
 #include "primitives.h"
 #include "skybox.h"
 
 #include "vector.h"
+
+class resource_manager {
+    resource_manager() {}
+    static std::map<std::string, GLuint> m_textures;
+    static resource_manager* m_manager;
+
+public:
+    ~resource_manager() {}
+
+    static resource_manager* get_resource_manager() {
+        if (m_manager == nullptr)
+            m_manager = new resource_manager;
+        return m_manager;
+    }
+    static GLuint load_texture(const std::string& fname);
+};
+
+
 
 class skybox {
     atlas::gl_skybox* m_sbox;
@@ -69,6 +88,7 @@ public:
         // calculate the position in earth space:
         vPosition = vPosition + vVelocity * dt;
     }
+    virtual void render(atlas::gl_shader* m_shader) {}
 };
 
 class ground :public world_object {
@@ -87,6 +107,9 @@ public:
         m_material->set_diffuse(0.12345f, 0.12345f, 0.12345f);
         m_material->set_specular(0.34567f, 0.34567f, 0.34567f);
         m_material->set_shine(0.1f * 128);
+    }
+    void set_scale(const atlas::vec3& scale) {
+        m_plane->set_scale(scale);
     }
 
     virtual void render(atlas::gl_shader* m_shader) {
@@ -113,7 +136,7 @@ public:
         m_material->set_specular(0.608273f, 0.608273f, 0.608273f);
         m_material->set_shine(0.4f * 128);
     }
-    virtual void set_scale(const atlas::vec3& scale) {
+    void set_scale(const atlas::vec3& scale) {
         m_box->set_scale(scale);
     }
     virtual void move_to(float x, float y, float z) {
@@ -131,9 +154,9 @@ class building : public world_object {
 public:
     building(int _i = 0) {
         if (_i % 2)
-            m_texture = atlas::load_texture("resources/build1.tga");
+            m_texture = resource_manager::load_texture("resources/build1.tga");
         else
-            m_texture = atlas::load_texture("resources/build2.tga");
+            m_texture = resource_manager::load_texture("resources/build2.tga");
     }
     virtual void create() {
         m_box = atlas::create_cube(GL_FILL, true);
@@ -148,8 +171,12 @@ public:
         return m_texture;
     }
     virtual void render(atlas::gl_shader* m_shader) {
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_texture);
+        m_shader->set_int("use_texture", 1);
         m_box->render(m_shader);
+        m_shader->set_int("use_texture", 0);
+        glActiveTexture(0);
     }
 };
 

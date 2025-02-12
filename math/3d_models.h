@@ -90,6 +90,7 @@ namespace atlas {
             return current->size(); // index of last insert!
         }
         void invert_coordinates(const ivec3& ivt);
+        void recenter();
     };
 
     class obj_model : public base_3d_model {

@@ -20,7 +20,7 @@ void	airplane::InitializeAirplane(void)
     // Set initial position
     Airplane.vPosition.x = -4800.f;
     Airplane.vPosition.y = 0.0f;
-    Airplane.vPosition.z = 1300.0f;
+    Airplane.vPosition.z = 300.0f;
 
     // Set initial velocity
     Airplane.vVelocity.x = 150.f;

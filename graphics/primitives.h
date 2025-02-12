@@ -62,6 +62,7 @@ namespace atlas {
         virtual void render(gl_shader* _shader) {
             if (!vao) return;
 
+
             if (use_vertex_color) {
                 _shader->set_int("use_vertex_color", 1);
             }
@@ -70,6 +71,7 @@ namespace atlas {
                 _shader->set_vec3("objectColor", m_material->get_ambient());
                 _shader->set_int("use_vertex_color", 0);
             }
+            
 
             // position object
             mat4 ob_matrix = tmat * rmat * smat;
@@ -83,7 +85,7 @@ namespace atlas {
                 // setup drawing
                 glFrontFace(GL_CCW);
                 glPolygonMode(GL_FRONT, draw_mode);
-                glDrawElements(GL_TRIANGLES, (unsigned int)m_mesh_sizes.num_indices, GL_UNSIGNED_SHORT, 0);
+                glDrawElements(GL_TRIANGLES, (unsigned int)m_mesh_sizes.num_indices, GL_UNSIGNED_INT, 0);
             }
             else
             {

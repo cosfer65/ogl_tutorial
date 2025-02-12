@@ -79,6 +79,11 @@ namespace atlas {
         mat4 perspective() {
             return perspective_matrix(zoom_angle, aspect, near_plane, far_plane);
         }
+        void set_perspective(float angle, float np, float fp) {
+            zoom_angle = angle;
+            near_plane = np;
+            far_plane = fp;
+        }
         // mat4 ortho() {
         //     return ortho_matrix(zoom_angle, aspect, near_plane, far_plane);
         // }

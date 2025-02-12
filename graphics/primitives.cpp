@@ -5,39 +5,6 @@
 namespace atlas {
     static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<atlas::vec3>* colors, const std::vector<std::vector<atlas::ivec3>>& fcs);
 
-    static GLuint create_vbo(std::vector<float>& vertices, std::vector<unsigned short>& indices) {
-        // the identifier of the buffer we will create
-        GLuint vao;
-
-        // generate the buffer
-        glGenVertexArrays(1, &vao);
-        // and make it current so that any subsequent calls will operate on it
-        glBindVertexArray(vao);
-
-        // we start with the vertex coordinates
-        GLuint position_buffer;
-        // generate buffer
-        glGenBuffers(1, &position_buffer);
-        // make it current
-        glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
-        // copy the data into it
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-        // set the data organization parameters
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        // enable the position data at 'location=0' (see shader!)
-        glEnableVertexAttribArray(0);
-
-        // now set the index buffer
-        GLuint index_buffer;
-        glGenBuffers(1, &index_buffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
-        glBindVertexArray(0);
-
-        // return the generated buffer ID
-        return vao;
-    }
-
     void gl_prim::create_from_mesh(c_mesh* mesh, GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
         m_mesh_sizes.set_from_mesh(mesh->m_data);
 
@@ -93,7 +60,7 @@ namespace atlas {
         GLuint index_buffer;
         glGenBuffers(1, &index_buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_mesh_sizes.num_indices * sizeof(unsigned short), &mesh->m_data.indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_mesh_sizes.num_indices * sizeof(unsigned int), &mesh->m_data.indices[0], GL_STATIC_DRAW);
         glBindVertexArray(0);
     }
 
@@ -138,10 +105,10 @@ namespace atlas {
     static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<atlas::vec3>* colors, const std::vector<std::vector<atlas::ivec3>>& fcs) {
         c_mesh* m_mesh = new c_mesh;
 
-        int count = 0;
+        unsigned int count = 0;
         for (auto& f : fcs) {
-            for (int i = 0; i < 3; ++i) {
-                int v = f[i].x;
+            for (unsigned int i = 0; i < 3; ++i) {
+                unsigned int v = f[i].x;
                 m_mesh->addVertex(verts[v]);
 
                 if (colors) {

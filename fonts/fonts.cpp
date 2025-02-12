@@ -1,10 +1,8 @@
 #include "fonts.h"
 #include "camera.h"
 #include "light.h"
-#include "util.h"
 #include "primitives.h"
 #include "font.h"
-#include "buffers.h"
 
 using namespace atlas;
 

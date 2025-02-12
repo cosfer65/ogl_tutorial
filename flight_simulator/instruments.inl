@@ -394,4 +394,51 @@ public:
     }
 };
 
+class altimeter {
+    gl_view_window m_view;
+    //gl_camera* m_camera;
+    gl_viewport* m_viewport;
+    gl_font* font2D;
+
+    float m_altitude;
+
+
+public:
+    altimeter() {}
+    ~altimeter() {}
+    void initialize() {
+        m_viewport = new gl_viewport();
+        m_viewport->set_fov(dtr(6.5));
+        //m_camera = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
+
+        font2D = get_font_manager().create_font("Consolas", "Consolas", 24);
+        font2D->set_color(vec4(1, 0, 0.5f, 1));
+        font2D->set_position(5, 7);
+    }
+
+
+    virtual void render() {
+        m_view.start();
+        m_viewport->set_viewport();
+
+        glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // mat4 cam_matrix = m_camera->perspective() * m_viewport->perspective();
+        font2D->set_position(15, 85);
+        font2D->render("Altitude");
+        font2D->set_position(15, 55);
+        font2D->render("30000ft");
+
+        m_view.end();
+    }
+    void resize_window(int width, int height) {
+        int h4 = height / 4;
+
+        m_view.set_position(0, 0);
+        m_view.set_extent(h4, h4);
+        m_viewport->set_window_aspect(h4, h4);
+        m_viewport->set_position(0, 0);
+    }
+};
 #endif // __instruments_h__

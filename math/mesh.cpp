@@ -14,7 +14,7 @@ namespace atlas {
     class ply_loader {
         enum read_state { IDLE, VERTEX_READ, FACE_READ };
         read_state state;
-        int v_count, f_count;
+        unsigned int v_count, f_count;
 
         c_mesh* m_mesh;
         cg_parser parser;
@@ -33,9 +33,9 @@ namespace atlas {
             m_mesh->addTexCoord(x, y);
         }
         void add_face(str_array& star) {
-            int x = atoi(star[1].c_str());
-            int y = atoi(star[2].c_str());
-            int z = atoi(star[3].c_str());
+            unsigned int x = atoi(star[1].c_str());
+            unsigned int y = atoi(star[2].c_str());
+            unsigned int z = atoi(star[3].c_str());
             m_mesh->addIndices(x, y, z);
         }
         int parse_ply(const std::string& line) {
@@ -157,7 +157,7 @@ namespace atlas {
         m_data.texCoords.push_back(s);
         m_data.texCoords.push_back(t);
     }
-    void c_mesh::addIndices(unsigned short i1, unsigned short i2, unsigned short i3) {
+    void c_mesh::addIndices(unsigned int i1, unsigned int i2, unsigned int i3) {
         m_data.indices.push_back(i1);
         m_data.indices.push_back(i2);
         m_data.indices.push_back(i3);
@@ -216,7 +216,7 @@ namespace atlas {
              xh,  yh,  zh,  xh,  yh, -zh, -xh,  yh,  zh, -xh,  yh, -zh, // top
              xh, -yh, -zh,  xh, -yh,  zh, -xh, -yh, -zh, -xh, -yh,  zh, // bottom
         };
-        int num_points = sizeof(vertex_positions) / sizeof(float);
+        unsigned int num_points = sizeof(vertex_positions) / sizeof(float);
         int vertex_indices[] =
         {
             0, 1, 2, 2, 1, 3,    // front
@@ -226,7 +226,7 @@ namespace atlas {
             16,17,18, 18,17,19,  // top
             20,21,22,22,21,23,   // bottom
         };
-        int num_indices = sizeof(vertex_indices) / sizeof(int);
+        unsigned int num_indices = sizeof(vertex_indices) / sizeof(int);
 
         float vertex_normals[] =
         {
@@ -246,15 +246,15 @@ namespace atlas {
             1,0, 1,1, 0,0, 0,1,
             1,0, 1,1, 0,0, 0,1,
         };
-        int tex_points = sizeof(tex_positions) / sizeof(float);
+        unsigned int tex_points = sizeof(tex_positions) / sizeof(float);
 
-        for (int i = 0, j = 0; i < num_points; i += 3, j += 2) {
+        for (unsigned int i = 0, j = 0; i < num_points; i += 3, j += 2) {
             ms->addVertex(vertex_positions[i], vertex_positions[i + 1], vertex_positions[i + 2]);
             ms->addNormal(vertex_normals[i], vertex_normals[i + 1], vertex_normals[i + 2]);
 
             ms->addTexCoord(tex_positions[j], tex_positions[j + 1]);
         }
-        for (auto i = 0; i < num_indices; i += 3) {
+        for (unsigned int i = 0; i < num_indices; i += 3) {
             ms->addIndices(vertex_indices[i], vertex_indices[i + 1], vertex_indices[i + 2]);
         }
 

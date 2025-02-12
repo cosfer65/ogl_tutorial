@@ -1,5 +1,7 @@
 #include "car_control.h"
 #include "world_objects.h"
+#include "quaternion.h"
+#include "font.h"
 
 using namespace atlas;
 

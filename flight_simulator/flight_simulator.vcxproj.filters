@@ -24,6 +24,9 @@
     <ClInclude Include="airplane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="world_objects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="flight_simulator.cpp">
@@ -32,9 +35,16 @@
     <ClCompile Include="airplane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="world_objects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\runtime\resources\compass_fs.glsl" />
     <None Include="..\runtime\resources\compass_vs.glsl" />
+    <None Include="..\runtime\resources\lights_materials_fs.glsl" />
+    <None Include="..\runtime\resources\lights_materials_vs.glsl" />
+    <None Include="..\runtime\resources\VertexShader.glsl" />
+    <None Include="..\runtime\resources\FragmentShader.glsl" />
   </ItemGroup>
 </Project>
