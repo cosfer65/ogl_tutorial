@@ -1,6 +1,9 @@
 #ifndef __instruments_h__
 #define __instruments_h__
 
+#include "skybox.h"
+#include "font.h"
+
 struct stickSate {
     stickSate() {
     }
@@ -31,6 +34,75 @@ public:
         glDisable(GL_SCISSOR_TEST);
     }
 };
+
+class pilot_view {
+    gl_view_window m_view;
+    gl_viewport* m_viewport;
+    gl_camera* m_cam;
+    gl_light* m_light;
+    gl_shader* m_shader;
+    skybox* m_skybox;
+
+    world* m_world = nullptr;
+
+public:
+    pilot_view() {}
+    ~pilot_view() { }
+    void initialize() {
+        m_viewport = new gl_viewport();
+        m_viewport->set_perspective(dtr(30), 0.1f, 10000.f);
+        m_cam = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
+
+        m_skybox = new skybox;
+        m_skybox->create();
+
+        m_light = new gl_light(gl_light::SPOTLIGHT);
+        m_light->set_position(vec3(-3000, 3000, 3000));
+        m_light->set_ambient(vec3(1, 1, 1));
+        m_light->set_diffuse(vec3(1, 1, 1));
+        m_light->set_specular(vec3(1, 1, 1));
+
+        m_shader = new gl_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
+        m_shader->load();
+    }
+
+    void set_world(world* w) {
+        m_world = w;
+    }
+    gl_camera* get_camera() {
+        return m_cam;
+    }
+    virtual void render() {
+        m_view.start();
+        m_viewport->set_viewport();
+        glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        m_skybox->render(m_viewport, m_cam);
+
+        m_shader->use();
+        m_light->apply(m_shader);
+        mat4 cam_matrix = m_cam->perspective() * m_viewport->perspective();
+        m_shader->set_mat4("camera", cam_matrix);
+        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+        if (m_world) {
+            m_world->render(m_shader);
+        }
+        m_shader->end();
+        m_view.end();
+    }
+    void resize_window(int width, int height) {
+        int h2 = height / 2;
+
+        m_view.set_position(0, h2);
+        m_view.set_extent(width, h2);
+        m_viewport->set_window_aspect(width, h2);
+        m_viewport->set_position(0, h2);
+    }
+};
+    
 
 class artificial_horizon {
     gl_view_window m_view;
@@ -402,6 +474,7 @@ class altimeter {
 
     float m_altitude;
     float m_climb;
+    float m_speed;
 
 public:
     altimeter() {}
@@ -420,7 +493,7 @@ public:
         m_shader->load();
 
         font3D = get_font_manager().create_font("Bookman3D", "Bookman Old Style", 12, .2f);
-        font3D->set_scale(vec3(0.5f));
+        font3D->set_scale(vec3(0.4f));
     }
 
     void set_altitude(float a) {
@@ -429,7 +502,9 @@ public:
     void set_climb(float a) {
         m_climb = a;
     }
-
+    void set_speed(float a) {
+        m_speed = a;
+    }
     virtual void render() {
         m_view.start();
         m_viewport->set_viewport();
@@ -447,16 +522,22 @@ public:
         char txt[100];
         m_shader->set_vec4("objectColor", vec4(.9f, .9f, .9f, 1.f));
 
-        font3D->move_to(0, 2, 0);
+        font3D->move_to(0, 2.5f, 0);
         font3D->render(m_shader, ALIGN_CENTER, "Altitude");
-        font3D->move_to(0, 1, 0);
+        font3D->move_to(0, 1.5f, 0);
         sprintf(txt, "%d ft", (int)m_altitude);
         font3D->render(m_shader, ALIGN_CENTER, txt);
 
-        font3D->move_to(0, -0.5f, 0);
+        font3D->move_to(0, 0.f, 0);
         font3D->render(m_shader, ALIGN_CENTER, "Climb");
-        font3D->move_to(0, -1.5f, 0);
+        font3D->move_to(0, -1.f, 0);
         sprintf(txt, "%d ft/sec", (int)m_climb);
+        font3D->render(m_shader, ALIGN_CENTER, txt);
+
+        font3D->move_to(0, -2.5f, 0);
+        font3D->render(m_shader, ALIGN_CENTER, "Speed");
+        font3D->move_to(0, -3.5f, 0);
+        sprintf(txt, "%d kn", (int)(m_speed * 0.5924838f));
         font3D->render(m_shader, ALIGN_CENTER, txt);
 
         m_shader->end();

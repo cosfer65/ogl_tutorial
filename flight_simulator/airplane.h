@@ -68,7 +68,6 @@ struct RigidBody {
     float		fSpeed;			// speed (magnitude of the velocity)
 
     clf_quaternion	qOrientation;	// orientation in earth coordinates
-    //Matrix3x3	mRotation;		// rotation matrix
 
     clf_vector3D		vForces;		// total force on body
     clf_vector3D		vMoments;		// total moment (torque) on body
