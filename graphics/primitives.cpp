@@ -96,6 +96,32 @@ namespace atlas {
         return p;
     }
 
+    gl_prim* create_cross(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        gl_prim* p = new gl_prim;
+        c_mesh* tmesh = create_cross_mesh(); // 1, 1, 1);
+        p->set_draw_type(GL_LINES);
+        p->create_from_mesh(tmesh, drmode, dr_el);
+        delete tmesh;
+        return p;
+    }
+
+    gl_prim* create_diamond(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        gl_prim* p = new gl_prim;
+        c_mesh* tmesh = create_diamond_mesh(); // 1, 1, 1);
+        p->create_from_mesh(tmesh, drmode, dr_el);
+        delete tmesh;
+        return p;
+    }
+
+    gl_prim* create_hbar(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        gl_prim* p = new gl_prim;
+        c_mesh* tmesh = create_hbar_mesh(); // 1, 1, 1);
+        p->set_draw_type(GL_LINES);
+        p->create_from_mesh(tmesh, drmode, dr_el);
+        delete tmesh;
+        return p;
+    }
+
     inline float random_color() {
         int c = rand() % 256;
         float col = ((float)c) / 255.f;

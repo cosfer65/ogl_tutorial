@@ -58,7 +58,7 @@ namespace atlas {
 #define MK_CONTROL          0x0008
 #define MK_MBUTTON          0x0010
 #endif
-        virtual void onMouseMove(int dx, int dy, WPARAM extra_btn) {};
+            virtual void onMouseMove(int dx, int dy, WPARAM extra_btn) {};
         virtual void onMouseDown(int btn, WPARAM extra_btn) {};
         virtual void onMouseUp(int btn, WPARAM extra_btn) {};
         virtual void onMouseDblClick(int btn, WPARAM extra_btn) {};

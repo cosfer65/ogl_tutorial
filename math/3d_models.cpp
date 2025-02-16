@@ -296,10 +296,10 @@ namespace atlas {
         m_objects.push_back(current);
 
         for (auto& f : m_facets) {
-            int v1 = (int)add_vertex(f->vertices[0])-1;//convert to 0 base
-            int n = (int)add_normal(f->normal)-1;
-            int v2 = (int)add_vertex(f->vertices[1])-1;
-            int v3 = (int)add_vertex(f->vertices[2])-1;
+            int v1 = (int)add_vertex(f->vertices[0]) - 1;//convert to 0 base
+            int n = (int)add_normal(f->normal) - 1;
+            int v2 = (int)add_vertex(f->vertices[1]) - 1;
+            int v3 = (int)add_vertex(f->vertices[2]) - 1;
             add_face(vertex(v1, -1, n), vertex(v2, -1, n), vertex(v3, -1, n));
         }
     }
@@ -324,14 +324,14 @@ namespace atlas {
         return true;
     }
 
-    bool stl_model::save(const std::string& fnm) { 
+    bool stl_model::save(const std::string& fnm) {
         std::ofstream mdl(fnm);
         mdl << "solid Object01\n";
         if (mdl.is_open()) {
             for (auto& f : m_facets) {
                 mdl << "  facet normal " << f->normal.x << " " << f->normal.y << " " << f->normal.z << "\n";
                 mdl << "    outer loop\n";
-                for (int i=0; i<3;++i)
+                for (int i = 0; i < 3; ++i)
                     mdl << "      vertex " << f->vertices[i].x << " " << f->vertices[i].y << " " << f->vertices[i].z << "\n";
                 mdl << "    endloop\n";
                 mdl << "  endfacet\n";
@@ -357,7 +357,6 @@ namespace atlas {
     };
 
     off_model::~off_model() {
-
     }
 
     bool off_model::load(const std::string& fnm) {
@@ -432,6 +431,5 @@ namespace atlas {
             int ni = (int)add_normal(n) - 1;
             add_face(vertex(f->vertices.x, -1, ni), vertex(f->vertices.y, -1, ni), vertex(f->vertices.z, -1, ni));
         }
-
     }
 }

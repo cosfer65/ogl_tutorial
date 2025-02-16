@@ -161,11 +161,17 @@ namespace atlas {
         m_data.indices.push_back(i1);
         m_data.indices.push_back(i2);
         m_data.indices.push_back(i3);
-        vec3 p1 = vertex(i1);
-        vec3 p2 = vertex(i2);
-        vec3 p3 = vertex(i3);
-        face_normals.push_back(calc_normal(p1, p2, p3));
-        ++num_faces;
+        // vec3 p1 = vertex(i1);
+        // vec3 p2 = vertex(i2);
+        // vec3 p3 = vertex(i3);
+        //face_normals.push_back(calc_normal(p1, p2, p3));
+        //++num_faces;
+    }
+    void c_mesh::addIndices(unsigned int i1, unsigned int i2) {
+        m_data.indices.push_back(i1);
+        m_data.indices.push_back(i2);
+        // vec3 p1 = vertex(i1);
+        // vec3 p2 = vertex(i2);
     }
     void c_mesh::move(float x, float y, float z)
     {
@@ -396,6 +402,72 @@ namespace atlas {
         //  0----3
         ms->addIndices(0, 2, 1);
         ms->addIndices(0, 3, 2);
+        return ms;
+    }
+    c_mesh* create_cross_mesh() {
+        c_mesh* ms = new c_mesh;
+        float minx = -0.5f;
+        float maxx = 0.5f;
+        float miny = -0.5f;
+        float maxy = 0.5f;
+        ms->addVertex(minx, 0, 0);
+        ms->addVertex(maxx, 0, 0);
+        ms->addVertex(0, miny, 0);
+        ms->addVertex(0, maxy, 0);
+
+        //  indices
+        //       3
+        //       |
+        //       |
+        //  0---------1
+        //       |
+        //       |
+        //       2
+        ms->addIndices(0, 1);
+        ms->addIndices(2, 3);
+        return ms;
+    }
+
+    c_mesh* create_diamond_mesh() {
+        c_mesh* ms = new c_mesh;
+        float minx = -0.5f;
+        float maxx = 0.5f;
+        float miny = -0.5f;
+        float maxy = 0.5f;
+        ms->addVertex(minx, 0, 0);
+        ms->addVertex(0, miny, 0);
+        ms->addVertex(maxx, 0, 0);
+        ms->addVertex(0, maxy, 0);
+
+        //  indices
+        //       3
+        //       |
+        //       |
+        //  0---------2
+        //       |
+        //       |
+        //       1
+        ms->addIndices(1, 2, 3);
+        ms->addIndices(3, 0, 1);
+        return ms;
+    }
+
+    c_mesh* create_hbar_mesh() {
+        c_mesh* ms = new c_mesh;
+        float minx = -0.5f;
+        float maxx = 0.5f;
+        ms->addVertex(minx, 0, 0);
+        ms->addVertex(maxx, 0, 0);
+
+        //  indices
+        //       3
+        //       |
+        //       |
+        //  0---------1
+        //       |
+        //       |
+        //       2
+        ms->addIndices(0, 1);
         return ms;
     }
 }

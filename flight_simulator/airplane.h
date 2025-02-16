@@ -120,12 +120,12 @@ public:
     void	ZeroFlaps(void);
 
     RigidBody	Airplane;		// Rigid body properties of our airplane
-// protected:
-    // 0-3 flaps
-    // 1-2 wings
-    // 4-5 ailerons
-    // 6 rudder
-    // 7 body
+    // protected:
+        // 0-3 flaps
+        // 1-2 wings
+        // 4-5 ailerons
+        // 6 rudder
+        // 7 body
     BodyElement	Element[8];		// Mass, inertia and lifting surface properties of our airplane
 
     clf_vector3D		Thrust;			// Thrust vector, assumed to act through the plane's CG

@@ -27,8 +27,6 @@ public:
     static GLuint load_texture(const std::string& fname);
 };
 
-
-
 class skybox {
     atlas::gl_skybox* m_sbox;
 public:
@@ -177,6 +175,30 @@ public:
         m_box->render(m_shader);
         m_shader->set_int("use_texture", 0);
         glActiveTexture(0);
+    }
+};
+
+class world {
+    std::vector<world_object*> m_objects;
+public:
+    world() {}
+    ~world() {
+        for (auto e : m_objects) {
+            delete e;
+        }   
+    }
+    void add_object(world_object* obj) {
+        m_objects.push_back(obj);
+    }
+    void step_simulation(float dt, unsigned int options) {
+        for (auto e : m_objects) {
+            e->step_simulation(dt, options);
+        }
+    }
+    void render(atlas::gl_shader* m_shader) {
+        for (auto e : m_objects) {
+            e->render(m_shader);
+        }
     }
 };
 

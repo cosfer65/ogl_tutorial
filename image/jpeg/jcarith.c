@@ -431,7 +431,7 @@ encode_mcu_DC_first(j_compress_ptr cinfo, JBLOCKROW* MCU_data)
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
             if (m < (int)((1L << cinfo->arith_dc_L[tbl]) >> 1))
                 entropy->dc_context[ci] = 0;	/* zero diff category */
-            else if (m > (int) ((1L << cinfo->arith_dc_U[tbl]) >> 1))
+            else if (m > (int)((1L << cinfo->arith_dc_U[tbl]) >> 1))
                 entropy->dc_context[ci] += 8;	/* large diff category */
             /* Figure F.9: Encoding the magnitude bit pattern of v */
             st += 14;
@@ -767,7 +767,7 @@ encode_mcu(j_compress_ptr cinfo, JBLOCKROW* MCU_data)
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
             if (m < (int)((1L << cinfo->arith_dc_L[tbl]) >> 1))
                 entropy->dc_context[ci] = 0;	/* zero diff category */
-            else if (m > (int) ((1L << cinfo->arith_dc_U[tbl]) >> 1))
+            else if (m > (int)((1L << cinfo->arith_dc_U[tbl]) >> 1))
                 entropy->dc_context[ci] += 8;	/* large diff category */
             /* Figure F.9: Encoding the magnitude bit pattern of v */
             st += 14;

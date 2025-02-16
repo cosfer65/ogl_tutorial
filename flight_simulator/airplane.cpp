@@ -5,7 +5,7 @@
 
 float	g = -32.174f;		// acceleration due to gravity,-32.174 ft/s^2
 float	rho = 0.0023769f;	// desity of air at sea level,0.0023769 slugs/ft^3
-float	_MAXTHRUST = 15000.f;
+float	_MAXTHRUST = 20000.f;
 
 //------------------------------------------------------------------------//
 // This function sets the initial state of the plane, i.e., its initial
@@ -18,12 +18,12 @@ void	airplane::InitializeAirplane(void)
     float iRoll, iPitch, iYaw;
 
     // Set initial position
-    Airplane.vPosition.x = -4800.f;
+    Airplane.vPosition.x = -5000.f;
     Airplane.vPosition.y = 0.0f;
-    Airplane.vPosition.z = 300.0f;
+    Airplane.vPosition.z = 250.0f;
 
     // Set initial velocity
-    Airplane.vVelocity.x = 150.f;
+    Airplane.vVelocity.x = 200.f;
     Airplane.vVelocity.y = 0.0f;
     Airplane.vVelocity.z = 0.0f;
     Airplane.fSpeed = Airplane.vVelocity.length();   // 600.0f;

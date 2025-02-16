@@ -6,7 +6,6 @@
 
 using namespace atlas;
 
-
 class gl_background :public gl_prim {
 protected:
 public:

@@ -51,7 +51,7 @@ public:
         m_shader->load();
 
         model1 = new gl_model();
-        model1->load(model_name); 
+        model1->load(model_name);
         //model1->set_scale(vec3(0.5f, 0.5f, 0.5f));
 
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
@@ -167,8 +167,8 @@ public:
 
         {
             char txt[100];
-            sprintf(txt, "x:%d, y:%d, z:%d, xy:%d, xz%d, yz:%d", 
-                base_3d_model::inv_x, base_3d_model::inv_y, base_3d_model::inv_z, 
+            sprintf(txt, "x:%d, y:%d, z:%d, xy:%d, xz%d, yz:%d",
+                base_3d_model::inv_x, base_3d_model::inv_y, base_3d_model::inv_z,
                 base_3d_model::flip_xy, base_3d_model::flip_xz, base_3d_model::flip_yz);
             font2D->set_position(5, 110);
             font2D->render(txt);

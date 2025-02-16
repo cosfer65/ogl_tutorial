@@ -151,5 +151,6 @@ namespace atlas {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
+        default_shader->end();
     }
 }

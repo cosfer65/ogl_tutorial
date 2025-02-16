@@ -46,5 +46,7 @@
     <None Include="..\runtime\resources\lights_materials_vs.glsl" />
     <None Include="..\runtime\resources\VertexShader.glsl" />
     <None Include="..\runtime\resources\FragmentShader.glsl" />
+    <None Include="..\runtime\resources\stick_fs.glsl" />
+    <None Include="..\runtime\resources\stick_vs.glsl" />
   </ItemGroup>
 </Project>

@@ -18,6 +18,7 @@ namespace atlas {
         // Specifies how polygons will be rasterized.
         // Accepted values are GL_POINT, GL_LINE, and GL_FILL.
         GLenum draw_mode;
+        GLenum draw_type;
         bool draw_elements;
         vec3 position;
         vec3 scale;
@@ -36,6 +37,7 @@ namespace atlas {
             position = vec3(0);
             rotation = vec3(0);
             draw_mode = GL_FILL;
+            draw_type = GL_TRIANGLES;
             draw_elements = true;
             // matrices are row-major!
             rmat = rotation_matrix(rotation.x, 0, 0, 1) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 1, 0, 0);
@@ -62,7 +64,6 @@ namespace atlas {
         virtual void render(gl_shader* _shader) {
             if (!vao) return;
 
-
             if (use_vertex_color) {
                 _shader->set_int("use_vertex_color", 1);
             }
@@ -71,7 +72,6 @@ namespace atlas {
                 _shader->set_vec3("objectColor", m_material->get_ambient());
                 _shader->set_int("use_vertex_color", 0);
             }
-            
 
             // position object
             mat4 ob_matrix = tmat * rmat * smat;
@@ -79,13 +79,16 @@ namespace atlas {
 
             // pass transformation to shader
             _shader->set_mat4("model", ob_matrix);
+
             glBindVertexArray(vao);
             if (draw_elements)
             {
                 // setup drawing
-                glFrontFace(GL_CCW);
-                glPolygonMode(GL_FRONT, draw_mode);
-                glDrawElements(GL_TRIANGLES, (unsigned int)m_mesh_sizes.num_indices, GL_UNSIGNED_INT, 0);
+                if (draw_type == GL_TRIANGLES) {
+                    glFrontFace(GL_CCW);
+                    glPolygonMode(GL_FRONT, draw_mode);
+                }
+                glDrawElements(draw_type, (unsigned int)m_mesh_sizes.num_indices, GL_UNSIGNED_INT, 0);
             }
             else
             {
@@ -96,7 +99,9 @@ namespace atlas {
             }
             glBindVertexArray(0);
         }
-
+        void set_draw_type(GLenum dt) {
+            draw_type = dt;
+        }
         virtual void step_simulation(float fElapsed) {}
         void set_all(const vec3& _p, const vec3& _s, const vec3& _r) {
             position = _p;
@@ -119,7 +124,7 @@ namespace atlas {
             rmat = rotation_matrix(rotation.x, 1, 0, 0) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 0, 0, 1);
         }
         void rotate_by(float x, float y, float z) {
-            rotation += vec3(x,y,z);
+            rotation += vec3(x, y, z);
             rmat = rotation_matrix(rotation.x, 1, 0, 0) * rotation_matrix(rotation.y, 0, 1, 0) * rotation_matrix(rotation.z, 0, 0, 1);
         }
         void move_to(const vec3& _r) {
@@ -170,11 +175,6 @@ namespace atlas {
             return rotation;
         }
     };
-
-    gl_prim* create_cube(GLenum drmode = GL_LINE, bool dr_el = true);
-    gl_prim* create_sphere(GLenum drmode = GL_LINE, bool dr_el = true);
-    gl_prim* create_cylinder(GLenum drmode = GL_LINE, bool dr_el = true);
-    gl_prim* create_plane(GLenum drmode = GL_LINE, bool dr_el = true);
 
     class gl_model {
         std::vector<gl_prim*> m_objects;
@@ -229,6 +229,14 @@ namespace atlas {
         virtual void create_elliptic(GLenum drmode = GL_FILL, bool dr_el = true);
         virtual void r_create(GLenum drmode = GL_FILL, bool dr_el = true);
     };
+
+    gl_prim* create_cube(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_sphere(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_cylinder(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_plane(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_cross(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_diamond(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_hbar(GLenum drmode = GL_FILL, bool dr_el = true);
 }
 
 #endif // __primitives__

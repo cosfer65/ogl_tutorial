@@ -57,7 +57,7 @@ namespace atlas {
         unsigned int num_vertices;
         unsigned int num_faces;
         mesh_data m_data;
-        std::vector<vec3> face_normals; // needed for collision detection
+        // std::vector<vec3> face_normals; // needed for collision detection
 
         virtual void addVertex(float x, float y, float z);
         virtual void addVertex(const vec3& v);
@@ -67,6 +67,7 @@ namespace atlas {
         virtual void addNormal(const vec3& n);
         virtual void addTexCoord(float s, float t);
         virtual void addIndices(unsigned int i1, unsigned int i2, unsigned int i3);
+        virtual void addIndices(unsigned int i1, unsigned int i2);
 
         virtual void create(float dx, float dy, float dz) {};
         bool load(const std::string& fname);
@@ -98,5 +99,8 @@ namespace atlas {
     // create a rectangular surface at the x-z plane and y=0
     // it extends -x/2 -> x/2  -z/2->z/2 y=0-parameter ignored
     c_mesh* create_plane(float x, float y, float z);
+    c_mesh* create_cross_mesh();
+    c_mesh* create_diamond_mesh();
+    c_mesh* create_hbar_mesh();
 }
 #endif // __mesh_h__

@@ -3,12 +3,10 @@
 
 struct stickSate {
     stickSate() {
-        x = y = 0;
-        thrust = 0.f;
     }
-    int x;
-    int y;
-    float thrust;
+    int x = 0;
+    int y = 0;
+    float thrust = 0.f;
 };
 
 class gl_view_window {
@@ -64,7 +62,7 @@ public:
 
         m_stencil = new gl_stencil;
         m_stencil->create_elliptic();
-        //m_stencil->set_scale(vec3(0.15f));
+        m_stencil->set_scale(vec3(0.75f));
     }
 
     void rotate_by(float pitch, float yaw, float roll) {
@@ -312,7 +310,6 @@ public:
     }
 };
 
-
 class compass_indicator {
     gl_view_window m_view;
     gl_camera* m_camera;
@@ -387,21 +384,24 @@ public:
     void resize_window(int width, int height) {
         int h4 = height / 4;
 
-        m_view.set_position(2*h4, h4);
+        m_view.set_position(2 * h4, h4);
         m_view.set_extent(h4, h4);
         m_viewport->set_window_aspect(h4, h4);
-        m_viewport->set_position(2*h4, h4);
+        m_viewport->set_position(2 * h4, h4);
     }
 };
 
 class altimeter {
     gl_view_window m_view;
-    //gl_camera* m_camera;
     gl_viewport* m_viewport;
-    gl_font* font2D;
+    gl_camera* m_cam;
+    gl_light* m_light;
+    gl_shader* m_shader;
+
+    gl_font* font3D;
 
     float m_altitude;
-
+    float m_climb;
 
 public:
     altimeter() {}
@@ -409,13 +409,26 @@ public:
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_fov(dtr(6.5));
-        //m_camera = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        font2D = get_font_manager().create_font("Consolas", "Consolas", 24);
-        font2D->set_color(vec4(1, 0, 0.5f, 1));
-        font2D->set_position(5, 7);
+        m_cam = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_light = new gl_light(gl_light::SPOTLIGHT);
+        m_light->set_position(vec3(-30, 30, 30));
+
+        m_shader = new gl_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/fonts_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/fonts_fs.glsl");
+        m_shader->load();
+
+        font3D = get_font_manager().create_font("Bookman3D", "Bookman Old Style", 12, .2f);
+        font3D->set_scale(vec3(0.5f));
     }
 
+    void set_altitude(float a) {
+        m_altitude = a;
+    }
+    void set_climb(float a) {
+        m_climb = a;
+    }
 
     virtual void render() {
         m_view.start();
@@ -424,11 +437,29 @@ public:
         glClearColor(0.1f, 0.1f, 0.1f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // mat4 cam_matrix = m_camera->perspective() * m_viewport->perspective();
-        font2D->set_position(15, 85);
-        font2D->render("Altitude");
-        font2D->set_position(15, 55);
-        font2D->render("30000ft");
+        m_shader->use();
+        m_light->apply(m_shader);
+
+        mat4 cam_matrix = m_cam->perspective() * m_viewport->perspective();
+        m_shader->set_mat4("camera", cam_matrix);
+        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+
+        char txt[100];
+        m_shader->set_vec4("objectColor", vec4(.9f, .9f, .9f, 1.f));
+
+        font3D->move_to(0, 2, 0);
+        font3D->render(m_shader, ALIGN_CENTER, "Altitude");
+        font3D->move_to(0, 1, 0);
+        sprintf(txt, "%d ft", (int)m_altitude);
+        font3D->render(m_shader, ALIGN_CENTER, txt);
+
+        font3D->move_to(0, -0.5f, 0);
+        font3D->render(m_shader, ALIGN_CENTER, "Climb");
+        font3D->move_to(0, -1.5f, 0);
+        sprintf(txt, "%d ft/sec", (int)m_climb);
+        font3D->render(m_shader, ALIGN_CENTER, txt);
+
+        m_shader->end();
 
         m_view.end();
     }
@@ -441,4 +472,159 @@ public:
         m_viewport->set_position(0, 0);
     }
 };
+
+class stick_indicator {
+    gl_view_window m_view;
+    gl_viewport* m_viewport;
+    gl_camera* m_cam;
+    gl_light* m_light;
+    gl_shader* m_shader;
+
+    stickSate* m_stick_state = nullptr; // access to airplane's stick
+    gl_prim* m_cross;
+    gl_prim* m_diamond;
+    gl_prim* m_thrust;
+
+public:
+    stick_indicator() {}
+    ~stick_indicator() {}
+    void initialize() {
+        m_viewport = new gl_viewport();
+        m_viewport->set_fov(dtr(6.5));
+
+        m_cam = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_light = new gl_light(gl_light::SPOTLIGHT);
+        m_light->set_position(vec3(-30, 30, 30));
+
+        m_shader = new gl_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/stick_vs.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/stick_fs.glsl");
+        m_shader->load();
+
+        m_cross = create_cross();
+        m_cross->set_scale(vec3(3));
+
+        m_diamond = create_diamond();
+        m_diamond->set_scale(vec3(0.5f));
+
+        m_thrust = create_hbar();
+        m_thrust->set_scale(vec3(0.75f));
+    }
+
+    void set_stick_state(stickSate* s) {
+        m_stick_state = s;
+    }
+    virtual void render() {
+        m_view.start();
+        m_viewport->set_viewport();
+
+        glClearColor(0.1f, 0.1f, 0.3f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        m_shader->use();
+        m_light->apply(m_shader);
+
+        mat4 cam_matrix = m_cam->perspective() * m_viewport->perspective();
+        m_shader->set_mat4("camera", cam_matrix);
+        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+
+        m_shader->set_vec4("objectColor", vec4(.85f, .85f, .85f, 1.f));
+        m_cross->render(m_shader);
+
+        if (m_stick_state) {
+            float x, y, t;
+            x = ((float)m_stick_state->x) / 500.f;
+            y = ((float)m_stick_state->y) / 500.f;
+            t = m_stick_state->thrust / 500.f;
+            m_diamond->move_to(x, y, 0);
+            m_shader->set_vec4("objectColor", vec4(.27f, .37f, .47f, .57f));
+            m_diamond->render(m_shader);
+
+            m_thrust->move_to(0, t - 1, 0);
+            m_shader->set_vec4("objectColor", vec4(.67f, .37f, .17f, .57f));
+            m_thrust->render(m_shader);
+        }
+
+        m_shader->end();
+
+        m_view.end();
+    }
+    void resize_window(int width, int height) {
+        int h4 = height / 4;
+
+        m_view.set_position(h4, 0);
+        m_view.set_extent(h4, h4);
+        m_viewport->set_window_aspect(h4, h4);
+        m_viewport->set_position(h4, 0);
+    }
+};
+
+class map_instrument {
+public:
+    gl_view_window m_view;
+    gl_viewport* m_viewport;
+    gl_camera* m_cam;
+    gl_light* m_light;
+    gl_shader* m_shader;
+
+    world* m_world = nullptr;
+
+public:
+    map_instrument() {}
+    ~map_instrument() {}
+    void initialize() {
+        m_viewport = new gl_viewport();
+        m_viewport->set_perspective(dtr(20), 0.1f, 10000.f);
+
+        m_cam = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_light = new gl_light(gl_light::SPOTLIGHT);
+        m_light->set_position(vec3(-30, 30, 30));
+
+        m_shader = new gl_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
+
+        m_shader->load();
+    }
+    gl_camera* get_camera() {
+        return m_cam;
+    }
+    void set_world(world* w) {
+        m_world = w;
+    }
+    virtual void render() {
+        m_view.start();
+        m_viewport->set_viewport();
+
+        glClearColor(0.1f, 0.1f, 0.2f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        m_shader->use();
+        m_light->apply(m_shader);
+
+        mat4 cam_matrix = m_cam->perspective() * m_viewport->perspective();
+        m_shader->set_mat4("camera", cam_matrix);
+        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+
+        if (m_world) {
+            //m_shader->set_vec4("objectColor", vec4(.85f, .85f, .85f, 1.f));
+            m_world->render(m_shader);
+        }
+
+        m_shader->end();
+
+        m_view.end();
+    }
+
+    void resize_window(int width, int height) {
+        int h2 = height / 2;
+        int w2 = width / 2;
+
+        m_view.set_position(w2, 0);
+        m_view.set_extent(w2, h2);
+        m_viewport->set_window_aspect(w2, h2);
+        m_viewport->set_position(w2, 0);
+    }
+};
+
 #endif // __instruments_h__

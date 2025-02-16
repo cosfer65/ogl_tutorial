@@ -8,8 +8,8 @@
 using namespace atlas;
 
 #include "airplane.h"
-#include "instruments.inl"
 #include "world_objects.h"
+#include "instruments.inl"
 
 void print_vec(vec3 v) {
     char str[100];
@@ -44,8 +44,11 @@ class atlas_app :public gl_application {
     airplane m_airplane;
     vec3 euler_angles;
     stickSate tstate;
+    stick_indicator m_stick_indicator;
 
-    std::vector<world_object*> m_world_objects;
+    world* m_world;
+
+    map_instrument m_map;
 
 public:
     atlas_app() {
@@ -55,25 +58,29 @@ public:
     }
 
     void create_world() {
+        m_world = new world;
         ground* g = new ground;
         g->create();
-        g->set_scale(vec3(1000, 0, 1000));
+        g->set_scale(vec3(10000, 0, 10000));
 
-        m_world_objects.push_back(g);
+        m_world->add_object(g);
 
         building* bld;
 
         float x, z;
         int c = 0;
-        for (x = -150.f; x < 151.f; x += 45.f) {
-            for (z = -150.f; z < 151.f; z += 45.f) {
+        for (x = -450.f; x < 451.f; x += 50.f) {
+            for (z = -450.f; z < 451.f; z += 50.f) {
                 bld = new building(c);
                 c++;
 
                 bld->create();
-                bld->move_to(x, 7.5f, z);
-                bld->set_scale(vec3(15));
-                m_world_objects.push_back(bld);
+                float w = (float)(rand() % 15) + 15;
+                float d = (float)(rand() % 15) + 15;
+                float h = (float)(rand() % 25) + 25;
+                bld->move_to(x, h / 2.f, z);
+                bld->set_scale(vec3(w, h, d));
+                m_world->add_object(bld);
             }
         }
     }
@@ -81,7 +88,6 @@ public:
     void build_main_view() {
         main_viewport = new gl_viewport();
         main_viewport->set_perspective(dtr(30), 0.1f, 10000.f);
-        // main_viewport->set_fov(dtr(30));
         main_camera = new gl_camera(vec3(0, 50, 600), vec3(0, 0, 0), vec3(0, 1, 0));
 
         m_skybox = new skybox;
@@ -98,8 +104,6 @@ public:
 
         // create the simple light shader
         main_shader = new gl_shader;
-        // main_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
-        // main_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
         main_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
         main_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
         main_shader->load();
@@ -112,6 +116,10 @@ public:
         m_roll_ind.initialize();
         m_compass_ind.initialize();
         m_altimeter.initialize();
+        m_stick_indicator.initialize();
+        m_stick_indicator.set_stick_state(&tstate);
+        m_map.initialize();
+        m_map.set_world(m_world);
     }
 
     virtual int init_application() {
@@ -136,7 +144,8 @@ public:
     }
 
     virtual void onMouseMove(int dx, int dy, WPARAM extra_btn) {
-        if (extra_btn & MK_LBUTTON) {
+        // ignore mouse move when left button is not pressed
+        if (!(extra_btn & MK_LBUTTON)) {
             if (dx != 0) {
                 tstate.x += dx;
                 if (tstate.x < -1000) tstate.x = -1000;
@@ -158,12 +167,6 @@ public:
                     m_airplane.PitchUp(ud);
             }
         }
-        if (extra_btn & MK_RBUTTON) {
-            // model1->rotate_by(0, 0, dtr(dy / 5.f));
-            // m_ah.rotate_by(0, 0, dtr(dy / 5.f));
-            // m_roll_ind.rotate_by(0, 0, dtr(dy / 5.f));
-            // m_compass_ind.rotate_by(0, 0, dtr(dy / 5.f));
-        }
     };
 
     virtual void onMouseWheel(int delta, WPARAM extra_btn) {
@@ -183,11 +186,7 @@ public:
         main_shader->set_mat4("camera", cam_matrix);
         main_shader->set_vec3("cameraPos", main_camera->vLocation);
 
-        // model1->render(main_shader);
-
-        for (auto e : m_world_objects) {
-            e->render(main_shader);
-        }
+        m_world->render(main_shader);
 
         main_shader->end();
         main_view.end();
@@ -203,6 +202,8 @@ public:
         m_roll_ind.render();
         m_compass_ind.render();
         m_altimeter.render();
+        m_stick_indicator.render();
+        m_map.render();
     }
 
     virtual void exit_application() {
@@ -222,26 +223,45 @@ public:
             m_roll_ind.resize_window(width, height);
             m_compass_ind.resize_window(width, height);
             m_altimeter.resize_window(width, height);
+            m_stick_indicator.resize_window(width, height);
+            m_map.resize_window(width, height);
         }
     }
 
     virtual void step_simulation(float fElapsed) {
+        if (keyDown['Z'])
+            tstate.thrust -= fElapsed * 400.f;
+        if (keyDown['A'])
+            tstate.thrust += fElapsed * 400.f;
+        if (tstate.thrust < 0.f) tstate.thrust = 0.f;
+        if (tstate.thrust > 1000.f) tstate.thrust = 1000.f;
+        m_airplane.SetThrust(tstate.thrust / 1000.f);
+
         m_airplane.StepSimulation(fElapsed);
         euler_angles = make_euler_angles_from_q(m_airplane.Airplane.qOrientation);
         model1->rotate_to(-euler_angles.y, -euler_angles.z, euler_angles.x);
         m_ah.rotate_to(-euler_angles.y, 0, euler_angles.x);
         m_roll_ind.rotate_to(0, 0, euler_angles.x); // done
         m_compass_ind.rotate_to(0, 0, euler_angles.z);
+        m_altimeter.set_altitude(m_airplane.Airplane.vPosition.z);
+        m_altimeter.set_climb(m_airplane.Airplane.vVelocity.z);
 
+        // calculate pilot's view
         vec3 z = m_airplane.GetBodyZAxisVector();
         vec3 x = m_airplane.GetBodyXAxisVector();
-
         vec3 vForward = clf_vector3D(x.x, x.z, x.y);
         vec3 vUp = clf_vector3D(z.x, z.z, z.y);
         x = m_airplane.Airplane.vPosition * 0.3f; // convert ft to m
         vec3 vLocation = clf_vector3D(x.x, x.z, x.y);
-
         main_camera->setup_d(vLocation, vForward, vUp);
+
+        // calculate map view
+        x = m_airplane.Airplane.vPosition * 0.3f; // convert ft to m
+        vLocation = clf_vector3D(x.x, 1500, x.y);
+        vForward = clf_vector3D(0, -1, 0);
+        x = m_airplane.GetBodyXAxisVector();
+        vUp = clf_vector3D(x.x, 0, x.y);
+        m_map.get_camera()->setup_d(vLocation, vForward, vUp);
     }
 };
 
