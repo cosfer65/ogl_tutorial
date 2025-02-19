@@ -7,10 +7,17 @@
 
 using namespace atlas;
 
+std::string model_name("resources/cube.obj");
 //std::string model_name("resources/car_01.obj");
-//std::string model_name("resources/rafale.stl");
-std::string model_name("resources/artificial_horizon.obj");
-//std::string model_name("resources/ico_sps.off");
+//std::string model_name("resources/rafale.off");
+//std::string model_name("resources/model_68.off");
+//std::string model_name("resources/model_25.off");
+//std::string model_name("resources/Part3.off");
+
+//std::string model_name("c:/blender/cube1.obj");
+
+
+float fscale = 1.f;
 
 class atlas_app :public gl_application {
     gl_viewport* m_view;
@@ -23,6 +30,7 @@ class atlas_app :public gl_application {
     float fov = 15.f;
 
     gl_font* font2D;
+    gl_prim* m_ucs;
 public:
     atlas_app() {
         m_view = new gl_viewport();
@@ -33,11 +41,11 @@ public:
     virtual int init_application() {
         m_view->set_fov(dtr(fov));
         // m_cam = new gl_camera(vec3(-5, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_cam = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_cam = new gl_camera(vec3(0, 0, 100), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        m_light = new gl_light(gl_light::SPOTLIGHT);
+        m_light = new gl_light(gl_light::DIRLIGHT);
         // we are holding the light source and pointing at the objects
-        m_light->set_position(vec3(10, 10, 10));
+        m_light->set_position(vec3(-100, 100, 100));
         // allow some ambience for the light
         // white light (we can experiment with this)
         m_light->set_ambient(vec3(1));
@@ -51,10 +59,13 @@ public:
         m_shader->load();
 
         model1 = new gl_model();
-        model1->load(model_name);
-        //model1->set_scale(vec3(0.5f, 0.5f, 0.5f));
+        model1->load(model_name); //--------------------------------------
+        model1->set_scale(vec3(fscale));
 
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
+
+        m_ucs = create_UCS();
+        m_ucs->set_scale(vec3(2));
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -65,79 +76,38 @@ public:
     }
 
     virtual void onMouseMove(int dx, int dy, WPARAM extra_btn) {
-        if (extra_btn & MK_LBUTTON)
+        if (extra_btn & MK_LBUTTON) {
             model1->rotate_by(dtr(dy / 5.f), dtr(dx / 5.f), 0);
-        if (extra_btn & MK_RBUTTON)
+            m_ucs->rotate_by(dtr(dy / 5.f), dtr(dx / 5.f), 0);
+        }
+        if (extra_btn & MK_RBUTTON) {
             model1->rotate_by(0, 0, dtr(dy / 5.f));
-    };
+            m_ucs->rotate_by(0, 0, dtr(dy / 5.f));
+        }
+    }
+
     virtual void onMouseWheel(int delta, WPARAM extra_btn) {
         if (delta > 0)
-            fov += 1.f;
+            fscale -= 0.05f;
         if (delta < 0)
-            fov -= 1.f;
-        if (fov > 160.f)
-            fov = 160.f;
-        if (fov < 4.f)
-            fov = 4.f;
-        m_view->set_fov(dtr(fov));
-    };
+            fscale += 0.05f;
+        if (fscale < 0.05f)
+            fov = 0.05f;
+        model1->set_scale(vec3(fscale));
+    }
 
     virtual void step_simulation(float fElapsed) {
-        bool reload = false;
-        if (keyDown['R']) {
-            base_3d_model::inv_x = 1;
-            base_3d_model::inv_y = 1;
-            base_3d_model::inv_z = 1;
-            base_3d_model::flip_xy = 0;
-            base_3d_model::flip_xz = 0;
-            base_3d_model::flip_yz = 0;
-            reload = true;
-            keyDown['R'] = 0;
+        if (keyDown['T']) {
+            base_3d_model::inv_trias = 1 - base_3d_model::inv_trias;
+            keyDown['T'] = 0;
+            model1->load(model_name); //--------------------------------------
+            model1->set_scale(vec3(fscale));
         }
-        if (keyDown['S']) {
-            // model1->save("resources/model.stl");
-            keyDown['S'] = 0;
-            reload = true;
-        }
-        if (keyDown['X']) {
-            base_3d_model::inv_x *= -1;
-            keyDown['X'] = 0;
-            reload = true;
-        }
-        if (keyDown['Y']) {
-            base_3d_model::inv_y *= -1;
-            keyDown['Y'] = 0;
-            reload = true;
-        }
-        if (keyDown['Z']) {
-            base_3d_model::inv_z *= -1;
-            keyDown['Z'] = 0;
-            reload = true;
-        }
-        if (keyDown['1']) {
-            base_3d_model::flip_xy = 1 - base_3d_model::flip_xy;
-            base_3d_model::flip_xz = 0;
-            base_3d_model::flip_yz = 0;
-            keyDown['1'] = 0;
-            reload = true;
-        }
-        if (keyDown['2']) {
-            base_3d_model::flip_xz = 1 - base_3d_model::flip_xz;
-            base_3d_model::flip_xy = 0;
-            base_3d_model::flip_yz = 0;
-            keyDown['2'] = 0;
-            reload = true;
-        }
-        if (keyDown['3']) {
-            base_3d_model::flip_yz = 1 - base_3d_model::flip_yz;
-            base_3d_model::flip_xy = 0;
-            base_3d_model::flip_xz = 0;
-            keyDown['3'] = 0;
-            reload = true;
-        }
-        if (reload) {
-            model1->load(model_name);
-            // model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
+        if (keyDown['N']) {
+            base_3d_model::inv_norms = 1 - base_3d_model::inv_norms;
+            keyDown['N'] = 0;
+            model1->load(model_name); //--------------------------------------
+            model1->set_scale(vec3(fscale));
         }
     }
 
@@ -161,27 +131,25 @@ public:
 
         model1->render(m_shader);
 
+        m_shader->set_vec3("objectColor", vec3(1));
+        m_ucs->move_to(-15, 0, 0);
+        m_ucs->render(m_shader);
+
         m_shader->end();
 
         font2D->set_color(vec4(1));
 
         {
             char txt[100];
-            sprintf(txt, "x:%d, y:%d, z:%d, xy:%d, xz%d, yz:%d",
-                base_3d_model::inv_x, base_3d_model::inv_y, base_3d_model::inv_z,
-                base_3d_model::flip_xy, base_3d_model::flip_xz, base_3d_model::flip_yz);
-            font2D->set_position(5, 110);
+            sprintf(txt, "T:%d, N:%d", base_3d_model::inv_trias, base_3d_model::inv_norms);
+            font2D->set_position(5, 80);
             font2D->render(txt);
         }
 
-        font2D->set_position(5, 95);
-        font2D->render("S to save model");
-        font2D->set_position(5, 80);
-        font2D->render("R to reset model");
         font2D->set_position(5, 65);
-        font2D->render("X/Y/Z to invert axis");
+        font2D->render("T to set CCW");
         font2D->set_position(5, 50);
-        font2D->render("flips: 1-yz, 2-xy, 3-xz");
+        font2D->render("N to invert normal");
 
         font2D->set_position(5, 35);
         font2D->render("Left mouse button and drag to rotate around X/Y axes");

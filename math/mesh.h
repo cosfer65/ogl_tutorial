@@ -102,5 +102,6 @@ namespace atlas {
     c_mesh* create_cross_mesh();
     c_mesh* create_diamond_mesh();
     c_mesh* create_hbar_mesh();
+    c_mesh* create_UCS_mesh();
 }
 #endif // __mesh_h__

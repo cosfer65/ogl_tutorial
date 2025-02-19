@@ -6,25 +6,8 @@
 #include "geom.h"
 
 namespace atlas {
-    int base_3d_model::inv_x = 1;
-    int base_3d_model::inv_y = 1;
-    int base_3d_model::inv_z = 1;
-    int base_3d_model::flip_xy = 0;
-    int base_3d_model::flip_xz = 0;
-    int base_3d_model::flip_yz = 0;
-
-    void base_3d_model::invert_coordinates(const ivec3& ivt) {
-        for (auto& v : m_vertices) {
-            v.x *= ivt.x;
-            v.y *= ivt.y;
-            v.z *= ivt.z;
-        }
-        for (auto& v : m_normals) {
-            v.x *= ivt.x;
-            v.y *= ivt.y;
-            v.z *= ivt.z;
-        }
-    }
+    int base_3d_model::inv_trias = 0;
+    int base_3d_model::inv_norms = 0;
 
     void base_3d_model::recenter() {
         float mnx, mxx;
@@ -52,6 +35,26 @@ namespace atlas {
             v.z -= cz;
         }
     }
+
+    void base_3d_model::fix_model() {
+        if (base_3d_model::inv_trias)
+        {
+            for (auto o : m_objects) {
+                for (auto& f : *o) {
+                    vertex t = f[0];
+                    f[0] = f[2];
+                    f[2] = t;
+                }
+            }
+        }
+        if (base_3d_model::inv_norms)
+        {
+            for (auto& n : m_normals) {
+                n = n * -1;
+            }
+        }
+    }
+
 
     template<typename T>
     basevec3<T> parse_vector3(const std::string& str, const std::string& delim) {
@@ -81,22 +84,23 @@ namespace atlas {
     void obj_model::parse_material_tokens(const str_array& tokens) {
         if (tokens[0] == "newmtl") {
             mat_lib = new material;
+
+            mat_lib->ns = 250.f;
+            mat_lib->ka = vec3(0.45f, 0.45f, 0.65f);
+            mat_lib->kd = vec3(0.45f, 0.45f, 0.65f);
+            mat_lib->ks = vec3(0.45f, 0.45f, 0.65f);
+            mat_lib->ke = vec3(0.45f, 0.45f, 0.65f);
+
+            mat_lib->ni = 1.8f;
+            mat_lib->d = 0.9f;
+            mat_lib->illum = 2;
+            mat_lib->tr = 1.f;
+            mat_lib->tf = ivec3(0);
+
             mat_list[tokens[1]] = mat_lib;
         }
         else if (tokens[0] == "Ns") {
             mat_lib->ns = (float)atof(tokens[1].c_str());
-        }
-        else if (tokens[0] == "d") {
-            mat_lib->d = (float)atof(tokens[1].c_str());
-        }
-        else if (tokens[0] == "Tr") {
-            mat_lib->tr = (float)atof(tokens[1].c_str());
-        }
-        else if (tokens[0] == "Tf") {
-            mat_lib->tf = ivec3(atoi(tokens[1].c_str()), atoi(tokens[2].c_str()), atoi(tokens[3].c_str()));
-        }
-        else if (tokens[0] == "illum") {
-            mat_lib->illum = atoi(tokens[1].c_str());
         }
         else if (tokens[0] == "Ka") {
             mat_lib->ka = vec3((float)atof(tokens[1].c_str()), (float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()));
@@ -106,6 +110,24 @@ namespace atlas {
         }
         else if (tokens[0] == "Ks") {
             mat_lib->ks = vec3((float)atof(tokens[1].c_str()), (float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()));
+        }
+        else if (tokens[0] == "Ke") {
+            mat_lib->ke = vec3((float)atof(tokens[1].c_str()), (float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()));
+        }
+        else if (tokens[0] == "Ni") {
+            mat_lib->ni = (float)atof(tokens[1].c_str());
+        }
+        else if (tokens[0] == "d") {
+            mat_lib->d = (float)atof(tokens[1].c_str());
+        }
+        else if (tokens[0] == "illum") {
+            mat_lib->illum = atoi(tokens[1].c_str());
+        }
+        else if (tokens[0] == "Tr") {
+            mat_lib->tr = (float)atof(tokens[1].c_str());
+        }
+        else if (tokens[0] == "Tf") {
+            mat_lib->tf = ivec3(atoi(tokens[1].c_str()), atoi(tokens[2].c_str()), atoi(tokens[3].c_str()));
         }
     }
 
@@ -138,16 +160,6 @@ namespace atlas {
         if (tokens[0] == "mtllib") {
             import_material_lib(tokens[1]);
         }
-        else if (tokens[0] == "flip") {
-            flip.x = tokens[1][0] - 'w';
-            flip.y = tokens[2][0] - 'w';
-        }
-        else if (tokens[0] == "negate") {
-            negate = tokens[1][0] - 'w';
-        }
-        else if (tokens[0] == "ccw") {
-            ccw = atoi(tokens[1].c_str());
-        }
         else if (tokens[0] == "o") {
             // new object
             current = new object;
@@ -174,7 +186,6 @@ namespace atlas {
             vertex v1 = parse_vertex(tokens[1]);
             vertex v2 = parse_vertex(tokens[2]);
             vertex v3 = parse_vertex(tokens[3]);
-            // convert to CCW
             add_face(v1, v2, v3);
         }
         else if (tokens[0] == "usemtl") {
@@ -208,34 +219,6 @@ namespace atlas {
         return true;
     }
 
-    void obj_model::fix_model() {
-        if (flip.x != 0 && flip.y != 0) {
-            for (auto& v : m_vertices) {
-                float t = v[flip.x - 1];
-                v[flip.x - 1] = v[flip.y - 1];
-                v[flip.y - 1] = t;
-            }
-        }
-        if (negate != 0) {
-            negate--;
-            for (auto& v : m_vertices) {
-                v[negate] *= -1;
-            }
-            // for (auto& v : m_normals) {
-            //    // v[negate] *= -1;
-            // }
-        }
-        if (!ccw) {
-            for (auto o : m_objects) {
-                for (auto& f : *o) {
-                    vertex t = f[0];
-                    f[0] = f[2];
-                    f[2] = t;
-                }
-            }
-        }
-    }
-
     class facet {
     public:
         facet() {
@@ -261,28 +244,11 @@ namespace atlas {
         if (!face) return;
         for (int i = 0; i < tokens.size(); ++i) {
             if (tokens[i] == "normal") {
-                if (flip_xy)
-                    face->normal = vec3((float)atof(tokens[i + 2].c_str()) * inv_x, (float)atof(tokens[i + 1].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z);
-                else if (flip_xz)
-                    face->normal = vec3((float)atof(tokens[i + 3].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 1].c_str()) * inv_z);
-                else if (flip_yz)
-                    face->normal = vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 3].c_str()) * inv_y, (float)atof(tokens[i + 2].c_str()) * inv_z);
-                else
-                    face->normal = vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z);
+                face->normal = vec3((float)atof(tokens[i + 1].c_str()), (float)atof(tokens[i + 2].c_str()), (float)atof(tokens[i + 3].c_str()));
                 break;
             }
             if (tokens[i] == "vertex") {
-                if (flip_xy)
-                    face->vertices.push_back(vec3((float)atof(tokens[i + 2].c_str()) * inv_x, (float)atof(tokens[i + 1].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z));
-                else if (flip_xz)
-                    face->vertices.push_back(vec3((float)atof(tokens[i + 3].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 1].c_str()) * inv_z));
-                else if (flip_yz)
-                    face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 3].c_str()) * inv_y, (float)atof(tokens[i + 2].c_str()) * inv_z));
-                else
-                    face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z));
-                break;
-
-                // face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()) * inv_x, (float)atof(tokens[i + 2].c_str()) * inv_y, (float)atof(tokens[i + 3].c_str()) * inv_z));
+                face->vertices.push_back(vec3((float)atof(tokens[i + 1].c_str()), (float)atof(tokens[i + 2].c_str()), (float)atof(tokens[i + 3].c_str())));
                 break;
             }
         }
@@ -291,7 +257,18 @@ namespace atlas {
     void stl_model::build_internals() {
         current = new object;
         current->m_material = new material;
+        
+        current->m_material->ns = 250.f;
         current->m_material->ka = vec3(0.45f, 0.45f, 0.65f);
+        current->m_material->kd = vec3(0.45f, 0.45f, 0.65f);
+        current->m_material->ks = vec3(0.45f, 0.45f, 0.65f);
+        current->m_material->ke = vec3(0.45f, 0.45f, 0.65f);
+
+        current->m_material->ni = 1.8f;
+        current->m_material->d = 0.9f;
+        current->m_material->illum = 2;
+        current->m_material->tr = 1.f;
+        current->m_material->tf = ivec3(0);
 
         m_objects.push_back(current);
 
@@ -321,6 +298,8 @@ namespace atlas {
             return false;
         }
         build_internals();
+        recenter();
+        fix_model();
         return true;
     }
 
@@ -409,6 +388,7 @@ namespace atlas {
             mdl.close();
             build_internals();
             recenter();
+            fix_model();
         }
         else {
             return false;
@@ -419,7 +399,18 @@ namespace atlas {
     void off_model::build_internals() {
         current = new object;
         current->m_material = new material;
+
+        current->m_material->ns = 250.f;
         current->m_material->ka = vec3(0.45f, 0.45f, 0.65f);
+        current->m_material->kd = vec3(0.45f, 0.45f, 0.65f);
+        current->m_material->ks = vec3(0.45f, 0.45f, 0.65f);
+        current->m_material->ke = vec3(0.45f, 0.45f, 0.65f);
+
+        current->m_material->ni = 1.8f;
+        current->m_material->d = 0.9f;
+        current->m_material->illum = 2;
+        current->m_material->tr = 1.f;
+        current->m_material->tf = ivec3(0);
 
         m_objects.push_back(current);
 

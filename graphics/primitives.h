@@ -69,7 +69,7 @@ namespace atlas {
             }
             else if (m_material) {
                 m_material->apply(_shader);
-                _shader->set_vec3("objectColor", m_material->get_ambient());
+                _shader->set_vec3("objectColor", m_material->get_diffuse());
                 _shader->set_int("use_vertex_color", 0);
             }
 
@@ -237,6 +237,7 @@ namespace atlas {
     gl_prim* create_cross(GLenum drmode = GL_FILL, bool dr_el = true);
     gl_prim* create_diamond(GLenum drmode = GL_FILL, bool dr_el = true);
     gl_prim* create_hbar(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_UCS(GLenum drmode = GL_FILL, bool dr_el = true);
 }
 
 #endif // __primitives__

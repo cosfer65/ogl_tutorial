@@ -470,4 +470,46 @@ namespace atlas {
         ms->addIndices(0, 1);
         return ms;
     }
+
+    c_mesh* create_UCS_mesh() {
+        c_mesh* ms = new c_mesh;
+        ms->addVertex(0, 0, 0);
+        //ms->addColor(1, 1, 1);
+
+        // x->red
+        ms->addVertex(1, 0, 0);
+        //ms->addColor(1, 0, 0);
+        ms->addVertex(0.8f, 0.2f, 0);
+        //ms->addColor(1, 0, 0);
+        ms->addVertex(0.8f, -0.2f, 0);
+        //ms->addColor(1, 0, 0);
+        ms->addIndices(0, 1);
+        ms->addIndices(1, 2);
+        ms->addIndices(1, 3);
+
+        // y->green
+        ms->addVertex(0, 1, 0);
+        //ms->addColor(0, 1, 0);
+        ms->addVertex(0.2f, 0.8f, 0);
+        //ms->addColor(0, 1, 0);
+        ms->addVertex(-0.2f, 0.8f, 0);
+        //ms->addColor(0, 1, 0);
+        ms->addIndices(0, 4);
+        ms->addIndices(4, 5);
+        ms->addIndices(4, 6);
+
+        // z->blue
+        ms->addVertex(0, 0, 1);
+        //ms->addColor(0, 0, 1);
+        ms->addVertex(0, 0.2f, 0.8f);
+        //ms->addColor(0, 0, 1);
+        ms->addVertex(0, -0.2f, 0.8f);
+        //ms->addColor(0, 0, 1);
+        ms->addIndices(0, 7);
+        ms->addIndices(7, 8);
+        ms->addIndices(7, 9);
+
+        return ms;
+    }
+
 }

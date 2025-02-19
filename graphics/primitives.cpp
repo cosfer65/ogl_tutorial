@@ -122,6 +122,44 @@ namespace atlas {
         return p;
     }
 
+    class gl_ucs :public gl_prim {
+    protected:
+    public:
+        gl_ucs() {
+        }
+        virtual ~gl_ucs() {
+        }
+        virtual void render(gl_shader* _shader) {
+            if (!vao) return;
+            _shader->set_int("use_vertex_color", 0);
+
+            // position object
+            mat4 ob_matrix = tmat * rmat * smat;
+            ob_matrix.transpose();    // convert for OpenGL!
+
+            // pass transformation to shader
+            _shader->set_mat4("model", ob_matrix);
+            glBindVertexArray(vao);
+            unsigned int idx = (unsigned int)m_mesh_sizes.num_indices / 3;
+            _shader->set_vec3("objectColor", vec3(1, 0, 0));
+            glDrawElements(GL_LINES, idx, GL_UNSIGNED_INT, 0);
+            _shader->set_vec3("objectColor", vec3(0, 1, 0));
+            glDrawElements(GL_LINES, idx, GL_UNSIGNED_INT, (const void*)(idx * sizeof(unsigned int)));
+            _shader->set_vec3("objectColor", vec3(0, 0, 1));
+            glDrawElements(GL_LINES, idx, GL_UNSIGNED_INT, (const void*)(2 * idx * sizeof(unsigned int)));
+            glBindVertexArray(0);
+        }
+    };
+
+    gl_prim* create_UCS(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        gl_prim* p = new gl_ucs;
+        c_mesh* tmesh = create_UCS_mesh(); // 1, 1, 1);
+        p->set_draw_type(GL_LINES);
+        p->create_from_mesh(tmesh, drmode, dr_el);
+        delete tmesh;
+        return p;
+    }
+
     inline float random_color() {
         int c = rand() % 256;
         float col = ((float)c) / 255.f;
@@ -206,7 +244,7 @@ namespace atlas {
                 colors = &model->m_colors;
             gl_prim* p = create_prim(model->m_vertices, model->m_normals, colors, *o);
 
-            base_3d_model::material* mm = o->m_material;
+            material* mm = o->m_material;
             if (mm) {
                 cg_material* m_mat1 = new cg_material;
                 m_mat1->set_ambient(mm->ka);

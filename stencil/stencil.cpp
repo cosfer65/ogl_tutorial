@@ -38,21 +38,6 @@ public:
             delete tmesh;
         }
     }
-    virtual void render(gl_shader* _shader) {
-        if (!vao) return;
-
-        // position object
-        mat4 ob_matrix = tmat * rmat * smat;
-        ob_matrix.transpose();
-        // pass transformation to shader
-        _shader->set_mat4("model", ob_matrix);
-
-        glBindVertexArray(vao);
-        glFrontFace(GL_CCW);
-        glPolygonMode(GL_FRONT, draw_mode);
-        glDrawElements(GL_TRIANGLES, (unsigned int)m_mesh_sizes.num_indices, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
-    }
 };
 
 class atlas_app :public gl_application {
@@ -183,10 +168,10 @@ public:
 
         // draw a rectangle behind the cube to act as background
         // this will make the stecil shape visible
-        m_shader->set_vec3("objectColor", vec3(0.5f, 0.5f, 0.5f));
+        m_shader->set_vec3("objectColor", vec3(0.95f, 0.55f, 0.15f));
         pbackgound->render(m_shader);
         // and now draw the cube
-        m_shader->set_vec3("objectColor", vec3(.1f, .2f, .9f));
+        m_shader->set_vec3("objectColor", vec3(.1f, .2f, .99f));
         m_cube->render(m_shader);
         // stop using stncil
         glDisable(GL_STENCIL_TEST);

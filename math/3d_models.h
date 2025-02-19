@@ -11,14 +11,31 @@
 namespace atlas {
     typedef ivec3 vertex;
 
+        typedef std::vector<vertex> face;
+        struct material {
+            float ns;
+        vec3 ka;
+        vec3 kd;
+        vec3 ks;
+        vec3 ke;
+        float ni;
+            float d;
+        int illum;
+            float tr;
+            ivec3 tf;
+        };
+        class object : public std::vector<face> {
+        public:
+            object() {}
+            material* m_material;
+        };
+
     class base_3d_model {
+    protected:
+        virtual void build_internals() {}
     public:
-        static int inv_x;
-        static int inv_y;
-        static int inv_z;
-        static int flip_xy;
-        static int flip_xz;
-        static int flip_yz;
+        static int inv_trias;
+        static int inv_norms;
 
         base_3d_model() {}
 
@@ -29,24 +46,6 @@ namespace atlas {
         std::vector<vec3> m_normals;
         std::vector<vec3> m_colors;
         std::vector<vec2> m_textures;
-
-        typedef std::vector<vertex> face;
-        struct material {
-            float ns;
-            float d;
-            float tr;
-            ivec3 tf;
-            int illum;
-            vec3 ka;
-            vec3 kd;
-            vec3 ks;
-        };
-        class object : public std::vector<face> {
-        public:
-            object() {}
-            material* m_material;
-        };
-
         std::vector<object*> m_objects;
         object* current;
         std::map<std::string, material*> mat_list;
@@ -89,8 +88,8 @@ namespace atlas {
             current->push_back(face({ v1,v2,v3 })); // vertex, texture, normal indices per vertex
             return current->size(); // index of last insert!
         }
-        void invert_coordinates(const ivec3& ivt);
         void recenter();
+        virtual void fix_model();
     };
 
     class obj_model : public base_3d_model {
@@ -99,10 +98,6 @@ namespace atlas {
         bool import_material_lib(const std::string& fname);
         void parse_material_tokens(const str_array& tokens);
         std::string current_file;
-        ivec2 flip = ivec2(0, 0);// 1=x, 2=y, 3=z --> 1,2=flip x,y etc (0,0) = do nothing
-        int negate = 0;// ivec3(0, 0, 0);
-        int ccw = 1;
-        void fix_model();
     public:
         obj_model() :base_3d_model() {
         }
@@ -113,7 +108,7 @@ namespace atlas {
     class stl_model : public base_3d_model {
         void parse_tokens(const str_array& tokens);
         std::vector<facet*> m_facets;
-        void build_internals();
+        virtual void build_internals();
     public:
         stl_model() :base_3d_model() {
         }
@@ -125,13 +120,12 @@ namespace atlas {
     class ifacet;
     class off_model : public base_3d_model {
         std::vector<ifacet*> m_facets;
-        void build_internals();
+        virtual void build_internals();
     public:
         off_model() :base_3d_model() {
         }
         virtual ~off_model();
         virtual bool load(const std::string& fnm);
-        // virtual bool save(const std::string& fnm);
     };
 }
 
