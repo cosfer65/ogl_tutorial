@@ -98,6 +98,7 @@ namespace atlas {
         bool import_material_lib(const std::string& fname);
         void parse_material_tokens(const str_array& tokens);
         std::string current_file;
+        void recalc_normals();
     public:
         obj_model() :base_3d_model() {
         }

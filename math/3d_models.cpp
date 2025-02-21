@@ -41,7 +41,7 @@ namespace atlas {
         {
             for (auto o : m_objects) {
                 for (auto& f : *o) {
-                    vertex t = f[0];
+                    vertex t = f[0]; // vertex contains vertex, texture, normal indices
                     f[0] = f[2];
                     f[2] = t;
                 }
@@ -193,6 +193,20 @@ namespace atlas {
         }
     }
 
+    void obj_model::recalc_normals() {
+        m_normals.clear();
+        for (auto o : m_objects) {
+            for (auto& f : *o) { // vertex contains vertex, texture, normal indices
+                vec3 p1 = m_vertices[f[0].x];
+                vec3 p2 = m_vertices[f[1].x];
+                vec3 p3 = m_vertices[f[2].x];
+                vec3 norm = calc_normal(p1, p2, p3);
+                m_normals.push_back(norm);
+                f[0].z = f[1].z = f[2].z = m_normals.size() - 1;
+            }
+        }
+    }
+
     bool obj_model::load(const std::string& fnm) {
         current_file = fnm;
         cg_parser parser;
@@ -210,6 +224,7 @@ namespace atlas {
             mdl.close();
             recenter();
             fix_model();
+            recalc_normals();
         }
         else
         {

@@ -7,14 +7,11 @@
 
 using namespace atlas;
 
-std::string model_name("resources/cube.obj");
+//std::string model_name("resources/artificial_horizon.stl");
+//std::string model_name("resources/artificial_horizon.obj");
 //std::string model_name("resources/car_01.obj");
 //std::string model_name("resources/rafale.off");
-//std::string model_name("resources/model_68.off");
-//std::string model_name("resources/model_25.off");
-//std::string model_name("resources/Part3.off");
-
-//std::string model_name("c:/blender/cube1.obj");
+std::string model_name("d:/3d_models/cone.obj");
 
 
 float fscale = 1.f;
@@ -41,11 +38,11 @@ public:
     virtual int init_application() {
         m_view->set_fov(dtr(fov));
         // m_cam = new gl_camera(vec3(-5, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_cam = new gl_camera(vec3(0, 0, 100), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_cam = new gl_camera(vec3(0, 0, 50), vec3(0, 0, 0), vec3(0, 1, 0));
 
-        m_light = new gl_light(gl_light::DIRLIGHT);
+        m_light = new gl_light(gl_light::SPOTLIGHT);
         // we are holding the light source and pointing at the objects
-        m_light->set_position(vec3(-100, 100, 100));
+        m_light->set_position(vec3(-100, 0, 0));
         // allow some ambience for the light
         // white light (we can experiment with this)
         m_light->set_ambient(vec3(1));
@@ -132,7 +129,7 @@ public:
         model1->render(m_shader);
 
         m_shader->set_vec3("objectColor", vec3(1));
-        m_ucs->move_to(-15, 0, 0);
+        m_ucs->move_to(-8, 0, 0);
         m_ucs->render(m_shader);
 
         m_shader->end();

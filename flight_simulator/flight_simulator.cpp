@@ -59,15 +59,17 @@ public:
 
         float x, z;
         int c = 0;
-        for (x = -450.f; x < 451.f; x += 50.f) {
-            for (z = -450.f; z < 451.f; z += 50.f) {
+        for (x = -1500.f; x < 1510.f; x += 160.f) {
+            for (z = -1500.f; z < 1510.f; z += 160.f) {
                 bld = new building(c);
                 c++;
 
                 bld->create();
-                float w = (float)(rand() % 15) + 15;
-                float d = (float)(rand() % 15) + 15;
-                float h = (float)(rand() % 25) + 25;
+                int wd = 25;
+                int hd = 50;
+                float w = (float)(rand() % wd) + wd;
+                float d = (float)(rand() % wd) + wd;
+                float h = (float)(rand() % hd) + hd;
                 bld->move_to(x, h / 2.f, z);
                 bld->set_scale(vec3(w, h, d));
                 m_world->add_object(bld);
