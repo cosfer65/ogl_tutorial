@@ -197,8 +197,8 @@ namespace atlas {
         return prim;
     }
 
-    gl_model::gl_model(const std::string& model_file) {
-        load(model_file);
+    gl_model::gl_model(const std::string& model_file, bool inv_trias/*=false*/, bool inv_norms/*=false*/) {
+        load(model_file, inv_trias, inv_norms);
     }
     void gl_model::clean_up() {
         for (auto o : m_objects)
@@ -208,8 +208,10 @@ namespace atlas {
             delete loaded_model;
     }
 
-    void gl_model::load(const std::string& model_file) {
+    void gl_model::load(const std::string& model_file, bool inv_trias/*=false*/, bool inv_norms/*=false*/) {
         clean_up();
+        base_3d_model::inv_trias = inv_trias;
+        base_3d_model::inv_norms = inv_norms;
         if (file_extension(model_file) == "obj") {
             obj_model* l_model = new obj_model;
             l_model->load(model_file);
@@ -256,6 +258,17 @@ namespace atlas {
             m_objects.push_back(p);
         }
     }
+
+    float gl_model::bbox_x() {
+        return loaded_model->bbox_x();
+    }
+    float gl_model::bbox_y() {
+        return loaded_model->bbox_y();
+    }
+    float gl_model::bbox_z() {
+        return loaded_model->bbox_z();
+    }
+
 
     void gl_stencil::create(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
         draw_elements = true;

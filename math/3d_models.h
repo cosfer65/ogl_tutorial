@@ -33,9 +33,12 @@ namespace atlas {
     class base_3d_model {
     protected:
         virtual void build_internals() {}
+        vec3 bbox_size;
     public:
-        static int inv_trias;
-        static int inv_norms;
+        static bool inv_trias;
+        static void set_inv_trias(bool v) { inv_trias = v; }
+        static bool inv_norms;
+        static void set_inv_norms(bool v) { inv_norms = v; }
 
         base_3d_model() {}
 
@@ -88,6 +91,10 @@ namespace atlas {
             current->push_back(face({ v1,v2,v3 })); // vertex, texture, normal indices per vertex
             return current->size(); // index of last insert!
         }
+        float bbox_x() { return bbox_size.x; }
+        float bbox_y() { return bbox_size.y; }
+        float bbox_z() { return bbox_size.z; }
+
         void recenter();
         virtual void fix_model();
     };

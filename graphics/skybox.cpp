@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include "skybox.h"
-#include "util.h"
+// #include "util.h"
+#include "light.h"
 #include "image.h"
 #include "camera.h"
 #include "shaders.h"
@@ -88,6 +89,14 @@ namespace atlas {
     gl_skybox::~gl_skybox() {
     }
 
+    void gl_skybox::load_shader(const std::string& vs, const std::string& fs) {
+        default_shader = new gl_shader;
+        default_shader->add_file(GL_VERTEX_SHADER, vs);
+        default_shader->add_file(GL_FRAGMENT_SHADER, fs);
+        default_shader->load();
+
+    }
+
     void gl_skybox::load(const std::vector<std::string>& faces)
     {
         if (skyboxVAO == 0)
@@ -142,6 +151,32 @@ namespace atlas {
 
         // GL_CW inside the box!
         glFrontFace(GL_CW);
+
+        glBindVertexArray(skyboxVAO);
+        glActiveTexture(GL_TEXTURE0);
+        default_shader->set_int("c_skybox", GL_TEXTURE0);
+        glEnable(GL_TEXTURE_CUBE_MAP);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+        glDepthFunc(GL_LESS); // set depth function back to default
+        default_shader->end();
+    }
+
+    void gl_skybox::render_sh(gl_effect* effect, gl_viewport* vp, gl_camera* cam)
+    {
+        glDepthFunc(GL_LEQUAL);
+        default_shader->use();
+        mat4 view = vp->perspective();
+        mat4 camera = cam->perspective();
+        remove_translation(camera); // remove translation from the camera matrix
+        mat4 cam_matrix = camera * view;
+        default_shader->set_mat4("view", cam_matrix);
+
+        // GL_CW inside the box!
+        glFrontFace(GL_CW);
+
+        effect->apply(default_shader);
 
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);

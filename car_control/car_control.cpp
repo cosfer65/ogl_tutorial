@@ -1,5 +1,6 @@
 #include "car_control.h"
 #include "world_objects.h"
+#include "light.h"
 #include "quaternion.h"
 #include "font.h"
 
@@ -85,8 +86,10 @@ public:
         car_fwd.normalize();
 
         if (!car_model)
-            car_model = new gl_model("resources/car_01.obj");
+            car_model = new gl_model("resources/car_01.obj", true);
+        car_model->rotate_to(0, dtr(180), 0);  // model was saved in a different orientation
         car_model->set_scale(vec3(0.4f, 0.4f, 0.4f));
+        vPosition.y = (car_model->bbox_y() / 2) * 0.4f;  //times the scale!
         car_model->move_to(vPosition);
     }
     const atlas::vec3& position() {
@@ -192,6 +195,7 @@ class car_control_app :public gl_application {
 
     moving_camera* p_moving_camera = nullptr;
     gl_light* m_light;
+    gl_fog* m_fog;
     gl_shader* m_shader;
 
     skybox* m_skybox;
@@ -263,9 +267,13 @@ public:
         m_light->set_diffuse(vec3(1, 1, 1));
         m_light->set_specular(vec3(1, 0, 1));
 
+        m_fog = new gl_fog;
+        m_fog->set_color(vec3(1, 1, 1));
+        m_fog->set_linear(0, 200);
+
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/FogVertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FogFragmentShader.glsl");
         // m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
         // m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_material_fs.glsl");
         // m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
@@ -350,12 +358,14 @@ public:
 
         mat4 cam_matrix = m_pov[view_point]->camera()->perspective() * m_pov[view_point]->viewport()->perspective();
 
-        m_skybox->render(m_pov[view_point]->viewport(), m_pov[view_point]->camera());
+        m_skybox->render_sh(m_fog, m_pov[view_point]->viewport(), m_pov[view_point]->camera());
 
         m_shader->use();
         m_light->apply(m_shader);
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_pov[view_point]->camera()->vLocation);
+
+        m_fog->apply(m_shader);
 
         m_shader->set_int("use_texture", 0);
         m_ground->render(m_shader);

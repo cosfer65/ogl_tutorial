@@ -8,6 +8,7 @@ namespace atlas {
     class gl_shader;
     class gl_viewport;
     class gl_camera;
+    class gl_effect;
 
     class gl_skybox {
         // gl_skybox VAO
@@ -18,11 +19,13 @@ namespace atlas {
     public:
         gl_skybox();
         ~gl_skybox();
+        void load_shader(const std::string& vs, const std::string& fs);
         void load(const std::vector<std::string>& faces);
         void render(gl_viewport* vp, gl_camera* cam);
         unsigned int texture() {
             return textureID;
         }
+        void render_sh(gl_effect* effect, gl_viewport* vp, gl_camera* cam);
     };
 }
 

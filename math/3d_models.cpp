@@ -6,8 +6,8 @@
 #include "geom.h"
 
 namespace atlas {
-    int base_3d_model::inv_trias = 0;
-    int base_3d_model::inv_norms = 0;
+    bool base_3d_model::inv_trias = false;
+    bool base_3d_model::inv_norms = false;
 
     void base_3d_model::recenter() {
         float mnx, mxx;
@@ -17,17 +17,19 @@ namespace atlas {
         mny = mxy = m_vertices[0].y;
         mnz = mxz = m_vertices[0].z;
         for (auto& v : m_vertices) {
-            if (v.x < mnx)mnx = v.x;
-            if (v.y < mny)mny = v.y;
-            if (v.z < mnz)mnz = v.z;
-            if (v.x > mxx)mxx = v.x;
-            if (v.y > mxy)mxy = v.y;
-            if (v.z > mxz)mxz = v.z;
+            if (v.x < mnx) mnx = v.x;
+            if (v.y < mny) mny = v.y;
+            if (v.z < mnz) mnz = v.z;
+            if (v.x > mxx) mxx = v.x;
+            if (v.y > mxy) mxy = v.y;
+            if (v.z > mxz) mxz = v.z;
         }
 
         float cx = (mxx + mnx) / 2;
         float cy = (mxy + mny) / 2;
         float cz = (mxz + mnz) / 2;
+
+        bbox_size = vec3(mxx - mnx, mxy - mny, mxz - mnz);
 
         for (auto& v : m_vertices) {
             v.x -= cx;
@@ -54,7 +56,6 @@ namespace atlas {
             }
         }
     }
-
 
     template<typename T>
     basevec3<T> parse_vector3(const std::string& str, const std::string& delim) {
@@ -202,7 +203,7 @@ namespace atlas {
                 vec3 p3 = m_vertices[f[2].x];
                 vec3 norm = calc_normal(p1, p2, p3);
                 m_normals.push_back(norm);
-                f[0].z = f[1].z = f[2].z = m_normals.size() - 1;
+                f[0].z = f[1].z = f[2].z = (int)m_normals.size() - 1;
             }
         }
     }
@@ -272,7 +273,7 @@ namespace atlas {
     void stl_model::build_internals() {
         current = new object;
         current->m_material = new material;
-        
+
         current->m_material->ns = 250.f;
         current->m_material->ka = vec3(0.45f, 0.45f, 0.65f);
         current->m_material->kd = vec3(0.45f, 0.45f, 0.65f);

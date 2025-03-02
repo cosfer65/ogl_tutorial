@@ -9,9 +9,9 @@ using namespace atlas;
 
 //std::string model_name("resources/artificial_horizon.stl");
 //std::string model_name("resources/artificial_horizon.obj");
-//std::string model_name("resources/car_01.obj");
+std::string model_name("resources/car_01.obj");
 //std::string model_name("resources/rafale.off");
-std::string model_name("d:/3d_models/cone.obj");
+//std::string model_name("d:/3d_models/cone.obj");
 
 
 float fscale = 1.f;
@@ -56,7 +56,7 @@ public:
         m_shader->load();
 
         model1 = new gl_model();
-        model1->load(model_name); //--------------------------------------
+        model1->load(model_name, true);
         model1->set_scale(vec3(fscale));
 
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
@@ -97,13 +97,13 @@ public:
         if (keyDown['T']) {
             base_3d_model::inv_trias = 1 - base_3d_model::inv_trias;
             keyDown['T'] = 0;
-            model1->load(model_name); //--------------------------------------
+            model1->load(model_name, base_3d_model::inv_trias, base_3d_model::inv_norms); //--------------------------------------
             model1->set_scale(vec3(fscale));
         }
         if (keyDown['N']) {
             base_3d_model::inv_norms = 1 - base_3d_model::inv_norms;
             keyDown['N'] = 0;
-            model1->load(model_name); //--------------------------------------
+            model1->load(model_name, base_3d_model::inv_trias, base_3d_model::inv_norms); //--------------------------------------
             model1->set_scale(vec3(fscale));
         }
     }

@@ -176,19 +176,31 @@ namespace atlas {
         }
     };
 
+    class gl_stencil :public gl_prim {
+    protected:
+    public:
+        gl_stencil() {
+        }
+        virtual ~gl_stencil() {
+        }
+        virtual void create(GLenum drmode = GL_FILL, bool dr_el = true);
+        virtual void create_elliptic(GLenum drmode = GL_FILL, bool dr_el = true);
+        virtual void r_create(GLenum drmode = GL_FILL, bool dr_el = true);
+    };
+
     class gl_model {
         std::vector<gl_prim*> m_objects;
         base_3d_model* loaded_model = nullptr;
     public:
         gl_model() {}
-        gl_model(const std::string& model_file);
+        gl_model(const std::string& model_file, bool inv_trias = false, bool inv_norms = false);
 
         ~gl_model() {
             clean_up();
         }
         void clean_up();
         void create(base_3d_model* model);
-        void load(const std::string& model_file);
+        void load(const std::string& model_file, bool inv_trias=false, bool inv_norms=false);
         void save(const std::string& model_file);
 
         void render(gl_shader* m_shader) {
@@ -216,18 +228,9 @@ namespace atlas {
                 p->set_scale(s);
             }
         }
-    };
-
-    class gl_stencil :public gl_prim {
-    protected:
-    public:
-        gl_stencil() {
-        }
-        virtual ~gl_stencil() {
-        }
-        virtual void create(GLenum drmode = GL_FILL, bool dr_el = true);
-        virtual void create_elliptic(GLenum drmode = GL_FILL, bool dr_el = true);
-        virtual void r_create(GLenum drmode = GL_FILL, bool dr_el = true);
+        float bbox_x();
+        float bbox_y();
+        float bbox_z();
     };
 
     gl_prim* create_cube(GLenum drmode = GL_FILL, bool dr_el = true);
