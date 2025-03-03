@@ -31,16 +31,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\runtime\resources\FogFragmentShader.glsl">
+    <None Include="..\runtime\resources\FragmentShader.glsl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\runtime\resources\FogVertexShader.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\runtime\resources\FogBoxFrag.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\runtime\resources\FogBoxVert.glsl">
+    <None Include="..\runtime\resources\VertexShader.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

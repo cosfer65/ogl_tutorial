@@ -1,6 +1,7 @@
 #include "car_control.h"
 #include "world_objects.h"
 #include "light.h"
+#include "effects.h"
 #include "quaternion.h"
 #include "font.h"
 
@@ -272,11 +273,8 @@ public:
         m_fog->set_linear(0, 200);
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/FogVertexShader.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FogFragmentShader.glsl");
-        // m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
-        // m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_material_fs.glsl");
-        // m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
         m_shader->load();
 
         create_environment();
@@ -358,7 +356,7 @@ public:
 
         mat4 cam_matrix = m_pov[view_point]->camera()->perspective() * m_pov[view_point]->viewport()->perspective();
 
-        m_skybox->render_sh(m_fog, m_pov[view_point]->viewport(), m_pov[view_point]->camera());
+        m_skybox->render_with_effects(m_fog, m_pov[view_point]->viewport(), m_pov[view_point]->camera());
 
         m_shader->use();
         m_light->apply(m_shader);

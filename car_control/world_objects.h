@@ -18,7 +18,6 @@ public:
     }
     void create() {
         m_sbox = new atlas::gl_skybox;
-        m_sbox->load_shader("resources/FogBoxVert.glsl", "resources/FogBoxFrag.glsl");
         std::vector<std::string> faces
         {
             "resources/px.tga", "resources/nx.tga",
@@ -30,8 +29,8 @@ public:
     void render(atlas::gl_viewport* vp, atlas::gl_camera* cam) {
         m_sbox->render(vp, cam);
     }
-    void render_sh(atlas::gl_effect* effect, atlas::gl_viewport* vp, atlas::gl_camera* cam) {
-        m_sbox->render_sh(effect, vp, cam);
+    void render_with_effects(atlas::gl_effect* effect, atlas::gl_viewport* vp, atlas::gl_camera* cam) {
+        m_sbox->render_with_effects(effect, vp, cam);
     }
 };
 

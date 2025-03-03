@@ -20,6 +20,19 @@ struct material
 };
 uniform material mat;
 
+struct FogParameters
+{
+	vec3 color;
+	float linearStart;
+	float linearEnd;
+	float density;
+	
+	int equation;
+	int isEnabled;
+};
+uniform FogParameters fogParams;
+
+
 uniform int use_texture;
 
 in vec3 Normal; // surface normal
@@ -30,8 +43,28 @@ out vec4 color; // resulting drawing color
 in vec2 texCoord;
 uniform sampler2D textureSampler;
 
+float getFogFactor(FogParameters params, float fogCoordinate)
+{
+	float result = 0.0;
+	if(params.equation == 0)
+	{
+		float fogLength = params.linearEnd - params.linearStart;
+		result = (params.linearEnd - fogCoordinate) / fogLength;
+	}
+	else if(params.equation == 1) {
+		result = exp(-params.density * fogCoordinate);
+	}
+	else if(params.equation == 2) {
+		result = exp(-pow(params.density * fogCoordinate, 2.0));
+	}
+	
+	result = 1.0 - clamp(result, 0.0, 1.0);
+	return result;
+}
+
 void main()
 {
+	vec4 temp_color = vec4(1, 1, 1, 1);
     if (use_texture == 0)
     {
         // ambient color based on metrial properties as well
@@ -64,10 +97,17 @@ void main()
         // light emitted from object is (ambient + diffuse + specular)
         vec3 result = (ambient + diffuse + specular);
 
-        color = vec4(result, 1);
+        temp_color = vec4(result, 1);
     }
     else
     {
-        color = vec4(texture(textureSampler, texCoord).rgb, 1);
+        temp_color = vec4(texture(textureSampler, texCoord).rgb, 1);
     }
+	// Apply fog calculation only if fog is enabled
+	if(fogParams.isEnabled == 1)	{
+		float fogCoordinate = abs(gl_FragCoord.z / gl_FragCoord.w);
+		temp_color = mix(temp_color, vec4(fogParams.color, 1.0), getFogFactor(fogParams, fogCoordinate));
+	}
+
+	color = temp_color;
 }

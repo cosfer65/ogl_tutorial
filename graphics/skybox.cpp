@@ -1,7 +1,7 @@
 #include "graphics.h"
 #include "skybox.h"
-// #include "util.h"
 #include "light.h"
+#include "effects.h"
 #include "image.h"
 #include "camera.h"
 #include "shaders.h"
@@ -71,15 +71,43 @@ namespace atlas {
         "}\n"
     };
     // Source code for fragment shader
-    static const GLchar* fragment_source =
-    {
+    static const GLchar* fragment_source = {
         "#version 330 core\n"
         "out vec4 FragColor;\n"
         "in vec3 TexCoords;\n"
         "uniform samplerCube c_skybox;\n"
-        "void main()\n"
+        "struct FogParameters\n"
         "{\n"
-        "	FragColor = texture(c_skybox, TexCoords);\n"
+        "    vec3 color;\n"
+        "    float linearStart;\n"
+        "    float linearEnd;\n"
+        "    float density;\n"
+        "\n"
+        "    int equation;\n"
+        "    int isEnabled;\n"
+        "};\n"
+        "uniform FogParameters fogParams;\n"
+        "float getFogFactor(FogParameters params, float fogCoordinate) {\n"
+        "    float result = 0.0;\n"
+        "    if (params.equation == 0) {\n"
+        "        float fogLength = params.linearEnd - params.linearStart;\n"
+        "        result = (params.linearEnd - fogCoordinate) / fogLength;\n"
+        "    }\n"
+        "    else if (params.equation == 1) {\n"
+        "        result = exp(-params.density * fogCoordinate);\n"
+        "    }\n"
+        "    else if (params.equation == 2) {\n"
+        "        result = exp(-pow(params.density * fogCoordinate, 2.0));\n"
+        "    }\n"
+        "    result = 1.0 - clamp(result, 0.0, 1.0);\n"
+        "    return result;\n"
+        "}\n"
+        "void main() {\n"
+        "    FragColor = texture(c_skybox, TexCoords);\n"
+        "    if (fogParams.isEnabled == 1) {\n"
+        "        float fogCoordinate = fogParams.linearEnd * 0.75;\n"
+        "        FragColor = mix(FragColor, vec4(fogParams.color, 1.0), getFogFactor(fogParams, fogCoordinate));\n"
+        "    }\n"
         "}\n"
     };
 
@@ -163,7 +191,7 @@ namespace atlas {
         default_shader->end();
     }
 
-    void gl_skybox::render_sh(gl_effect* effect, gl_viewport* vp, gl_camera* cam)
+    void gl_skybox::render_with_effects(gl_effect* effect, gl_viewport* vp, gl_camera* cam)
     {
         glDepthFunc(GL_LEQUAL);
         default_shader->use();

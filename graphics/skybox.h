@@ -25,7 +25,7 @@ namespace atlas {
         unsigned int texture() {
             return textureID;
         }
-        void render_sh(gl_effect* effect, gl_viewport* vp, gl_camera* cam);
+        void render_with_effects(gl_effect* effect, gl_viewport* vp, gl_camera* cam);
     };
 }
 
