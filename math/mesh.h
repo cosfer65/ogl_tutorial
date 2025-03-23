@@ -105,6 +105,6 @@ namespace atlas {
     c_mesh* create_diamond_mesh();
     c_mesh* create_hbar_mesh();
     c_mesh* create_UCS_mesh();
-    c_mesh* create_heightmap_mesh(const matrix<float>& hmap, float length_scale);
+    c_mesh* create_heightmap_mesh(const matrix<float>& hmap, float length_scale, float height_scale);
 }
 #endif // __mesh_h__

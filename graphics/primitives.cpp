@@ -97,10 +97,10 @@ namespace atlas {
         return p;
     }
 
-    gl_prim* create_heightmap(const std::string& fname, GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+    gl_prim* create_heightmap(const std::string& fname, float length_scale, float height_scale, int image_resolution, GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
         matrix<float> hmap(1, 1);
-        load_heightmap_image_matrix(fname, hmap);
-        c_mesh* m_hmap = create_heightmap_mesh(hmap, 2.5);
+        load_heightmap_image_matrix(fname, hmap, image_resolution);
+        c_mesh* m_hmap = create_heightmap_mesh(hmap, length_scale, height_scale);
         gl_prim* p = new gl_prim;
         p->create_from_mesh(m_hmap, drmode, dr_el);
         p->set_texture(load_texture(fname));

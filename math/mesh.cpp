@@ -516,9 +516,7 @@ namespace atlas {
         return ms;
     }
 
-    c_mesh* create_heightmap_mesh(const matrix<float>& hmap, float length_scale) {
-        float height_scale = 20;
-
+    c_mesh* create_heightmap_mesh(const matrix<float>& hmap, float length_scale, float height_scale) {
         c_mesh* ms = new c_mesh;
         auto cols = hmap.cols - 1;   // goes into our x direction
         auto rows = hmap.rows - 1;   // goes into our z direction

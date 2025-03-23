@@ -253,7 +253,7 @@ namespace atlas {
     gl_prim* create_diamond(GLenum drmode = GL_FILL, bool dr_el = true);
     gl_prim* create_hbar(GLenum drmode = GL_FILL, bool dr_el = true);
     gl_prim* create_UCS(GLenum drmode = GL_FILL, bool dr_el = true);
-    gl_prim* create_heightmap(const std::string& fname, GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_heightmap(const std::string& fname, float length_scale, float height_scale, int image_resolution, GLenum drmode = GL_FILL, bool dr_el = true);
 }
 
 #endif // __primitives__

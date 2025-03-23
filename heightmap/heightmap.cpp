@@ -47,7 +47,7 @@ public:
         m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/dso_FragmentShader.glsl");
         m_shader->load();
 
-        m_hmap = create_heightmap("resources/textures/heightmap.tga");// , GL_LINE, true);
+        m_hmap = create_heightmap("resources/textures/heightmap.tga", 2.f, 20.f, 8);
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
