@@ -8,26 +8,34 @@
 
 using namespace atlas;
 
-class atlas_app :public gl_application {
+class frame_buffers_app :public gl_application {
     gl_texture_buffer* m_tex_buffer; // the texture buffer
     gl_viewport* fb_view;            // the viewport to the texture image
-    gl_shader* m_shader_create;      // the shader to create the texture
-    gl_prim* m_cube;              // rotating cube for the texture
+    gl_shader* m_shader;             // the shader to draw
+    gl_prim* m_cube;                 // rotating cube for the texture
 
     gl_viewport* m_view;             // normal view
-    gl_shader* m_shader_use;         // shader for the final render
-    gl_prim* m_sphere;          // the object to use the texture
+    gl_prim* m_sphere;               // the object to use the texture
 
     gl_camera* m_cam;                // shared camer
     gl_light* m_light;               // shared light
 
     gl_font* font2D;
 public:
-    atlas_app() {
+    frame_buffers_app() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (frame buffers)";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
+    }
+    virtual ~frame_buffers_app() {
+        delete m_view;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete m_cube;
+        delete m_sphere;
+        delete font2D;
     }
     virtual int init_application() {
         m_view->set_fov(dtr(10));
@@ -44,21 +52,17 @@ public:
         m_tex_buffer = new gl_texture_buffer();
         m_tex_buffer->create(512, 512);
 
-        m_shader_create = new gl_shader;
-        m_shader_create->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.glsl");
-        m_shader_create->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_create_fs.glsl");
-        m_shader_create->load();
-
-        m_shader_use = new gl_shader;
-        m_shader_use->add_file(GL_VERTEX_SHADER, "resources/frame_buffers_vs.glsl");
-        m_shader_use->add_file(GL_FRAGMENT_SHADER, "resources/frame_buffers_use_fs.glsl");
-        m_shader_use->load();
+        // shader
+        m_shader = new gl_shader;
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/frame_buffers_FragmentShader.glsl");
+        m_shader->load();
 
         m_cube = create_cube(GL_FILL, true);
         m_cube->move_to(vec3(0, 0, -2));
-        //m_cube->set_scale(vec3(1.5));
 
         m_sphere = create_sphere(GL_FILL, true);
+        m_sphere->set_scale(vec3(2));
 
         // the following will be analyzed in the next chapter
         font2D = get_font_manager().create_font("Consolas", "Consolas", 12);
@@ -81,6 +85,7 @@ public:
         m_cube->rotate_by(vec3(dtr(fElapsed * 15), dtr(fElapsed * 30), dtr(fElapsed * 45)));
         m_sphere->rotate_by(vec3(0, dtr(fElapsed * 30), 0));
     }
+
     virtual void render() {
         // we will draw on an off-screen image, which we will use
         // as a texture for the object we will draw later
@@ -93,18 +98,19 @@ public:
         // set the viewport to the image size
         fb_view->set_viewport();
         // clear the screen
-        glClearColor(0.7f, 0.6f, 0.5f, 0.4f);
+        glClearColor(0.5f, 0.5f, 0.9f, 0.9f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDepthFunc(GL_LEQUAL);
-        m_shader_create->use();
-        m_light->apply(m_shader_create);
+
+        m_shader->use();
+        m_light->apply(m_shader);
         mat4 cam_matrix = m_cam->perspective() * fb_view->perspective();
-        m_shader_create->set_mat4("camera", cam_matrix);
-        m_shader_create->set_vec3("cameraPos", m_cam->vLocation);
-        m_shader_create->set_vec3("objectColor", vec3(.4f, .9f, .9f));
-        m_cube->render(m_shader_create);
-        glUseProgram(0);
-        // and finally we stop redirection
+        m_shader->set_mat4("camera", cam_matrix);
+        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+        m_shader->set_vec4("object_color", vec4(.9f, .5f, .1f, 1));
+        m_shader->set_int("use_color_or_texture", 1);
+        m_cube->render(m_shader);
+        // and stop redirection
         m_tex_buffer->release();
 
         // and now we use the image as texture and we draw the cube again
@@ -115,25 +121,22 @@ public:
         glClearColor(0.2f, 0.2f, 0.2f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDepthFunc(GL_LEQUAL);
-        m_shader_use->use();
-        m_light->apply(m_shader_use);
+
+        m_light->apply(m_shader);
         cam_matrix = m_cam->perspective() * m_view->perspective();
-        m_shader_use->set_mat4("camera", cam_matrix);
-        m_shader_use->set_vec3("cameraPos", m_cam->vLocation);
-        m_shader_use->set_int("useColor", 0);
+        m_shader->set_mat4("camera", cam_matrix);
+        m_shader->set_vec3("cameraPos", m_cam->vLocation);
+        m_shader->set_int("use_color_or_texture", 0);
         // set the texture we created
         glBindTexture(GL_TEXTURE_2D, m_tex_buffer->texture());
-        m_sphere->render(m_shader_use);
-        // release shader
-        glUseProgram(0);
+        m_sphere->render(m_shader);
 
-        // the following will be analyzed in the next chapter
-        m_shader_use->set_int("useColor", 1);
-        m_shader_use->set_vec4("objectColor", vec4(.9f, .1f, .1f, 1));
-        glUseProgram(0);
+        m_shader->end();
+
         font2D->set_position(5, 5);
         font2D->render("press Esc to exit");
     }
 };
 
-atlas_app my_app;       // default
+
+frame_buffers_app my_app;       // default

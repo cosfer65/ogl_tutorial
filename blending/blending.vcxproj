@@ -97,14 +97,20 @@
     <ClCompile Include="blending.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\blending_fs.glsl">
+    <Image Include="..\runtime\resources\textures\blending.tga">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\blending_vs.glsl">
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\runtime\resources\shaders\blending_FragmentShader.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+    </None>
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

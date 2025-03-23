@@ -5,10 +5,9 @@
 
 #include "mesh.h"
 #include "amath.h"
-#include "geom.h"
 #include "quaternion.h"
-// #include "3ds_model.h"
 #include "utils.h"
+#include "geom.h"
 
 namespace atlas {
     class ply_loader {
@@ -161,17 +160,22 @@ namespace atlas {
         m_data.indices.push_back(i1);
         m_data.indices.push_back(i2);
         m_data.indices.push_back(i3);
-        // vec3 p1 = vertex(i1);
-        // vec3 p2 = vertex(i2);
-        // vec3 p3 = vertex(i3);
-        //face_normals.push_back(calc_normal(p1, p2, p3));
-        //++num_faces;
+    }
+    // add the indices and calculate the normals
+    void c_mesh::addIndices_n(unsigned int i1, unsigned int i2, unsigned int i3) {
+        m_data.indices.push_back(i1);
+        m_data.indices.push_back(i2);
+        m_data.indices.push_back(i3);
+        vec3 p1 = vertex(i1);
+        vec3 p2 = vertex(i2);
+        vec3 p3 = vertex(i3);
+        addNormal(calc_normal(p1, p2, p3));
+        addNormal(calc_normal(p1, p2, p3));
+        addNormal(calc_normal(p1, p2, p3));
     }
     void c_mesh::addIndices(unsigned int i1, unsigned int i2) {
         m_data.indices.push_back(i1);
         m_data.indices.push_back(i2);
-        // vec3 p1 = vertex(i1);
-        // vec3 p2 = vertex(i2);
     }
     void c_mesh::move(float x, float y, float z)
     {
@@ -512,4 +516,69 @@ namespace atlas {
         return ms;
     }
 
+    c_mesh* create_heightmap_mesh(const matrix<float>& hmap, float length_scale) {
+        float height_scale = 20;
+
+        c_mesh* ms = new c_mesh;
+        auto cols = hmap.cols - 1;   // goes into our x direction
+        auto rows = hmap.rows - 1;   // goes into our z direction
+
+        float minx = -(cols * length_scale) / 2;
+        float maxx = (cols * length_scale) / 2;
+        float minz = -(rows * length_scale) / 2;
+        float maxz = (rows * length_scale) / 2;
+        int idx = 0;
+        float sx = 1.f / cols;
+        float sz = 1.f / rows;
+        float tx = 0;
+        float tz = 0;
+
+        for (auto z = 0; z < rows; ++z)
+        {
+            tx = 0;
+            for (auto x = 0; x < cols; ++x)
+            {
+                float x1, x2, z1, z2;
+                x1 = minx + x * length_scale;
+                x2 = minx + (x + 1) * length_scale;
+                z1 = minz + z * length_scale;
+                z2 = minz + (z + 1) * length_scale;
+                float y1, y2, y3, y4;
+
+                y1 = hmap(z, x) * height_scale;
+                y2 = hmap(z, x + 1) * height_scale;
+                y3 = hmap(z + 1, x + 1) * height_scale;
+                y4 = hmap(z + 1, x) * height_scale;
+
+                vec3 v1(x1, y1, z1);
+                vec3 v2(x2, y2, z1);
+                vec3 v3(x2, y3, z2);
+                vec3 v4(x1, y4, z2);
+
+                ms->addVertex(v1);
+                ms->addVertex(v2);
+                ms->addVertex(v3);
+                ms->addIndices_n(idx + 2, idx + 1, idx + 0);
+
+                ms->addTexCoord(tx, tz);
+                ms->addTexCoord(tx+sx, tz);
+                ms->addTexCoord(tx+sx, tz+sz);
+                idx += 3;
+
+                ms->addVertex(v1);
+                ms->addVertex(v3);
+                ms->addVertex(v4);
+                ms->addIndices_n(idx + 2, idx + 1, idx + 0);
+
+                ms->addTexCoord(tx, tz);
+                ms->addTexCoord(tx + sx, tz+sz);
+                ms->addTexCoord(tx, tz + sz);
+                idx += 3;
+
+                tx += sx;
+            }
+            tz += sz;
+        }
+        return ms;
+    }
 }

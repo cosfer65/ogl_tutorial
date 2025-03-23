@@ -8,6 +8,45 @@ namespace atlas {
     typedef basemat3<float> mat3;
     typedef basemat4<float> mat4;
 
+    // arbitrary 2D matrix row major
+    template <typename T>
+    class matrix {
+    public:
+        int rows;
+        int cols;
+        T* data;
+        matrix(int r, int c) :rows(r), cols(c) {
+            data = new T[rows * cols];
+        }
+        matrix(const matrix& m) :rows(m.rows), cols(m.cols) {
+            data = new T[rows * cols];
+            memcpy(data, m.data, rows * cols * sizeof(T));
+        }
+        ~matrix() {
+            delete[] data;
+        }
+        T& operator()(int r, int c) {
+            return data[r * cols + c];
+        }
+        T operator()(int r, int c) const{
+            return data[r * cols + c];
+        }
+        matrix& operator=(const matrix& m) {
+            delete[] data;
+            rows = m.rows;
+            cols = m.cols;
+            data = new T[rows * cols];
+            memcpy(data, m.data, rows * cols * sizeof(T));
+            return *this;
+        }
+        void resize(int r, int c) {
+            delete[] data;
+            rows = r;
+            cols = c;
+            data = new T[rows * cols];
+        }
+    };
+
     //////////////////////////////////////////////////////////////////////////
     // translation
     mat4 translation_matrix(float x, float y, float z);
@@ -46,6 +85,6 @@ namespace atlas {
         gl_matrix[14] = transformMatrix[11];
         gl_matrix[15] = 1;
     }
-};
+}
 
 #endif // __matrix_h__

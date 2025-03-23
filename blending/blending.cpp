@@ -74,7 +74,7 @@ public:
     }
 };
 
-class atlas_app :public gl_application {
+class blending_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
     gl_light* m_light;
@@ -87,11 +87,20 @@ class atlas_app :public gl_application {
 
     gl_font* font2D;
 public:
-    atlas_app() {
+    blending_app() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (blending)";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
+    }
+    virtual ~blending_app() {
+        delete m_view;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete m_cube;
+        delete pglass;
+        delete font2D;
     }
     virtual int init_application() {
         m_view->set_fov(dtr(15));
@@ -102,8 +111,8 @@ public:
         m_light->set_specular(vec3(1, 1, 1));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/blending_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/blending_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/blending_FragmentShader.glsl");
         m_shader->load();
 
         m_cube = create_cube(GL_FILL);
@@ -114,7 +123,7 @@ public:
         pglass->create();
         pglass->set_scale(vec3(2));
 
-        texture = load_texture("resources/window.tga");
+        texture = load_texture("resources/textures/blending.tga");
 
         draw_order = 0;
         // the following will be analyzed in the next chapter
@@ -161,9 +170,9 @@ public:
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
 
         // draw opaque objects first
-        m_shader->set_vec4("objectColor", vec4(0, 1, 0, 1));
+        m_shader->set_vec4("object_color", vec4(0, 1, 0, 1));
         // use object color parameter, do not look for texture
-        m_shader->set_int("useColor", 1);
+        m_shader->set_int("use_color_or_texture", 1);
         m_cube->render(m_shader);
 
         // start blending
@@ -173,23 +182,23 @@ public:
         if (draw_order == 0)
         {
             // ignore object color and use texture
-            m_shader->set_int("useColor", 0);
+            m_shader->set_int("use_color_or_texture", 0);
             pglass->move_to(vec3(0, 0, -1.5f));
             pglass->render(m_shader);
 
-            m_shader->set_vec4("objectColor", vec4(.9f, .1f, .1f, 0.5f));
-            m_shader->set_int("useColor", 1);
+            m_shader->set_vec4("object_color", vec4(.9f, .1f, .1f, 0.5f));
+            m_shader->set_int("use_color_or_texture", 1);
             pglass->move_to(vec3(0, 0, 0));
             pglass->render(m_shader);
         }
         else
         {
-            m_shader->set_vec4("objectColor", vec4(.9f, .1f, .1f, 0.5f));
-            m_shader->set_int("useColor", 1);
+            m_shader->set_vec4("object_color", vec4(.9f, .1f, .1f, 0.5f));
+            m_shader->set_int("use_color_or_texture", 1);
             pglass->move_to(vec3(0, 0, -1.5f));
             pglass->render(m_shader);
 
-            m_shader->set_int("useColor", 0);
+            m_shader->set_int("use_color_or_texture", 0);
             pglass->move_to(vec3(0, 0, 0));
             pglass->render(m_shader);
         }
@@ -209,4 +218,4 @@ public:
     }
 };
 
-atlas_app my_app;       // default
+blending_app my_app;       // default

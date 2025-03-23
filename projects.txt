@@ -1,0 +1,36 @@
+ Volume in drive C is System
+ Volume Serial Number is EAE9-3F90
+
+ Directory of C:\GitHub\ogl_tutorial
+
+15/03/2025  07:28 μμ    <DIR>          .
+15/03/2025  07:28 μμ    <DIR>          ..
+09/10/2024  09:32 μμ                66 .gitattributes
+09/02/2025  11:10 μμ               167 .gitignore
+31/01/2025  10:13 μμ    <DIR>          basic_opengl
+15/03/2025  05:51 μμ    <DIR>          blending
+15/03/2025  07:05 μμ    <DIR>          car_control
+15/03/2025  07:06 μμ    <DIR>          cubemap
+15/03/2025  07:07 μμ    <DIR>          draw_cube
+15/03/2025  07:11 μμ    <DIR>          flight_simulator
+15/03/2025  07:12 μμ    <DIR>          fonts
+15/03/2025  07:13 μμ    <DIR>          frame_buffers
+14/03/2025  09:29 μμ    <DIR>          graphics
+14/03/2025  09:36 μμ    <DIR>          heightmap
+13/03/2025  10:40 μμ    <DIR>          image
+09/03/2025  05:17 μμ    <DIR>          lib
+15/03/2025  07:18 μμ    <DIR>          lights_materials
+13/03/2025  10:34 μμ    <DIR>          math
+15/03/2025  07:20 μμ    <DIR>          model_loader
+28/12/2024  11:56 μμ         1,237,274 OpenGL tutorial.docx
+14/03/2025  09:27 μμ            12,873 opengltut.sln
+08/02/2025  05:58 μμ    <DIR>          pipeline
+15/03/2025  07:28 μμ                 0 projects.txt
+13/01/2025  05:40 μμ            13,565 readme.docx
+09/03/2025  05:17 μμ    <DIR>          runtime
+15/03/2025  07:21 μμ    <DIR>          shadow_mapping
+15/03/2025  07:22 μμ    <DIR>          stencil
+15/03/2025  07:23 μμ    <DIR>          visual_effects
+10/03/2025  09:47 μμ    <DIR>          x64
+               6 File(s)      1,263,945 bytes
+              23 Dir(s)  795,644,178,432 bytes free

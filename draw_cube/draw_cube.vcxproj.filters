@@ -9,27 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="shaders">
+    <Filter Include="resources">
       <UniqueIdentifier>{5094a5dc-35cd-418f-9c3a-d1fd825749ac}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\runtime\resources\draw_cube_fs.glsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cube_vs.glsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cubet_fs.glsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cubet_vs.glsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="draw_simple_objects.h">
@@ -40,5 +22,21 @@
     <ClCompile Include="draw_simple_objects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\runtime\resources\shaders\dso_FragmentShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\runtime\resources\textures\earth2.tga">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="..\runtime\resources\textures\planks.tga">
+      <Filter>resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

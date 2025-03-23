@@ -1,7 +1,6 @@
 #ifndef __instruments_h__
 #define __instruments_h__
 
-#include "skybox.h"
 #include "font.h"
 
 struct stickSate {
@@ -47,7 +46,13 @@ class pilot_view {
 
 public:
     pilot_view() {}
-    ~pilot_view() { }
+    ~pilot_view() {
+        delete m_viewport;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete m_skybox;
+    }
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_perspective(dtr(30), 0.1f, 10000.f);
@@ -63,8 +68,8 @@ public:
         m_light->set_specular(vec3(1, 1, 1));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/car_control_FragmentShader.glsl");
         m_shader->load();
     }
 
@@ -102,7 +107,6 @@ public:
         m_viewport->set_position(0, h2);
     }
 };
-    
 
 class artificial_horizon {
     gl_view_window m_view;
@@ -117,7 +121,13 @@ class artificial_horizon {
 
 public:
     artificial_horizon() {}
-    ~artificial_horizon() {}
+    ~artificial_horizon() {
+        delete m_viewport;
+        delete m_camera;
+        delete m_shader;
+        delete m_ball;
+        delete m_stencil;
+    }
 
     void initialize() {
         m_viewport = new gl_viewport();
@@ -125,12 +135,12 @@ public:
         m_camera = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/artificial_horizon_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/artificial_horizon_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/dso_FragmentShader.glsl");
         m_shader->load();
 
         m_ball = new gl_model();
-        m_ball->load("resources/artificial_horizon.obj");
+        m_ball->load("resources/models/artificial_horizon.obj");
 
         m_stencil = new gl_stencil;
         m_stencil->create_elliptic();
@@ -158,7 +168,7 @@ public:
 
         // GL_STENCIL_BUFFER_BIT  needs mask=0xFF
         glStencilMask(0xff);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+        glClearColor(0.25f, 0.25f, 0.25f, .75f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // we are using stencil
@@ -174,6 +184,7 @@ public:
         m_shader->use();
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_camera->vLocation);
+        m_shader->set_int("use_color_or_texture", 1);
 
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
@@ -218,19 +229,24 @@ class roll_indicator {
     float m_pitch, m_yaw, m_roll;
 public:
     roll_indicator() {}
-    ~roll_indicator() {}
+    ~roll_indicator() {
+        delete m_viewport;
+        delete m_camera;
+        delete m_shader;
+        delete m_ball;
+    }
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_fov(dtr(6.5));
         m_camera = new gl_camera(vec3(0, 0, 20), vec3(0, 0, 0), vec3(0, 1, 0));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/artificial_horizon_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/artificial_horizon_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/dso_FragmentShader.glsl");
         m_shader->load();
 
         m_ball = new gl_model();
-        m_ball->load("resources/flight_sim_plane.stl");
+        m_ball->load("resources/models/flight_sim_plane.stl");
         m_ball->set_scale(0.15f);
     }
 
@@ -253,7 +269,7 @@ public:
         m_view.start();
         m_viewport->set_viewport();
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+        glClearColor(0.25f, 0.25f, 0.25f, .75f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mat4 cam_matrix = m_camera->perspective() * m_viewport->perspective();
@@ -261,6 +277,7 @@ public:
         m_shader->use();
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_camera->vLocation);
+        m_shader->set_int("use_color_or_texture", 1);
 
         m_ball->render(m_shader);
 
@@ -319,19 +336,19 @@ public:
         }
         m_material = new cg_material;
         m_material->set_ambient(vec3(0.75f));
-        m_texture.load("resources/compass.tga");
+        m_texture.load("resources/textures/compass.tga");
     }
     virtual void render(gl_shader* _shader) {
         if (!vao) return;
 
         m_texture.bind();
-        _shader->set_int("use_texture", 1);
+        _shader->set_int("use_color_or_texture", 0);
         gl_prim::render(_shader);
-        _shader->set_int("use_texture", 0);
+        _shader->set_int("use_color_or_texture", 1);
         m_texture.release();
     }
 };
-
+#if 0
 class gl_rect :public gl_prim {
 protected:
     gl_texture m_texture;
@@ -371,7 +388,7 @@ public:
         }
         m_material = new cg_material;
         m_material->set_ambient(vec3(0.75f));
-        m_texture.load("resources/compass.tga");
+        m_texture.load("resources/textures/compass.tga");
     }
     virtual void render(gl_shader* _shader) {
         if (!vao) return;
@@ -381,6 +398,7 @@ public:
         m_texture.release();
     }
 };
+#endif
 
 class compass_indicator {
     gl_view_window m_view;
@@ -394,19 +412,25 @@ class compass_indicator {
     float m_pitch, m_yaw, m_roll;
 public:
     compass_indicator() {}
-    ~compass_indicator() {}
+    ~compass_indicator() {
+        delete m_viewport;
+        delete m_camera;
+        delete m_shader;
+        delete m_ball;
+        delete m_disk;
+    }
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_fov(dtr(6.5));
         m_camera = new gl_camera(vec3(0, 0, 30), vec3(0, 0, 0), vec3(0, 1, 0));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/compass_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/compass_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/dso_FragmentShader.glsl");
         m_shader->load();
 
         m_ball = new gl_model();
-        m_ball->load("resources/flight_sim_plane.stl");
+        m_ball->load("resources/models/flight_sim_plane.stl");
         m_ball->set_scale(0.1f);
         m_ball->rotate_by(dtr(90), 0, 0);
 
@@ -420,7 +444,6 @@ public:
         m_yaw += yaw;
         m_roll += roll;
 
-        //m_ball->rotate_by(pitch, yaw, roll);
         m_disk->rotate_by(pitch, yaw, roll);
     }
     void rotate_to(float pitch, float yaw, float roll) {
@@ -428,7 +451,6 @@ public:
         m_yaw += yaw;
         m_roll += roll;
 
-        //m_ball->rotate_by(pitch, yaw, roll);
         m_disk->rotate_to(pitch, yaw, roll);
     }
 
@@ -478,7 +500,13 @@ class altimeter {
 
 public:
     altimeter() {}
-    ~altimeter() {}
+    ~altimeter() {
+        delete m_viewport;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete font3D;
+    }
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_fov(dtr(6.5));
@@ -488,8 +516,8 @@ public:
         m_light->set_position(vec3(-30, 30, 30));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/fonts_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/fonts_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/fonts_FragmentShader.glsl");
         m_shader->load();
 
         font3D = get_font_manager().create_font("Bookman3D", "Bookman Old Style", 12, .2f);
@@ -520,7 +548,7 @@ public:
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
 
         char txt[100];
-        m_shader->set_vec4("objectColor", vec4(.9f, .9f, .9f, 1.f));
+        m_shader->set_vec4("object_color", vec4(.9f, .9f, .9f, 1.f));
 
         font3D->move_to(0, 2.5f, 0);
         font3D->render(m_shader, ALIGN_CENTER, "Altitude");
@@ -568,7 +596,15 @@ class stick_indicator {
 
 public:
     stick_indicator() {}
-    ~stick_indicator() {}
+    ~stick_indicator() {
+        delete m_viewport;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete m_cross;
+        delete m_diamond;
+        delete m_thrust;
+    }
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_fov(dtr(6.5));
@@ -578,8 +614,8 @@ public:
         m_light->set_position(vec3(-30, 30, 30));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/stick_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/stick_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/dso_FragmentShader.glsl");
         m_shader->load();
 
         m_cross = create_cross();
@@ -608,8 +644,9 @@ public:
         mat4 cam_matrix = m_cam->perspective() * m_viewport->perspective();
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
+        m_shader->set_int("use_color_or_texture", 1); //
 
-        m_shader->set_vec4("objectColor", vec4(.85f, .85f, .85f, 1.f));
+        m_shader->set_vec4("object_color", vec4(.85f, .85f, .85f, 1.f));
         m_cross->render(m_shader);
 
         if (m_stick_state) {
@@ -618,11 +655,11 @@ public:
             y = ((float)m_stick_state->y) / 500.f;
             t = m_stick_state->thrust / 500.f;
             m_diamond->move_to(x, y, 0);
-            m_shader->set_vec4("objectColor", vec4(.27f, .37f, .47f, .57f));
+            m_shader->set_vec4("object_color", vec4(.27f, .37f, .47f, .57f));
             m_diamond->render(m_shader);
 
             m_thrust->move_to(0, t - 1, 0);
-            m_shader->set_vec4("objectColor", vec4(.67f, .37f, .17f, .57f));
+            m_shader->set_vec4("object_color", vec4(.67f, .37f, .17f, .57f));
             m_thrust->render(m_shader);
         }
 
@@ -652,7 +689,12 @@ public:
 
 public:
     map_instrument() {}
-    ~map_instrument() {}
+    ~map_instrument() {
+        delete m_viewport;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+    }
     void initialize() {
         m_viewport = new gl_viewport();
         m_viewport->set_perspective(dtr(20), 0.1f, 10000.f);
@@ -662,8 +704,8 @@ public:
         m_light->set_position(vec3(-30, 30, 30));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/car_control_FragmentShader.glsl");
 
         m_shader->load();
     }
@@ -688,7 +730,6 @@ public:
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
 
         if (m_world) {
-            //m_shader->set_vec4("objectColor", vec4(.85f, .85f, .85f, 1.f));
             m_world->render(m_shader);
         }
 

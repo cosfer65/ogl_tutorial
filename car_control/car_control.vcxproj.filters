@@ -9,11 +9,7 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="shaders">
+    <Filter Include="resources">
       <UniqueIdentifier>{0c457a74-4cca-4a7b-8c66-4f6fe27ec054}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -31,11 +27,27 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\runtime\resources\FragmentShader.glsl">
-      <Filter>shaders</Filter>
+    <None Include="..\runtime\resources\shaders\car_control_FragmentShader.glsl">
+      <Filter>resources</Filter>
     </None>
-    <None Include="..\runtime\resources\VertexShader.glsl">
-      <Filter>shaders</Filter>
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
+      <Filter>resources</Filter>
     </None>
+    <None Include="..\runtime\resources\models\car_01.mtl">
+      <Filter>resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\runtime\resources\textures\build1.tga">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="..\runtime\resources\textures\build2.tga">
+      <Filter>resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\runtime\resources\models\car_01.obj">
+      <Filter>resources</Filter>
+    </Object>
   </ItemGroup>
 </Project>

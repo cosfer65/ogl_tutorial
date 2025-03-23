@@ -172,11 +172,13 @@ namespace atlas {
             {
                 m_imageDataFormat = GL_RGB;
                 m_colorDepth = 24;
+                m_bytes_per_pixel = 3;
             }
             else
             {
                 m_imageDataFormat = GL_RGBA;
                 m_colorDepth = 32;
+                m_bytes_per_pixel = 4;
             }
             break;
 
@@ -184,6 +186,7 @@ namespace atlas {
         case TGA_GRAYSCALE_RLE:
             m_imageDataFormat = GL_LUMINANCE;
             m_colorDepth = 8;
+            m_bytes_per_pixel = 1;
             break;
         }
 

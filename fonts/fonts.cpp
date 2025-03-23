@@ -6,7 +6,7 @@
 
 using namespace atlas;
 
-class atlas_app :public gl_application {
+class fonts_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
     gl_light* m_light;
@@ -15,24 +15,34 @@ class atlas_app :public gl_application {
     gl_font* font3D;
     gl_font* font2D;
 public:
-    atlas_app() {
+    fonts_app() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (text rendering)";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
     }
+    virtual ~fonts_app() {
+        delete m_view;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete font3D;
+        delete font2D;
+    }
     virtual int init_application() {
         m_view->set_fov(dtr(15));
-        m_cam = new gl_camera(vec3(0, 5, 20), vec3(0, 0, 0), vec3(0, 1, 0));
-        m_light = new gl_light(gl_light::SPOTLIGHT);
-        m_light->set_position(vec3(-30, 30, 30));
+        m_cam = new gl_camera(vec3(0, 0, 25), vec3(0, 0, 0), vec3(0, 1, 0));
+        m_light = new gl_light(gl_light::DIRLIGHT);
+        m_light->set_position(vec3(-100, 0, 0));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/fonts_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/fonts_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/fonts_FragmentShader.glsl");
         m_shader->load();
 
         font3D = get_font_manager().create_font("Bookman3D", "Bookman Old Style", 20, .2f);
+        //font3D->set_scale(2);
+
         font2D = get_font_manager().create_font("Consolas", "Consolas", 24);
         font2D->set_color(vec4(1, 0, 0.5f, 1));
         font2D->set_position(5, 7);
@@ -72,7 +82,9 @@ public:
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
 
-        m_shader->set_vec4("objectColor", vec4(.1f, .1f, .9f, 1.f));
+        // render the objects using color
+        m_shader->set_int("use_color_or_texture", 1);
+        m_shader->set_vec4("object_color", vec4(.1f, .25f, .9f, 1.f));
         font3D->render(m_shader, ALIGN_CENTER, "GusOnGames");
         m_shader->end();
 
@@ -82,4 +94,4 @@ public:
     }
 };
 
-atlas_app my_app;       // default
+fonts_app my_app;       // default

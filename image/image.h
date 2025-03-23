@@ -18,6 +18,7 @@ namespace atlas {
         int format();
         unsigned char* image();
         void rotate180();
+        int bytes_per_pixel();
     };
 }
 

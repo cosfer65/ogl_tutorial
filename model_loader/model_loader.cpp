@@ -7,16 +7,14 @@
 
 using namespace atlas;
 
-//std::string model_name("resources/artificial_horizon.stl");
-//std::string model_name("resources/artificial_horizon.obj");
-std::string model_name("resources/car_01.obj");
-//std::string model_name("resources/rafale.off");
-//std::string model_name("d:/3d_models/cone.obj");
-
+//std::string model_name("resources/models/artificial_horizon.stl");
+//std::string model_name("resources/models/artificial_horizon.obj");
+std::string model_name("resources/models/car_01.obj");
+//std::string model_name("resources/models/rafale.off");
 
 float fscale = 1.f;
 
-class atlas_app :public gl_application {
+class model_loader :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
     gl_light* m_light;
@@ -29,30 +27,34 @@ class atlas_app :public gl_application {
     gl_font* font2D;
     gl_prim* m_ucs;
 public:
-    atlas_app() {
+    model_loader() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (model loader)";
         m_window.prefered_width = 1200;
         m_window.prefered_height = 700;
     }
+    virtual ~model_loader() {
+        delete m_view;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete model1;
+        delete font2D;
+        delete m_ucs;
+    }
     virtual int init_application() {
         m_view->set_fov(dtr(fov));
-        // m_cam = new gl_camera(vec3(-5, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
         m_cam = new gl_camera(vec3(0, 0, 50), vec3(0, 0, 0), vec3(0, 1, 0));
 
         m_light = new gl_light(gl_light::SPOTLIGHT);
-        // we are holding the light source and pointing at the objects
         m_light->set_position(vec3(-100, 0, 0));
-        // allow some ambience for the light
-        // white light (we can experiment with this)
         m_light->set_ambient(vec3(1));
         m_light->set_diffuse(vec3(1));
         m_light->set_specular(vec3(1));
 
-        // create the simple light shader
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/model_loader_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/model_loader_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/model_loader_FragmentShader.glsl");
         m_shader->load();
 
         model1 = new gl_model();
@@ -97,13 +99,13 @@ public:
         if (keyDown['T']) {
             base_3d_model::inv_trias = 1 - base_3d_model::inv_trias;
             keyDown['T'] = 0;
-            model1->load(model_name, base_3d_model::inv_trias, base_3d_model::inv_norms); //--------------------------------------
+            model1->load(model_name, base_3d_model::inv_trias, base_3d_model::inv_norms);
             model1->set_scale(vec3(fscale));
         }
         if (keyDown['N']) {
             base_3d_model::inv_norms = 1 - base_3d_model::inv_norms;
             keyDown['N'] = 0;
-            model1->load(model_name, base_3d_model::inv_trias, base_3d_model::inv_norms); //--------------------------------------
+            model1->load(model_name, base_3d_model::inv_trias, base_3d_model::inv_norms);
             model1->set_scale(vec3(fscale));
         }
     }
@@ -120,7 +122,6 @@ public:
 
         float xpos = 0;
 
-        // objects with simple light
         m_shader->use();
         m_light->apply(m_shader);
         m_shader->set_mat4("camera", cam_matrix);
@@ -128,7 +129,6 @@ public:
 
         model1->render(m_shader);
 
-        m_shader->set_vec3("objectColor", vec3(1));
         m_ucs->move_to(-8, 0, 0);
         m_ucs->render(m_shader);
 
@@ -164,4 +164,4 @@ public:
     }
 };
 
-atlas_app my_app;       // default
+model_loader my_app;       // default

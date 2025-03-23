@@ -97,14 +97,14 @@
     <ClCompile Include="fonts.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\fonts_fs.glsl">
+    <None Include="..\runtime\resources\shaders\fonts_FragmentShader.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\fonts_vs.glsl">
+    </None>
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

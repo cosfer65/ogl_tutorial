@@ -1,6 +1,7 @@
 #include "3d_models.h"
 #include "graphics.h"
 #include "primitives.h"
+#include "gl_image.h"
 
 namespace atlas {
     static gl_prim* create_prim(const std::vector<atlas::vec3>& verts, const std::vector<atlas::vec3>& norms, const std::vector<atlas::vec3>* colors, const std::vector<std::vector<atlas::ivec3>>& fcs);
@@ -96,6 +97,17 @@ namespace atlas {
         return p;
     }
 
+    gl_prim* create_heightmap(const std::string& fname, GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
+        matrix<float> hmap(1, 1);
+        load_heightmap_image_matrix(fname, hmap);
+        c_mesh* m_hmap = create_heightmap_mesh(hmap, 2.5);
+        gl_prim* p = new gl_prim;
+        p->create_from_mesh(m_hmap, drmode, dr_el);
+        p->set_texture(load_texture(fname));
+        delete m_hmap;
+        return p;
+    }
+
     gl_prim* create_cross(GLenum drmode /*= GL_FILL*/, bool dr_el /*= true*/) {
         gl_prim* p = new gl_prim;
         c_mesh* tmesh = create_cross_mesh(); // 1, 1, 1);
@@ -141,11 +153,11 @@ namespace atlas {
             _shader->set_mat4("model", ob_matrix);
             glBindVertexArray(vao);
             unsigned int idx = (unsigned int)m_mesh_sizes.num_indices / 3;
-            _shader->set_vec3("objectColor", vec3(1, 0, 0));
+            _shader->set_vec4("object_color", vec4(1, 0, 0, 1));
             glDrawElements(GL_LINES, idx, GL_UNSIGNED_INT, 0);
-            _shader->set_vec3("objectColor", vec3(0, 1, 0));
+            _shader->set_vec4("object_color", vec4(0, 1, 0, 1));
             glDrawElements(GL_LINES, idx, GL_UNSIGNED_INT, (const void*)(idx * sizeof(unsigned int)));
-            _shader->set_vec3("objectColor", vec3(0, 0, 1));
+            _shader->set_vec4("object_color", vec4(0, 0, 1, 1));
             glDrawElements(GL_LINES, idx, GL_UNSIGNED_INT, (const void*)(2 * idx * sizeof(unsigned int)));
             glBindVertexArray(0);
         }

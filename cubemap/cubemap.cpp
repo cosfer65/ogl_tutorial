@@ -25,24 +25,32 @@ public:
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
     }
+    virtual ~atlas_app() {
+        delete m_view;
+        delete m_cam;
+        delete m_shader;
+        delete m_skybox;
+        delete m_sphere;
+        delete m_cube;
+        delete font2D;
+    }
     virtual int init_application() {
         m_view->set_fov(dtr(30));
-        // m_cam = new gl_camera(vec3(0, 10, 30), vec3(0, 0, 0), vec3(0, 1, 0));
         m_cam = new gl_camera(vec3(0, 0, -20), vec3(0, 0, 0), vec3(0, 1, 0));
 
         m_skybox = new gl_skybox;
         std::vector<std::string> faces
         {
-            "resources/px.tga", "resources/nx.tga",
-            "resources/py.tga", "resources/ny.tga",
-            "resources/pz.tga", "resources/nz.tga"
+            "resources/skyboxes/px.tga", "resources/skyboxes/nx.tga",
+            "resources/skyboxes/py.tga", "resources/skyboxes/ny.tga",
+            "resources/skyboxes/pz.tga", "resources/skyboxes/nz.tga"
         };
 
         m_skybox->load(faces);
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/cubemap_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/cubemap_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/cubemap_FragmentShader.glsl");
         m_shader->load();
 
         m_sphere = create_sphere(GL_FILL, true);
@@ -96,13 +104,10 @@ public:
         mat4 cam_matrix = m_cam->perspective() * m_view->perspective();
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
-        // we use 1 and GL_TEXTURE1 for demonstration purposes only
-        m_shader->set_int("skybox", 1);
-        glActiveTexture(GL_TEXTURE1);
+
         // use cubemap texture
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_skybox->texture());
-        // notify shader to use the texture when rendering
-        m_shader->set_int("useColor", 0);
         // render our scene
         m_sphere->render(m_shader);
         m_cube->render(m_shader);

@@ -22,10 +22,13 @@ protected:
 public:
     point_of_view() {
         m_view = new gl_viewport();
-        m_view->set_fov(dtr(90));
+        m_view->set_fov(dtr(60));
         m_cam = new gl_camera();
     }
-    virtual ~point_of_view() {}
+    virtual ~point_of_view() {
+        delete m_view;
+        delete m_cam;
+    }
 
     virtual void create() {}
 
@@ -71,6 +74,12 @@ class moving_car {
 public:
     moving_car() {
     }
+    ~moving_car() {
+        if (p_view)
+            delete p_view;
+        if (car_model)
+            delete car_model;
+    }
     point_of_view* pov() {
         return p_view;
     }
@@ -87,7 +96,7 @@ public:
         car_fwd.normalize();
 
         if (!car_model)
-            car_model = new gl_model("resources/car_01.obj", true);
+            car_model = new gl_model("resources/models/car_01.obj", true);
         car_model->rotate_to(0, dtr(180), 0);  // model was saved in a different orientation
         car_model->set_scale(vec3(0.4f, 0.4f, 0.4f));
         vPosition.y = (car_model->bbox_y() / 2) * 0.4f;  //times the scale!
@@ -214,6 +223,19 @@ public:
         m_window.prefered_width = 1000;
         m_window.prefered_height = 750;
     }
+    virtual ~car_control_app() {
+        delete m_light;
+        delete m_fog;
+        delete m_shader;
+        delete m_skybox;
+        delete m_ground;
+        delete m_car;
+        for (auto b : buildings)
+            delete b;
+        for (auto p : pavements)
+            delete p;
+        delete p_moving_camera;
+    }
 
     void create_environment() {
         // skybox
@@ -273,8 +295,8 @@ public:
         m_fog->set_linear(0, 200);
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/VertexShader.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/FragmentShader.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/car_control_FragmentShader.glsl");
         m_shader->load();
 
         create_environment();
@@ -365,18 +387,18 @@ public:
 
         m_fog->apply(m_shader);
 
-        m_shader->set_int("use_texture", 0);
+        m_shader->set_int("use_color_or_texture", 1);
         m_ground->render(m_shader);
 
         for (auto p : pavements)
             p->render(m_shader);
 
-        m_shader->set_int("use_texture", 1);
+        m_shader->set_int("use_color_or_texture", 0);
         glActiveTexture(GL_TEXTURE0);
         for (auto build1 : buildings)
             build1->render(m_shader);
 
-        m_shader->set_int("use_texture", 0);
+        m_shader->set_int("use_color_or_texture", 1);
         m_car->render(m_shader);
 
         m_shader->end();

@@ -46,9 +46,14 @@ namespace atlas {
         GLuint load(const char* vertex_file, const char* fragment_file, const char* geometry_file = nullptr);
         GLuint compile(const char* vertex_source, const char* fragment_source, const char* geom_source = nullptr);
 
+        void set_defaults() {
+            set_int("use_vertex_color", 0);
+        }
+
         void use() {
             glGetIntegerv(GL_CURRENT_PROGRAM, &old_program);
             glUseProgram(program);
+            set_defaults();
         }
         void end() {
             glUseProgram(old_program);

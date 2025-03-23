@@ -7,15 +7,13 @@
 
 using namespace atlas;
 
-class atlas_app :public gl_application {
+class lights_materials_app :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
     gl_light* m_light;
 
-    // the shaders
+    // the shader
     gl_shader* m_shader;
-    gl_shader* mat_shader;
-    gl_shader* map_shader;
 
     // the objects
     gl_prim* m_cube;
@@ -28,15 +26,25 @@ class atlas_app :public gl_application {
     cg_material* m_mat4;
     cg_material* m_mat5;
 
-    GLuint   diffuse_texture;
-    GLuint   specular_texture;
-
 public:
-    atlas_app() {
+    lights_materials_app() {
         m_view = new gl_viewport();
         m_window.szTitle = "GusOnGames (lights and materials)";
         m_window.prefered_width = 1200;
         m_window.prefered_height = 750;
+    }
+    virtual ~lights_materials_app() {
+        delete m_view;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete m_cube;
+        delete m_sphere;
+        delete m_mat1;
+        delete m_mat2;
+        delete m_mat3;
+        delete m_mat4;
+        delete m_mat5;
     }
     virtual int init_application() {
         m_view->set_fov(dtr(15));
@@ -57,22 +65,11 @@ public:
         m_light->set_diffuse(vec3(1, 1, 1));
         m_light->set_specular(vec3(1, 1, 1));
 
-        // create the simple light shader
+        // create the shader
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/lights_materials_FragmentShader.glsl");
         m_shader->load();
-
-        // create the material shader
-        mat_shader = new gl_shader;
-        mat_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
-        mat_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_material_fs.glsl");
-        mat_shader->load();
-
-        map_shader = new gl_shader;
-        map_shader->add_file(GL_VERTEX_SHADER, "resources/lights_materials_vs.glsl");
-        map_shader->add_file(GL_FRAGMENT_SHADER, "resources/lights_materials_map_fs.glsl");
-        map_shader->load();
 
         // the cube
         m_cube = create_cube(GL_FILL);
@@ -99,9 +96,12 @@ public:
         m_mat3->set_specular(0.393548f, 0.271906f, 0.166721f);
         m_mat3->set_shine(0.2f * 128);
 
+        GLuint   diffuse_texture;
+        GLuint   specular_texture;
+
         // the color is based on the image
-        diffuse_texture = load_texture("resources/planks.tga");
-        specular_texture = load_texture("resources/planks_specular.tga");
+        diffuse_texture = load_texture("resources/textures/planks.tga");
+        specular_texture = load_texture("resources/textures/planks_specular.tga");
         m_mat4 = new cg_material;
         m_mat4->set_ambient(0.2f, 0.2f, 0.2f);
         // use image to paint object
@@ -110,8 +110,8 @@ public:
         m_mat4->set_shine(0.52f * 128);
 
         // the color is based on the image
-        diffuse_texture = load_texture("resources/earth.tga");
-        specular_texture = load_texture("resources/earth_specular.tga");
+        diffuse_texture = load_texture("resources/textures/earth.tga");
+        specular_texture = load_texture("resources/textures/earth_specular.tga");
         m_mat5 = new cg_material;
         m_mat5->set_ambient(0.2f, 0.2f, 0.2f);
         // use image to paint object
@@ -149,60 +149,52 @@ public:
         m_light->apply(m_shader);
         m_shader->set_mat4("camera", cam_matrix);
         m_shader->set_vec3("cameraPos", m_cam->vLocation);
-        m_shader->set_vec3("objectColor", vec3(0.07568f, 0.41424f, 0.07568f));
+        m_shader->set_vec4("object_color", vec4(0.07568f, 0.41424f, 0.07568f, 1));
+        m_shader->set_int("coloring_type", 0);
         m_cube->move_to(vec3(xpos, 1, -6.f));
         m_cube->render(m_shader);
         m_sphere->move_to(vec3(xpos, -1, -6.f));
         m_sphere->render(m_shader);
 
         // use materials
-        mat_shader->use();
-        m_light->apply(mat_shader);
-        mat_shader->set_mat4("camera", cam_matrix);
-        mat_shader->set_vec3("cameraPos", m_cam->vLocation);
-
         xpos += 2;
-
+        m_shader->set_int("coloring_type", 1);
         // first material
-        m_mat1->apply(mat_shader);
+        m_mat1->apply(m_shader);
         m_cube->move_to(vec3(xpos, 1, -6.f));
-        m_cube->render(mat_shader);
+        m_cube->render(m_shader);
         m_sphere->move_to(vec3(xpos, -1, -6.f));
-        m_sphere->render(mat_shader);
+        m_sphere->render(m_shader);
 
         xpos += 2;
 
         // second material
-        m_mat2->apply(mat_shader);
+        m_mat2->apply(m_shader);
         m_cube->move_to(vec3(xpos, 1, -6.f));
-        m_cube->render(mat_shader);
+        m_cube->render(m_shader);
         m_sphere->move_to(vec3(xpos, -1, -6.f));
-        m_sphere->render(mat_shader);
+        m_sphere->render(m_shader);
 
         xpos += 2;
 
         // third material
-        m_mat3->apply(mat_shader);
+        m_mat3->apply(m_shader);
         m_cube->move_to(vec3(xpos, 1, -6.f));
-        m_cube->render(mat_shader);
+        m_cube->render(m_shader);
         m_sphere->move_to(vec3(xpos, -1, -6.f));
-        m_sphere->render(mat_shader);
+        m_sphere->render(m_shader);
 
         //////////////////////////////////////////////////////////////////////////
         //
-        map_shader->use();
-        m_light->apply(map_shader);
-        map_shader->set_mat4("camera", cam_matrix);
-        map_shader->set_vec3("cameraPos", m_cam->vLocation);
-
-        m_mat4->apply(map_shader);
+        m_shader->set_int("coloring_type", 2);
+        m_mat4->apply(m_shader);
         xpos += 2;
         m_cube->move_to(vec3(xpos, 1, -6.f));
-        m_cube->render(map_shader);
+        m_cube->render(m_shader);
 
-        m_mat5->apply(map_shader);
+        m_mat5->apply(m_shader);
         m_sphere->move_to(vec3(xpos, -1, -6.f));
-        m_sphere->render(map_shader);
+        m_sphere->render(m_shader);
     }
 
     virtual void exit_application() {
@@ -213,4 +205,4 @@ public:
     }
 };
 
-atlas_app my_app;       // default
+lights_materials_app my_app;       // default

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "image.h"
 #include "targa.h"
 #include "jpeg.h"
@@ -91,5 +90,8 @@ namespace atlas {
         internals->timage->rotate180();
         {
         };
+    }
+    int cg_image::bytes_per_pixel() {
+        return internals->timage->bytes_per_pixel();
     }
 }

@@ -9,9 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="resources">
+      <UniqueIdentifier>{6e3c12b2-54b4-4a98-aaf2-2d9fb75e4c21}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,13 +39,36 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\runtime\resources\compass_fs.glsl" />
-    <None Include="..\runtime\resources\compass_vs.glsl" />
-    <None Include="..\runtime\resources\lights_materials_fs.glsl" />
-    <None Include="..\runtime\resources\lights_materials_vs.glsl" />
-    <None Include="..\runtime\resources\VertexShader.glsl" />
-    <None Include="..\runtime\resources\FragmentShader.glsl" />
-    <None Include="..\runtime\resources\stick_fs.glsl" />
-    <None Include="..\runtime\resources\stick_vs.glsl" />
+    <Image Include="..\runtime\resources\textures\build1.tga">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="..\runtime\resources\textures\build2.tga">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="..\runtime\resources\textures\compass.tga">
+      <Filter>resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\runtime\resources\shaders\car_control_FragmentShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\shaders\dso_FragmentShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\models\artificial_horizon.mtl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\models\flight_sim_plane.stl">
+      <Filter>resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\runtime\resources\models\artificial_horizon.obj">
+      <Filter>resources</Filter>
+    </Object>
   </ItemGroup>
 </Project>

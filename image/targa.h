@@ -63,9 +63,6 @@ namespace atlas {
     private:
         unsigned int  m_colorDepth;
         unsigned int  m_imageDataFormat;
-        unsigned char* m_pImageData;
-        //unsigned short m_width;
-        //unsigned short m_height;
         unsigned long  m_imageSize;
 
         // swap the red and blue components in the image data

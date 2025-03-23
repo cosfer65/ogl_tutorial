@@ -9,9 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="resources">
+      <UniqueIdentifier>{225f1450-350b-4964-b59b-5dbda861bda0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -25,7 +24,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\runtime\resources\model_loader_fs.glsl" />
-    <None Include="..\runtime\resources\model_loader_vs.glsl" />
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\shaders\model_loader_FragmentShader.glsl">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\runtime\resources\models\car_01.mtl">
+      <Filter>resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\runtime\resources\models\car_01.obj">
+      <Filter>resources</Filter>
+    </Object>
   </ItemGroup>
 </Project>

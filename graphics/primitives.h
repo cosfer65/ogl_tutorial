@@ -26,6 +26,7 @@ namespace atlas {
         int use_vertex_color;
 
         cg_material* m_material; // allow drawable objects to have their own materials
+        GLuint m_texture;
     public:
         mat4 rmat;  // rotation matrix (local)
         mat4 tmat;  // translation matrix
@@ -44,11 +45,14 @@ namespace atlas {
             smat = scaling_matrix(scale.x, scale.y, scale.z);
             tmat = translation_matrix(position.x, position.y, position.z);
             use_vertex_color = 0;
+            m_texture = 0;
         }
         virtual ~gl_prim() {}
 
         virtual void create_from_mesh(c_mesh* mesh, GLenum drmode = GL_FILL, bool dr_el = true);
-
+        void set_texture(GLuint tex) {
+            m_texture = tex;
+        }
         void set_material(cg_material* m) {
             m_material = m;
         }
@@ -64,13 +68,21 @@ namespace atlas {
         virtual void render(gl_shader* _shader) {
             if (!vao) return;
 
+            _shader->set_int("use_vertex_color", 0);
             if (use_vertex_color) {
                 _shader->set_int("use_vertex_color", 1);
             }
             else if (m_material) {
                 m_material->apply(_shader);
-                _shader->set_vec3("objectColor", m_material->get_diffuse());
-                _shader->set_int("use_vertex_color", 0);
+                _shader->set_vec4("object_color", vec4(m_material->get_diffuse(), 1));
+            }
+            else if (m_texture) {
+                _shader->set_vec4("object_color", vec4(0.3f, 0.5f, 0.9f, 1.f));
+                _shader->set_int("use_color_or_texture", 1);
+
+                _shader->set_int("use_color_or_texture", 0);
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, m_texture);
             }
 
             // position object
@@ -241,6 +253,7 @@ namespace atlas {
     gl_prim* create_diamond(GLenum drmode = GL_FILL, bool dr_el = true);
     gl_prim* create_hbar(GLenum drmode = GL_FILL, bool dr_el = true);
     gl_prim* create_UCS(GLenum drmode = GL_FILL, bool dr_el = true);
+    gl_prim* create_heightmap(const std::string& fname, GLenum drmode = GL_FILL, bool dr_el = true);
 }
 
 #endif // __primitives__

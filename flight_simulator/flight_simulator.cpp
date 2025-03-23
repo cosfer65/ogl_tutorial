@@ -20,9 +20,8 @@ void print_float(float v) {
     OutputDebugString(str);
 }
 
-class atlas_app :public gl_application {
+class flight_sim :public gl_application {
     bool init_done = false;
-    //gl_model* model1;
 
     // main view
     pilot_view main_view;
@@ -41,10 +40,13 @@ class atlas_app :public gl_application {
     world* m_world;
 
 public:
-    atlas_app() {
+    flight_sim() {
         m_window.szTitle = "GusOnGames (flight simulator)";
         m_window.prefered_width = 1200;
         m_window.prefered_height = 700;
+    }
+    virtual ~flight_sim() {
+        delete m_world;
     }
 
     void create_world() {
@@ -90,10 +92,6 @@ public:
         m_stick_indicator.set_stick_state(&tstate);
         m_map.initialize();
         m_map.set_world(m_world);
-
-        // model1 = new gl_model();
-        // model1->load("resources/flight_sim_plane.stl");
-        // model1->set_scale(vec3(0.2f, 0.2f, 0.2f));
 
         m_airplane.InitializeAirplane();
         tstate.thrust = m_airplane.GetThrust() * 1000.f;
@@ -177,7 +175,6 @@ public:
 
         m_airplane.StepSimulation(2*fElapsed/3);
         vec3 euler_angles = make_euler_angles_from_q(m_airplane.Airplane.qOrientation);
-        //model1->rotate_to(-euler_angles.y, -euler_angles.z, euler_angles.x);
         m_ah.rotate_to(-euler_angles.y, 0, euler_angles.x);
         m_roll_ind.rotate_to(0, 0, euler_angles.x); // done
         m_compass_ind.rotate_to(0, 0, euler_angles.z);
@@ -204,4 +201,4 @@ public:
     }
 };
 
-atlas_app my_app;       // default
+flight_sim my_app;       // default

@@ -16,6 +16,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="glew.c" />
+    <ClCompile Include="gl_image.cpp" />
     <ClCompile Include="primitives.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="skybox.cpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="effects.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="glew.h" />
+    <ClInclude Include="gl_image.h" />
     <ClInclude Include="gl_math.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="light.h" />

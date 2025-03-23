@@ -2,7 +2,6 @@
 #define __WORLD_OBJECTS_H__
 
 #include "camera.h"
-//#include "light.h"
 #include "material.h"
 #include "util.h"
 #include "primitives.h"
@@ -16,13 +15,16 @@ class skybox {
 public:
     skybox() {
     }
+    virtual ~skybox() {
+        delete m_sbox;
+    }
     void create() {
         m_sbox = new atlas::gl_skybox;
         std::vector<std::string> faces
         {
-            "resources/px.tga", "resources/nx.tga",
-            "resources/py.tga", "resources/ny.tga",
-            "resources/pz.tga", "resources/nz.tga"
+            "resources/skyboxes/px.tga", "resources/skyboxes/nx.tga",
+            "resources/skyboxes/py.tga", "resources/skyboxes/ny.tga",
+            "resources/skyboxes/pz.tga", "resources/skyboxes/nz.tga"
         };
         m_sbox->load(faces);
     }
@@ -81,7 +83,10 @@ class ground :public world_object {
 public:
     ground() {
     }
-    virtual ~ground() {}
+    virtual ~ground() {
+        delete m_material;
+        delete m_plane;
+    }
     virtual void create() {
         m_plane = atlas::create_plane(GL_FILL, true);
         m_plane->set_scale(200, 0, 200);
@@ -105,7 +110,10 @@ class pavement : public world_object {
 public:
     pavement() {
     }
-    virtual ~pavement() {}
+    virtual ~pavement() {
+        delete m_material;
+        delete m_box;
+    }
 
     virtual void create() {
         m_box = atlas::create_cube(GL_FILL, true);
@@ -135,9 +143,13 @@ class building : public world_object {
 public:
     building(int _i = 0) {
         if (_i % 2)
-            m_texture = atlas::load_texture("resources/build1.tga");
+            m_texture = atlas::load_texture("resources/textures/build1.tga");
         else
-            m_texture = atlas::load_texture("resources/build2.tga");
+            m_texture = atlas::load_texture("resources/textures/build2.tga");
+    }
+    virtual ~building() {
+        glDeleteTextures(1, &m_texture);
+        delete m_box;
     }
     virtual void create() {
         m_box = atlas::create_cube(GL_FILL, true);

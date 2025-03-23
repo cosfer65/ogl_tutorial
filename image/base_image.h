@@ -7,8 +7,9 @@ namespace atlas {
         unsigned char* m_buf;
         int m_width;
         int m_height;
+        int m_bytes_per_pixel;
 
-        base_image() :m_buf(NULL) {}
+        base_image() :m_buf(nullptr) {}
         virtual ~base_image() {}
 
         virtual bool load(const char* filename) = 0;
@@ -24,6 +25,9 @@ namespace atlas {
         }
         virtual unsigned char* image() {
             return m_buf;
+        }
+        virtual int bytes_per_pixel() {
+            return m_bytes_per_pixel;
         }
     };
 }

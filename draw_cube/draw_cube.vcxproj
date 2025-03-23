@@ -97,22 +97,24 @@
     <ClCompile Include="draw_simple_objects.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\runtime\resources\draw_cubet_fs.glsl">
+    <None Include="..\runtime\resources\shaders\dso_FragmentShader.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cubet_vs.glsl">
+    </None>
+    <None Include="..\runtime\resources\shaders\generic_VertexShader.glsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cube_fs.glsl">
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\runtime\resources\textures\earth2.tga">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\runtime\resources\draw_cube_vs.glsl">
+    </Image>
+    <Image Include="..\runtime\resources\textures\planks.tga">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+    </Image>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

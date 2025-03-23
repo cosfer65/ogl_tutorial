@@ -40,7 +40,7 @@ public:
     }
 };
 
-class atlas_app :public gl_application {
+class stencil_buffer :public gl_application {
     gl_viewport* m_view;
     gl_camera* m_cam;
     gl_light* m_light;
@@ -55,11 +55,20 @@ class atlas_app :public gl_application {
     gl_background* pbackgound;
 
 public:
-    atlas_app() {
+    stencil_buffer() {
         m_view = new gl_viewport();
         m_window.szTitle = "stencil";
         m_window.prefered_width = 800;
         m_window.prefered_height = 600;
+    }
+    virtual ~stencil_buffer() {
+        delete m_view;
+        delete m_cam;
+        delete m_light;
+        delete m_shader;
+        delete m_cube;
+        delete pstencil;
+        delete pbackgound;
     }
     virtual int init_application() {
         m_view->set_fov(dtr(25));
@@ -72,8 +81,8 @@ public:
         m_light->set_specular(vec3(1, 1, 1));
 
         m_shader = new gl_shader;
-        m_shader->add_file(GL_VERTEX_SHADER, "resources/stencil_vs.glsl");
-        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/stencil_fs.glsl");
+        m_shader->add_file(GL_VERTEX_SHADER, "resources/shaders/generic_VertexShader.glsl");
+        m_shader->add_file(GL_FRAGMENT_SHADER, "resources/shaders/model_loader_FragmentShader.glsl");
         m_shader->load();
 
         m_cube = create_cube(GL_FILL, true);
@@ -168,10 +177,10 @@ public:
 
         // draw a rectangle behind the cube to act as background
         // this will make the stecil shape visible
-        m_shader->set_vec3("objectColor", vec3(0.95f, 0.55f, 0.15f));
+        m_shader->set_vec4("object_color", vec4(0.95f, 0.55f, 0.15f, 1));
         pbackgound->render(m_shader);
         // and now draw the cube
-        m_shader->set_vec3("objectColor", vec3(.1f, .2f, .99f));
+        m_shader->set_vec4("object_color", vec4(.1f, .2f, .99f, 1));
         m_cube->render(m_shader);
         // stop using stncil
         glDisable(GL_STENCIL_TEST);
@@ -179,4 +188,4 @@ public:
     }
 };
 
-atlas_app my_app;       // default
+stencil_buffer my_app;       // default

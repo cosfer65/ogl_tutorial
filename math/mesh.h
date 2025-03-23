@@ -5,6 +5,7 @@
 #include <string>
 
 #include "vector.h"
+#include "matrix.h"
 
 namespace atlas {
     class quaternion;
@@ -67,6 +68,7 @@ namespace atlas {
         virtual void addNormal(const vec3& n);
         virtual void addTexCoord(float s, float t);
         virtual void addIndices(unsigned int i1, unsigned int i2, unsigned int i3);
+        virtual void addIndices_n(unsigned int i1, unsigned int i2, unsigned int i3);
         virtual void addIndices(unsigned int i1, unsigned int i2);
 
         virtual void create(float dx, float dy, float dz) {};
@@ -103,5 +105,6 @@ namespace atlas {
     c_mesh* create_diamond_mesh();
     c_mesh* create_hbar_mesh();
     c_mesh* create_UCS_mesh();
+    c_mesh* create_heightmap_mesh(const matrix<float>& hmap, float length_scale);
 }
 #endif // __mesh_h__
