@@ -1,11 +1,7 @@
-
-OpenGL tutorial.docx
 /.vs
 /lib
 /runtime/Debugx64
+/runtime/Releasex64
 /x64
 *.aps
 *.bak
-/runtime/Releasex64
-flight_simulator/airplane - Copy.cpp
-flight_simulator/airplane - Copy.h

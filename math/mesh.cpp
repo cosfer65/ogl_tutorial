@@ -521,11 +521,14 @@ namespace atlas {
         auto cols = hmap.cols - 1;   // goes into our x direction
         auto rows = hmap.rows - 1;   // goes into our z direction
 
+        // the edges of the terrain
         float minx = -(cols * length_scale) / 2;
         float maxx = (cols * length_scale) / 2;
         float minz = -(rows * length_scale) / 2;
         float maxz = (rows * length_scale) / 2;
-        int idx = 0;
+        int idx = 0; // counting the number of generated points
+        
+        // texture coordinates for the terrain
         float sx = 1.f / cols;
         float sz = 1.f / rows;
         float tx = 0;
@@ -536,38 +539,43 @@ namespace atlas {
             tx = 0;
             for (auto x = 0; x < cols; ++x)
             {
+                // x and z coordinates
                 float x1, x2, z1, z2;
                 x1 = minx + x * length_scale;
                 x2 = minx + (x + 1) * length_scale;
                 z1 = minz + z * length_scale;
                 z2 = minz + (z + 1) * length_scale;
+                
+                // y coordinates (elevation)
                 float y1, y2, y3, y4;
-
                 y1 = hmap(z, x) * height_scale;
                 y2 = hmap(z, x + 1) * height_scale;
                 y3 = hmap(z + 1, x + 1) * height_scale;
                 y4 = hmap(z + 1, x) * height_scale;
 
+                // the four points
                 vec3 v1(x1, y1, z1);
                 vec3 v2(x2, y2, z1);
                 vec3 v3(x2, y3, z2);
                 vec3 v4(x1, y4, z2);
 
+                // the first triangle
                 ms->addVertex(v1);
                 ms->addVertex(v2);
                 ms->addVertex(v3);
                 ms->addIndices_n(idx + 2, idx + 1, idx + 0);
-
+                // and the texture coordinates
                 ms->addTexCoord(tx, tz);
                 ms->addTexCoord(tx+sx, tz);
                 ms->addTexCoord(tx+sx, tz+sz);
                 idx += 3;
 
+                // the second triangle
                 ms->addVertex(v1);
                 ms->addVertex(v3);
                 ms->addVertex(v4);
                 ms->addIndices_n(idx + 2, idx + 1, idx + 0);
-
+                // and the texture coordinates
                 ms->addTexCoord(tx, tz);
                 ms->addTexCoord(tx + sx, tz+sz);
                 ms->addTexCoord(tx, tz + sz);
